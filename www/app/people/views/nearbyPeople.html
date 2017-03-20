@@ -1,0 +1,12 @@
+<ion-content class="has-header">
+        <ul>
+                <li >{{people}}</li>
+        </ul>
+        <div class="list">
+                <a ng-repeat="people in npc.peopleList" class="item item-avatar" href="#">
+                        <img ng-src="{{people.picture}}">
+                        <h2>{{people.anonName}}</h2>
+                        <p>{{people.status}}</p>
+                </a>
+        </div>
+</ion-content>

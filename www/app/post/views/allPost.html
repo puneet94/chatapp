@@ -1,0 +1,22 @@
+<ion-content class="has-header">
+        <div class="list">
+                <div class=" card" ng-repeat="post in apc.postsList track by post._id">
+                        <div class="item item-avatar">
+                                <img ng-src="{{post.user.picture}}">
+                                <h2>{{post.user.anonName}}</h2>
+                                <p>{{post.user.status}}</p>
+                        </div>
+                        <div class="item item-body">
+                                
+                                <p>
+                                        {{post.content}}
+                                </p>
+                                <p>
+                                        <span class="subdued" ng-repeat="interest in post.interests track by $index">
+                                        		!{{interest}}
+                                        </span>
+                                </p>
+                        </div>
+                </div>
+        </div>
+</ion-content>
