@@ -78,3 +78,8 @@
   border: 1px solid teal;
   border-radius: 3px; }
 
+
+.clearfix:after {
+  content: " ";
+  display: table;
+  clear: both; }

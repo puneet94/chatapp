@@ -1,0 +1,45 @@
+<ion-view cache-view="false">
+
+    <div class="bar bar-subheader item-input-inset">
+        <div class="buttons">
+            <button class="button" ui-sref="home.chat.all">Chats</button>
+        </div>
+        <h4 class="title">
+            <a ui-sref="tabs.userPage({userId:cbc.receiverUserId})" >{{cbc.receiverUser}}</a>
+        </h4>
+    </div>
+    <ion-content class="has-header has-subheader">
+        <div ng-cloak class="chatBoxPage" >
+
+            
+            <ul class="chatBoxUL">
+                <li ng-repeat="chat in cbc.chatList" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
+                    <div ng-class=" chat.user._id==cbc.currentUser ? 'you' : 'me'">
+                        <div class="image">
+                            <img ng-src="{{chat.user.picture}}" alt="" />
+                        </div>
+                        <p>{{chat.message}}</p>
+                    </div>
+                </li>
+            </ul>
+            <div style="clear:both;position: relative;" class="msgBox">
+                <div style="text-align:center;margin-left:50%;position:absolute;">
+                    <small-loading-directive small-loading="cbc.messageLoading"></small-loading-directive>
+                </div>
+
+                <div l>
+                    <textarea class="chatBoxTextArea" ng-model="cbc.myMsg" ng-disabled="cbc.messageLoading" ng-keypress="cbc.sendMsg($event)"></textarea>
+                    <button class="md-raised md-primary" ng-click="cbc.clickSubmit()">Send </button>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </ion-content>
+
+
+
+
+</ion-view>

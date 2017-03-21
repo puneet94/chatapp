@@ -54,7 +54,7 @@
 
 	function config($stateProvider) {
 		$stateProvider
-			.state('home.chat',{
+			.state('home.chat', {
 				url: '/chat',
 				abstract: true,
 				views: {
@@ -64,27 +64,33 @@
 						controllerAs: 'ppc'
 					}
 				}
-				
-			}).state('home.chat.all',{
+
+			}).state('home.chat.all', {
 				url: '/all',
-				
+
 				views: {
 					'chat-tab': {
 						templateUrl: 'app/chat/views/allChat.html',
 						controller: 'AllChatController',
 						controllerAs: 'apc'
 					}
-				}				
-			}).state('home.chat.revealed',{
+				}
+			}).state('home.chat.revealed', {
 				url: '/revealed',
-				
+
 				views: {
 					'chat-tab': {
 						templateUrl: 'app/chat/views/revealedChat.html',
 						controller: 'RevealedChatController',
 						controllerAs: 'rpc'
 					}
-				}				
+				}
+			}).state('chatBox', {
+				url: '/chatBox/:user',
+				templateUrl: 'app/chat/views/chatBox.html',
+				controller: 'ChatBoxController',
+				controllerAs: 'cbc'
+
 			});
 	}
 })(window.angular);
@@ -237,9 +243,9 @@
 
 
 	function config($stateProvider) {
-		
+
 		$stateProvider
-			.state('home.post',{
+			.state('home.post', {
 				url: '/post',
 				abstract: true,
 				views: {
@@ -249,57 +255,63 @@
 						controllerAs: 'ppc'
 					}
 				}
-				
-			}).state('home.post.all',{
+
+			}).state('home.post.all', {
 				url: '/all',
-				
+
 				views: {
 					'post-tab': {
 						templateUrl: 'app/post/views/allPost.html',
 						controller: 'AllPostController',
 						controllerAs: 'apc'
 					}
-				}			
-			}).state('home.post.latest',{
+				}
+			}).state('home.post.latest', {
 				url: '/latest',
-				
+
 				views: {
 					'post-tab': {
 						templateUrl: 'app/post/views/latestPost.html',
 						controller: 'LatestPostController',
 						controllerAs: 'lpc'
 					}
-				}				
-			}).state('home.post.popular',{
+				}
+			}).state('home.post.popular', {
 				url: '/popular',
-				
+
 				views: {
 					'post-tab': {
 						templateUrl: 'app/post/views/popularPost.html',
 						controller: 'PopularPostController',
 						controllerAs: 'ppc'
 					}
-				}				
-			}).state('home.post.nearby',{
+				}
+			}).state('home.post.nearby', {
 				url: '/nearby',
-				
+
 				views: {
 					'post-tab': {
 						templateUrl: 'app/post/views/nearbyPost.html',
 						controller: 'NearbyPostController',
 						controllerAs: 'npc'
 					}
-				}				
-			}).state('home.postSubmit',{
+				}
+			}).state('home.postSubmit', {
 				url: '/submit',
-				
+
 				views: {
 					'postSubmit-tab': {
 						templateUrl: 'app/post/views/createPost.html',
 						controller: 'CreatePostController',
 						controllerAs: 'cpc'
 					}
-				}				
+				}
+			}).state('singlePost', {
+				url: '/post/:id',
+				templateUrl: 'app/post/views/singlePost.html',
+				controller: 'SinglePostController',
+				controllerAs: 'spc'
+
 			});
 	}
 
@@ -389,15 +401,126 @@
 
 })(window.angular);
 
-(function(angular){
+(function(angular) {
 	'use strict';
 	angular.module('petal.chat')
-		.controller('AllChatController',['$scope','$state',AllChatController]);
+		.controller('AllChatController', ['$scope', '$state', 'chatService', AllChatController]);
 
-	function AllChatController($scope,$state){
+	function AllChatController($scope, $state,chatService) {
+		var acc = this;
+		acc.params = {
+			page: 1,
+			limit: 25
+		};
+		acc.chatRoomsList = [];
+		acc.getAllChatRooms = getAllChatRooms;
+		acc.loadMoreChats = loadMoreChats;
+		acc.pullRefreshChats = pullRefreshChats;
+		activate();
+
+		function pullRefreshChats() {
+			acc.params.page = 1;
+			acc.chatRoomsList = [];
+			getAllChatRooms();
+
+		}
+
+		function loadMoreChats() {
+			acc.params.page += 1;
+			getAllChatRooms();
+		}
+
+		function getAllChatRooms() {
+			chatService.getAllChatRooms(acc.params).then(function(response){
+				angular.forEach(response.data.docs, function(value) {
+					acc.chatRoomsList.push(value);
+				});
+			});
+		}
+
+		function activate() {
+			getAllChatRooms();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('app.chat')
+
+	.controller('ChatBoxController', ['$scope', 'Socket', '$stateParams', 'userData', 'chatService', 'userService', ChatBoxController]);
+
+	function ChatBoxController($scope, Socket, $stateParams, userData, chatService, userService) {
+		var cbc = this;
+
+		cbc.currentUser = userData.getUser()._id;
+		cbc.receiverUser = '';
+		cbc.chatList = [];
+		cbc.chatRoomId = '';
+		cbc.messageLoading = false;
+		activate();
+
+		function getChatMessages() {
+			chatService.getChatMessages(cbc.chatRoomId).then(function(res) {
+				angular.forEach(res.data[0].chats, function(chat) {
+					cbc.chatList.push(chat);
+				});
+			}, function(res) {
+				console.log(res);
+			});
+
+		}
+		function activate() {
+			chatService.getChatRoom($stateParams.user).then(function(res) {
+				console.log("the response the room");
+				console.log(res);
+				cbc.chatRoomId = res.data._id;
+				cbc.currentUser = res.data.creator1;
+				cbc.receiverUserId = res.data.creator2;
+				console.log("the reciver id" + cbc.receiverUserId);
+				console.log("the reciver id2" + cbc.currentUser);
+				socketJoin();
+				getChatMessages();
+
+				
+			}, function(res) {
+				console.log(res);
+			});
+		}
+
+
+		function socketJoin() {
+			Socket.emit('addToRoom', { 'roomId': cbc.chatRoomId });
+			Socket.on('messageSaved', function(message) {
+				cbc.chatList.push(message);
+				//$('.chatBoxUL').animate({ scrollTop: 99999999 }, 'slow');
+			});
+		}
+
+		cbc.clickSubmit = function() {
+
+			cbc.messageLoading = true;
+			var chatObj = { 'message': cbc.myMsg, 'user': cbc.currentUser, 'roomId': cbc.chatRoomId };
+			chatService.sendChatMessage(chatObj).then(function(res) {
+				cbc.myMsg = ' ';
+				cbc.messageLoading = false;
+				console.log(res);
+			}, function(res) {
+				console.log(res);
+			});
+
+
+		};
 
 	}
 })(window.angular);
+
+/*userService.getUserDetails(cbc.receiverUserId, { 'fields': 'displayName firstName' }).then(function(response) {
+					console.log("the receiver");
+					console.log(response.data);
+					cbc.receiverUser = response.data.displayName || (response.data.firstName);
+				});*/
+
 (function(angular){
 	'use strict';
 	angular.module('petal.chat')
@@ -410,12 +533,88 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.chat')
-		.controller('RevealedChatController',['$scope','$state',RevealedChatController]);
+		.controller('RevealedChatController',['$scope','$state','chatService',RevealedChatController]);
 
-	function RevealedChatController($scope,$state){
+	function RevealedChatController($scope,$state,chatService){
+		var acc = this;
+		acc.params = {
+			page: 1,
+			limit: 25
+		};
+		acc.chatRoomsList = [];
+		acc.getRevealedChatRooms = getRevealedChatRooms;
+		acc.loadMoreChats = loadMoreChats;
+		acc.pullRefreshChats = pullRefreshChats;
+		activate();
+
+		function pullRefreshChats() {
+			acc.params.page = 1;
+			acc.chatRoomsList = [];
+			getRevealedChatRooms();
+
+		}
+
+		function loadMoreChats() {
+			acc.params.page += 1;
+			getRevealedChatRooms();
+		}
+
+		function getRevealedChatRooms() {
+			chatService.getRevealedChatRooms(acc.params).then(function(response){
+				angular.forEach(response.data.docs, function(value) {
+					acc.chatRoomsList.push(value);
+				});
+			});
+		}
+
+		function activate() {
+			getRevealedChatRooms();
+		}
+	}
+})(window.angular);
+(function(angular) {
+	'use strict';
+	angular.module('petal.chat')
+		.service('chatService', ['$http', '$stateParams', 'homeService', ReviewService]);
+
+	function ReviewService($http, $stateParams, homeService) {
+		var rs = this;
+		rs.sendChatMessage = sendChatMessage;
+		rs.getChatMessages = getChatMessages;
+		rs.getChatRoom = getChatRoom;
+		rs.getAllChatRooms = getAllChatRooms;
+		rs.getRevealedChatRooms = getRevealedChatRooms;
+
+		function sendChatMessage(chat) {
+			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
+		}
+
+		function getChatMessages(chatRoomId) {
+
+			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId);
+		}
+
+		function getChatRoom(user) {
+			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
+
+		}
+		function getAllChatRooms(params) {
+			params.revealed = false;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
+		}
+		function getRevealedChatRooms(params) {
+			params.revealed = true;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
+		}
+
+		
+
 
 	}
 })(window.angular);
+
 (function(angular) {
     'use strict';
 
@@ -857,6 +1056,35 @@ angular.module('petal.home')
 		
 	}
 })(window.angular);
+(function(angular) {
+	'use strict';
+	angular.module('petal.post')
+		.controller('SinglePostController', ['$scope', '$state', 'postService', '$stateParams','$ionicHistory',SinglePostController]);
+
+	function SinglePostController($scope, $state, postService,$stateParams,$ionicHistory) {
+		var apc = this;
+		apc.getSinglePost= getSinglePost;
+		
+		apc.back = function(){
+			$ionicHistory.goBack();
+		};
+		
+		activate();
+		
+		function getSinglePost() {
+			postService.getPost($stateParams.id).then(function(response) {
+				console.log("singlepost");
+				console.log(response);
+				
+			});
+
+		}
+		function activate(){
+			getSinglePost();
+		}
+	}
+})(window.angular);
+
 (function(angular) {
 	'use strict';
 	angular.module('petal.post').
