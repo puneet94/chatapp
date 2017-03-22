@@ -5,6 +5,7 @@
 			$stateProvider.
 			state('home.user', {
 				url: '/user',
+				'abstract': true,
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userParentPage.html',

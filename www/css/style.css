@@ -1,3 +1,34 @@
+.leftChat {
+  clear: both;
+  float: left; }
+
+.rightChat {
+  clear: both;
+  float: right; }
+
+.image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  clear: both; }
+  .image img {
+    width: 100%;
+    height: 100%; }
+
+.you p {
+  float: right;
+  margin-right: 5px; }
+
+.you .image {
+  float: right; }
+
+.me p {
+  float: left;
+  margin-left: 5px; }
+
+.me .image {
+  float: left; }
+
 .authenticationModalContainer {
   padding: 24px; }
 

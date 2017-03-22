@@ -1,14 +1,14 @@
 (function(angular) {
 	'use strict';
-	angular.module('app.chat')
+	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', 'Socket', '$stateParams', 'userData', 'chatService', 'userService', ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', 'Socket', '$stateParams', 'userData', 'chatService' ,'$ionicScrollDelegate',ChatBoxController]);
 
-	function ChatBoxController($scope, Socket, $stateParams, userData, chatService, userService) {
+	function ChatBoxController($scope, Socket, $stateParams, userData, chatService,$ionicScrollDelegate) {
 		var cbc = this;
 
 		cbc.currentUser = userData.getUser()._id;
-		cbc.receiverUser = '';
+		cbc.receiverUser = $stateParams.user;
 		cbc.chatList = [];
 		cbc.chatRoomId = '';
 		cbc.messageLoading = false;
@@ -16,37 +16,42 @@
 
 		function getChatMessages() {
 			chatService.getChatMessages(cbc.chatRoomId).then(function(res) {
-				angular.forEach(res.data[0].chats, function(chat) {
+				
+				angular.forEach(res.data.docs, function(chat) {
 					cbc.chatList.push(chat);
 				});
-			}, function(res) {
+			}).catch(function(res) {
 				console.log(res);
+			}).finally(function(){
+				$ionicScrollDelegate.scrollBottom(true);
 			});
 
 		}
 		function activate() {
-			chatService.getChatRoom($stateParams.user).then(function(res) {
-				console.log("the response the room");
-				console.log(res);
+			chatService.getChatRoom(cbc.receiverUser).then(function(res) {
 				cbc.chatRoomId = res.data._id;
-				cbc.currentUser = res.data.creator1;
-				cbc.receiverUserId = res.data.creator2;
-				console.log("the reciver id" + cbc.receiverUserId);
-				console.log("the reciver id2" + cbc.currentUser);
 				socketJoin();
 				getChatMessages();
-
-				
 			}, function(res) {
+				console.log('the error in getting chatroom');
 				console.log(res);
 			});
 		}
 
 
 		function socketJoin() {
-			Socket.emit('addToRoom', { 'roomId': cbc.chatRoomId });
-			Socket.on('messageSaved', function(message) {
+			console.log("socket joined");
+			Socket.emit('addToChatRoom', { 'roomId': cbc.chatRoomId });
+			Socket.on('messageReceived', function(message) {
+				
 				cbc.chatList.push(message);
+				$ionicScrollDelegate.scrollBottom(true);
+				//$('.chatBoxUL').animate({ scrollTop: 99999999 }, 'slow');
+			});
+			Socket.on('messageSaved', function(message) {
+				
+				cbc.chatList.push(message);
+				$ionicScrollDelegate.scrollBottom(true);
 				//$('.chatBoxUL').animate({ scrollTop: 99999999 }, 'slow');
 			});
 		}
@@ -54,11 +59,11 @@
 		cbc.clickSubmit = function() {
 
 			cbc.messageLoading = true;
-			var chatObj = { 'message': cbc.myMsg, 'user': cbc.currentUser, 'roomId': cbc.chatRoomId };
+			var chatObj = { 'message': cbc.myMsg,receiver:$stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
 				cbc.myMsg = ' ';
 				cbc.messageLoading = false;
-				console.log(res);
+				
 			}, function(res) {
 				console.log(res);
 			});

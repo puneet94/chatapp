@@ -24,7 +24,7 @@
 					'chat-tab': {
 						templateUrl: 'app/chat/views/allChat.html',
 						controller: 'AllChatController',
-						controllerAs: 'apc'
+						controllerAs: 'acc'
 					}
 				}
 			}).state('home.chat.revealed', {

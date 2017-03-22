@@ -23,9 +23,7 @@
 			controller: 'AuthenticationController',
 			controllerAs: 'ac',
 			templateUrl: 'app/home/views/authenticationPage.html',
-			resolve: {
-				redirectIfUserAuthenticated: ['$q', '$auth', '$state', '$timeout', redirectIfUserAuthenticated]
-			}
+			
 
 		}).state('home', {
 			url: "/home",

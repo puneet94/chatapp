@@ -1,5 +1,10 @@
 <ion-content  class="has-header">
-	<ul>
-		<li ng-repeat="people in apc.peopleList">{{people}}</li>
-	</ul>
+	<div class="list">
+
+                <a class="item item-avatar" ng-repeat="people in apc.peopleList" ui-sref="chatBox({user:people._id})">
+                        <img ng-src="{{people.picture}}">
+                        <h2>{{people.anonName||people.googleName}}</h2>
+                        <p>{{people.status}}</p>
+                </a>
+        </div>
 </ion-content>

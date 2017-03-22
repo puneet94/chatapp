@@ -1,10 +1,9 @@
 <ion-content class="has-header">
-	<ul>
-		<li>Chat all</li>
-		<li>Chat all</li>
-		<li>Chat all</li>
-		<li>Chat all</li>
-		<li>Chat all</li>
-		<li>Chat all</li>
-	</ul>
+        <div class="list">
+                <a class="item item-avatar" ng-repeat="chatRoom in acc.chatRoomsList" ui-sref="chatBox({user:chatRoom.creator2._id})">
+                        <img ng-src="{{chatRoom.creator2.picture}}">
+                        <h2>{{chatRoom.creator2.anonName}}</h2>
+                        <p>{{chatRoom.lastMessage.message}}</p>
+                </a>
+        </div>
 </ion-content>

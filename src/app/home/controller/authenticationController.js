@@ -8,6 +8,9 @@
         var phc = this;
         console.log("authenticate");
         phc.isAuth = $auth.isAuthenticated();
+        if(phc.isAuth){
+            $state.go('home.post.all');
+        }
         console.log(phc.isAuth);
         phc.authLogout = authLogout;
 
