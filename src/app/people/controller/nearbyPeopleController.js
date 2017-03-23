@@ -1,11 +1,12 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.people')
-		.controller('NearbyPeopleController',['$scope','$state','peopleService',NearbyPeopleController]);
+		.controller('NearbyPeopleController',['$scope','$state','peopleService','userData',NearbyPeopleController]);
 
-	function NearbyPeopleController($scope,$state,peopleService){
+	function NearbyPeopleController($scope,$state,peopleService,userData){
 
 		var apc = this;
+		apc.currentUser = userData.getUser();
 		apc.getNearbyPeople = getNearbyPeople;
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;

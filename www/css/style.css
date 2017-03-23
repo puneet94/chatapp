@@ -1,33 +1,7 @@
-.leftChat {
-  clear: both;
-  float: left; }
-
-.rightChat {
-  clear: both;
-  float: right; }
-
-.image {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+.clearfix:after {
+  content: " ";
+  display: table;
   clear: both; }
-  .image img {
-    width: 100%;
-    height: 100%; }
-
-.you p {
-  float: right;
-  margin-right: 5px; }
-
-.you .image {
-  float: right; }
-
-.me p {
-  float: left;
-  margin-left: 5px; }
-
-.me .image {
-  float: left; }
 
 .authenticationModalContainer {
   padding: 24px; }
@@ -109,8 +83,60 @@
   border: 1px solid teal;
   border-radius: 3px; }
 
+.headerCustom {
+  padding: 0;
+  margin: 0; }
 
-.clearfix:after {
-  content: " ";
-  display: table;
-  clear: both; }
+.rowCustom {
+  padding: 0;
+  margin: 0; }
+
+.columnCustom {
+  padding: 10px;
+  text-align: center; }
+
+.columnCustomActive {
+  border-bottom: 5px solid white;
+  color: white;
+  font-weight: 800; }
+
+.leftChat {
+  clear: both;
+  float: left; }
+
+.rightChat {
+  clear: both;
+  float: right; }
+
+.image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  clear: both;
+  margin: 0 10px; }
+  .image img {
+    width: 100%;
+    height: 100%; }
+
+.you p {
+  float: right;
+  margin-right: 5px;
+  background-color: #eee;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px; }
+
+.you .image {
+  float: right; }
+
+.me p {
+  float: left;
+  margin-left: 5px;
+  background-color: #007AFF;
+  padding: 10px;
+  border: 1px solid #007AFF;
+  border-radius: 5px;
+  color: white; }
+
+.me .image {
+  float: left; }

@@ -3,7 +3,7 @@
                 <li >{{people}}</li>
         </ul>
         <div class="list">
-                <a ng-repeat="people in npc.peopleList" class="item item-avatar" href="#">
+                <a ng-repeat="people in npc.peopleList" class="item item-avatar" href="#" ng-if="npc.currentUser._id!=people._id">
                         <img ng-src="{{people.picture}}">
                         <h2>{{people.anonName}}</h2>
                         <p>{{people.status}}</p>

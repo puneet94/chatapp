@@ -17,9 +17,10 @@
 			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
 		}
 
-		function getChatMessages(chatRoomId) {
-
-			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId);
+		function getChatMessages(chatRoomId,params) {
+			console.log("params");
+			console.log(params);
+			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
 		}
 
 		function getChatRoom(user) {

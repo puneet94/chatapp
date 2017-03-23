@@ -11,11 +11,19 @@
 		cbc.receiverUser = $stateParams.user;
 		cbc.chatList = [];
 		cbc.chatRoomId = '';
+		cbc.loadMoreChats = loadMoreChats;
 		cbc.messageLoading = false;
+		cbc.params = {
+			page: 1,
+			limit: 50
+		};
 		activate();
-
+		function loadMoreChats(){
+			cbc.params.page+=1;
+			getChatMessages();
+		}
 		function getChatMessages() {
-			chatService.getChatMessages(cbc.chatRoomId).then(function(res) {
+			chatService.getChatMessages(cbc.chatRoomId,cbc.params).then(function(res) {
 				
 				angular.forEach(res.data.docs, function(chat) {
 					cbc.chatList.push(chat);
@@ -24,6 +32,7 @@
 				console.log(res);
 			}).finally(function(){
 				$ionicScrollDelegate.scrollBottom(true);
+				$scope.$broadcast('scroll.refreshComplete');
 			});
 
 		}

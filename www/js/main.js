@@ -334,7 +334,7 @@
 
 			}).
 			state('home.user.userPage', {
-				url: '/userPage/:userId',
+				url: '/userPage/:user',
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userProfilePage.html',
@@ -349,9 +349,6 @@
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userProfileSettingsPage.html',
-						resolve: {
-							redirectIfNotUserAuthenticated: ['$q', '$auth', 'changeBrowserURL', redirectIfNotUserAuthenticated]
-						}
 					}
 				}
 
@@ -361,9 +358,6 @@
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userAccountSettingsPage.html',
-						resolve: {
-							redirectIfNotUserAuthenticated: ['$q', '$auth', 'changeBrowserURL', redirectIfNotUserAuthenticated]
-						}
 					}
 				}
 
@@ -459,11 +453,19 @@
 		cbc.receiverUser = $stateParams.user;
 		cbc.chatList = [];
 		cbc.chatRoomId = '';
+		cbc.loadMoreChats = loadMoreChats;
 		cbc.messageLoading = false;
+		cbc.params = {
+			page: 1,
+			limit: 50
+		};
 		activate();
-
+		function loadMoreChats(){
+			cbc.params.page+=1;
+			getChatMessages();
+		}
 		function getChatMessages() {
-			chatService.getChatMessages(cbc.chatRoomId).then(function(res) {
+			chatService.getChatMessages(cbc.chatRoomId,cbc.params).then(function(res) {
 				
 				angular.forEach(res.data.docs, function(chat) {
 					cbc.chatList.push(chat);
@@ -472,6 +474,7 @@
 				console.log(res);
 			}).finally(function(){
 				$ionicScrollDelegate.scrollBottom(true);
+				$scope.$broadcast('scroll.refreshComplete');
 			});
 
 		}
@@ -598,9 +601,10 @@
 			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
 		}
 
-		function getChatMessages(chatRoomId) {
-
-			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId);
+		function getChatMessages(chatRoomId,params) {
+			console.log("params");
+			console.log(params);
+			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
 		}
 
 		function getChatRoom(user) {
@@ -652,70 +656,6 @@ angular.module('petal.chat')
         });
     }
 })(window.angular);
-(function(angular) {
-    'use strict';
-
-    angular.module('petal.home')
-        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", AuthenticationController]);
-
-    function AuthenticationController($scope, $auth, $state, userData) {
-        var phc = this;
-        console.log("authenticate");
-        phc.isAuth = $auth.isAuthenticated();
-        if(phc.isAuth){
-            $state.go('home.post.all');
-        }
-        console.log(phc.isAuth);
-        phc.authLogout = authLogout;
-
-        phc.socialAuthenticate = socialAuthenticate;
-        console.log($state);
-
-        function socialAuthenticate(provider) {
-
-            $auth.authenticate(provider).then(function(response) {
-                console.log("from here");
-                console.log(response);
-                userData.setUser(response.data.user);
-                alert('login with ' + provider + ' successfull');
-                $state.go('home.post.all');
-            }).catch(function(err){
-                console.log("error");
-                console.log(err);
-            });
-        }
-
-        
-
-
-        function authLogout() {
-            $auth.logout();
-            userData.removeUser();
-            $state.go('authenticate');
-        }
-    }
-
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', HomeController]);
-
-	function HomeController($scope, $state) {
-		var hc = this;
-		hc.badgeValue= '';
-		hc.chatClicked=chatClicked;
-
-		
-
-		function chatClicked(){
-			$state.go('home.chat.all');
-		}
-	}
-})(window.angular);
-
 (function(angular){
 	'use strict';
 	angular.module('petal.home')
@@ -802,14 +742,79 @@ angular.module('petal.home')
   }
 })(window.angular);
 
+(function(angular) {
+    'use strict';
+
+    angular.module('petal.home')
+        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", AuthenticationController]);
+
+    function AuthenticationController($scope, $auth, $state, userData) {
+        var phc = this;
+        console.log("authenticate");
+        phc.isAuth = $auth.isAuthenticated();
+        if(phc.isAuth){
+            $state.go('home.post.all');
+        }
+        console.log(phc.isAuth);
+        phc.authLogout = authLogout;
+
+        phc.socialAuthenticate = socialAuthenticate;
+        console.log($state);
+
+        function socialAuthenticate(provider) {
+
+            $auth.authenticate(provider).then(function(response) {
+                console.log("from here");
+                console.log(response);
+                userData.setUser(response.data.user);
+                alert('login with ' + provider + ' successfull');
+                $state.go('home.post.all');
+            }).catch(function(err){
+                console.log("error");
+                console.log(err);
+            });
+        }
+
+        
+
+
+        function authLogout() {
+            $auth.logout();
+            userData.removeUser();
+            $state.go('authenticate');
+        }
+    }
+
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.home')
+		.controller('HomeController', ['$scope', '$state', HomeController]);
+
+	function HomeController($scope, $state) {
+		var hc = this;
+		hc.badgeValue= '';
+		hc.chatClicked=chatClicked;
+
+		
+
+		function chatClicked(){
+			$state.go('home.chat.all');
+		}
+	}
+})(window.angular);
+
 (function(angular){
 	'use strict';
 	angular.module('petal.people')
-		.controller('AllPeopleController',['$scope','$state','peopleService',AllPeopleController]);
+		.controller('AllPeopleController',['$scope','$state','peopleService','userData',AllPeopleController]);
 
-	function AllPeopleController($scope,$state,peopleService){
+	function AllPeopleController($scope,$state,peopleService,userData){
 		var apc = this;
 		apc.getAllPeople = getAllPeople;
+		apc.currentUser = userData.getUser();
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;
 		apc.peopleList = [];
@@ -872,11 +877,12 @@ angular.module('petal.home')
 (function(angular){
 	'use strict';
 	angular.module('petal.people')
-		.controller('NearbyPeopleController',['$scope','$state','peopleService',NearbyPeopleController]);
+		.controller('NearbyPeopleController',['$scope','$state','peopleService','userData',NearbyPeopleController]);
 
-	function NearbyPeopleController($scope,$state,peopleService){
+	function NearbyPeopleController($scope,$state,peopleService,userData){
 
 		var apc = this;
+		apc.currentUser = userData.getUser();
 		apc.getNearbyPeople = getNearbyPeople;
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;
@@ -950,75 +956,6 @@ angular.module('petal.home')
 
 	}
 })(window.angular);
-(function(angular) {
-  'use strict';
-  /*
-   *Service for getting a single store with its id
-   */
-  angular.module('petal.people')
-    .service('peopleService', ["$http", "homeService", 'userLocationService', '$q',PeopleService]);
-
-  /*
-   * This servic has a function names getStore which takes id as parameter and returns a promise
-   */
-  function PeopleService($http, homeService, userLocationService,$q) {
-    
-    this.getAllUsers = getAllUsers;
-    this.getRevealedUsers = getRevealedUsers;
-    this.getNearbyUsers = getNearbyUsers;
-    this.getRequestedUsers = getRequestedUsers;
-    this.getReceivedUsers = getReceivedUsers;
-    this.getNearbyUsers = getNearbyUsers;
-
-    function getAllUsers(params) {
-      params.all = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getRevealedUsers(params) {
-      params.revealed = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getReceivedUsers(params) {
-      params.received = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getRequestedUsers(params) {
-      params.requested = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getNearbyUsers(params) {
-      params.nearby = true;
-      var defer = $q.defer();
-      userLocationService.getUserLocation().then(function(position) {
-        params.latitude = position.latitude;
-        params.longitude = position.longitude;
-        $http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
-          defer.resolve(users);
-        }).catch(function(err){
-          defer.reject(err);
-        });
-      }).catch(function(err){
-        defer.reject(err);
-      });
-
-      return defer.promise;
-    }
-
-    
-
-
-
-  }
-})(window.angular);
-
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
@@ -1126,6 +1063,75 @@ angular.module('petal.home')
 })(window.angular);
 
 (function(angular) {
+  'use strict';
+  /*
+   *Service for getting a single store with its id
+   */
+  angular.module('petal.people')
+    .service('peopleService', ["$http", "homeService", 'userLocationService', '$q',PeopleService]);
+
+  /*
+   * This servic has a function names getStore which takes id as parameter and returns a promise
+   */
+  function PeopleService($http, homeService, userLocationService,$q) {
+    
+    this.getAllUsers = getAllUsers;
+    this.getRevealedUsers = getRevealedUsers;
+    this.getNearbyUsers = getNearbyUsers;
+    this.getRequestedUsers = getRequestedUsers;
+    this.getReceivedUsers = getReceivedUsers;
+    this.getNearbyUsers = getNearbyUsers;
+
+    function getAllUsers(params) {
+      params.all = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getRevealedUsers(params) {
+      params.revealed = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getReceivedUsers(params) {
+      params.received = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getRequestedUsers(params) {
+      params.requested = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getNearbyUsers(params) {
+      params.nearby = true;
+      var defer = $q.defer();
+      userLocationService.getUserLocation().then(function(position) {
+        params.latitude = position.latitude;
+        params.longitude = position.longitude;
+        $http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
+          defer.resolve(users);
+        }).catch(function(err){
+          defer.reject(err);
+        });
+      }).catch(function(err){
+        defer.reject(err);
+      });
+
+      return defer.promise;
+    }
+
+    
+
+
+
+  }
+})(window.angular);
+
+(function(angular) {
 	'use strict';
 	angular.module('petal.post').
 	service('postService', ['$http', 'homeService', 'userLocationService', '$q',PostService]);
@@ -1204,7 +1210,34 @@ angular.module('petal.home')
 			}
 		}
 })(window.angular);
+(function(angular){
+	'use strict';
+	angular.module('petal.user').
+		controller('UserPageController',['$state','$auth','userService','$stateParams',UserPageController]);
 
+		function UserPageController($state,$auth,userService,$stateParams){
+			
+			var umpc = this;
+			umpc.logout = logout;
+			activate();
+			function logout(){
+				$auth.logout();
+				$state.go('authenticate');
+			}
+
+			function activate(){
+				getUser();
+			}
+
+			function getUser(){
+				userService.getUser($stateParams.user).then(function(response){
+					console.log(":page user");
+					console.log(response);
+					umpc.user = response.data;
+				});
+			}
+		}
+})(window.angular);
 (function(angular){
 	'use strict';
 	angular.module('petal.user').

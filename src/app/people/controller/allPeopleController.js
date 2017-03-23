@@ -1,11 +1,12 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.people')
-		.controller('AllPeopleController',['$scope','$state','peopleService',AllPeopleController]);
+		.controller('AllPeopleController',['$scope','$state','peopleService','userData',AllPeopleController]);
 
-	function AllPeopleController($scope,$state,peopleService){
+	function AllPeopleController($scope,$state,peopleService,userData){
 		var apc = this;
 		apc.getAllPeople = getAllPeople;
+		apc.currentUser = userData.getUser();
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;
 		apc.peopleList = [];

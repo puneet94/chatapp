@@ -1,10 +1,10 @@
 <ion-view>
-        <ion-header-bar class="bar-calm">
-                <div class="row">
-                        <div class="col col-25" ui-sref="home.post.all">All</div>
-                        <div class="col col-25" ui-sref="home.post.nearby">Nearby</div>
-                        <div class="col col-25" ui-sref="home.post.latest">Latest</div>
-                        <div class="col col-25" ui-sref="home.post.popular">Popular</div>
+        <ion-header-bar class="bar-calm headerCustom">
+                <div class="row rowCustom">
+                        <div class="col col-25 columnCustom " ui-sref="home.post.all" ui-sref-active="columnCustomActive">All</div>
+                        <div class="col col-25 columnCustom" ui-sref="home.post.nearby" ui-sref-active="columnCustomActive">Nearby</div>
+                        <div class="col col-25 columnCustom" ui-sref="home.post.latest" ui-sref-active="columnCustomActive">Latest</div>
+                        <div class="col col-25 columnCustom" ui-sref="home.post.popular" ui-sref-active="columnCustomActive">Popular</div>
                 </div>
         </ion-header-bar>
         <div ui-view="post-tab">Loading</div>

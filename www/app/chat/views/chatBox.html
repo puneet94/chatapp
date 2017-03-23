@@ -1,5 +1,5 @@
 <ion-view cache-view="false">
-        <div class="bar bar-subheader item-input-inset">
+        <div class="bar bar-header ">
                 <div class="buttons">
                         <button class="button" ui-sref="home.chat.all">Chats</button>
                 </div>
@@ -8,6 +8,8 @@
         		</h4>
         </div>
         <ion-content class="has-header has-subheader">
+                <ion-refresher pulling-text="Pull to refresh..." on-refresh="cbc.loadMoreChats()">
+                </ion-refresher>
                 <div ng-cloak class="chatBoxPage">
                         <div ng-repeat="chat in cbc.chatList" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
                                 <div ng-class=" chat.user._id==cbc.currentUser ? 'you' : 'me'">

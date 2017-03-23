@@ -16,7 +16,7 @@
 
 			}).
 			state('home.user.userPage', {
-				url: '/userPage/:userId',
+				url: '/userPage/:user',
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userProfilePage.html',
@@ -31,9 +31,6 @@
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userProfileSettingsPage.html',
-						resolve: {
-							redirectIfNotUserAuthenticated: ['$q', '$auth', 'changeBrowserURL', redirectIfNotUserAuthenticated]
-						}
 					}
 				}
 
@@ -43,9 +40,6 @@
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userAccountSettingsPage.html',
-						resolve: {
-							redirectIfNotUserAuthenticated: ['$q', '$auth', 'changeBrowserURL', redirectIfNotUserAuthenticated]
-						}
 					}
 				}
 
