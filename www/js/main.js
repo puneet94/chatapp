@@ -515,8 +515,9 @@
 				cbc.myMsg = ' ';
 				cbc.messageLoading = false;
 				
-			}, function(res) {
-				console.log(res);
+			}).catch( function(err) {
+
+				console.log(err);
 			});
 
 
@@ -656,6 +657,70 @@ angular.module('petal.chat')
         });
     }
 })(window.angular);
+(function(angular) {
+    'use strict';
+
+    angular.module('petal.home')
+        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", AuthenticationController]);
+
+    function AuthenticationController($scope, $auth, $state, userData) {
+        var phc = this;
+        console.log("authenticate");
+        phc.isAuth = $auth.isAuthenticated();
+        if(phc.isAuth){
+            $state.go('home.post.all');
+        }
+        console.log(phc.isAuth);
+        phc.authLogout = authLogout;
+
+        phc.socialAuthenticate = socialAuthenticate;
+        console.log($state);
+
+        function socialAuthenticate(provider) {
+
+            $auth.authenticate(provider).then(function(response) {
+                console.log("from here");
+                console.log(response);
+                userData.setUser(response.data.user);
+                alert('login with ' + provider + ' successfull');
+                $state.go('home.post.all');
+            }).catch(function(err){
+                console.log("error");
+                console.log(err);
+            });
+        }
+
+        
+
+
+        function authLogout() {
+            $auth.logout();
+            userData.removeUser();
+            $state.go('authenticate');
+        }
+    }
+
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.home')
+		.controller('HomeController', ['$scope', '$state', HomeController]);
+
+	function HomeController($scope, $state) {
+		var hc = this;
+		hc.badgeValue= '';
+		hc.chatClicked=chatClicked;
+
+		
+
+		function chatClicked(){
+			$state.go('home.chat.all');
+		}
+	}
+})(window.angular);
+
 (function(angular){
 	'use strict';
 	angular.module('petal.home')
@@ -743,109 +808,62 @@ angular.module('petal.home')
 })(window.angular);
 
 (function(angular) {
-    'use strict';
-
-    angular.module('petal.home')
-        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", AuthenticationController]);
-
-    function AuthenticationController($scope, $auth, $state, userData) {
-        var phc = this;
-        console.log("authenticate");
-        phc.isAuth = $auth.isAuthenticated();
-        if(phc.isAuth){
-            $state.go('home.post.all');
-        }
-        console.log(phc.isAuth);
-        phc.authLogout = authLogout;
-
-        phc.socialAuthenticate = socialAuthenticate;
-        console.log($state);
-
-        function socialAuthenticate(provider) {
-
-            $auth.authenticate(provider).then(function(response) {
-                console.log("from here");
-                console.log(response);
-                userData.setUser(response.data.user);
-                alert('login with ' + provider + ' successfull');
-                $state.go('home.post.all');
-            }).catch(function(err){
-                console.log("error");
-                console.log(err);
-            });
-        }
-
-        
-
-
-        function authLogout() {
-            $auth.logout();
-            userData.removeUser();
-            $state.go('authenticate');
-        }
-    }
-
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', HomeController]);
-
-	function HomeController($scope, $state) {
-		var hc = this;
-		hc.badgeValue= '';
-		hc.chatClicked=chatClicked;
-
-		
-
-		function chatClicked(){
-			$state.go('home.chat.all');
-		}
-	}
-})(window.angular);
-
-(function(angular){
 	'use strict';
 	angular.module('petal.people')
-		.controller('AllPeopleController',['$scope','$state','peopleService','userData',AllPeopleController]);
+		.controller('AllPeopleController', ['$scope', '$state', 'peopleService', AllPeopleController]);
 
-	function AllPeopleController($scope,$state,peopleService,userData){
+	function AllPeopleController($scope, $state, peopleService) {
 		var apc = this;
 		apc.getAllPeople = getAllPeople;
-		apc.currentUser = userData.getUser();
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;
-		apc.peopleList = [];
-		apc.params = {
-			limit: 25,
-			page: 1
-		};
+
+
 		activate();
-		function pullRefreshPeople(){
-			apc.params.page = 1;
-			apc.peopleList = [];
-			getAllPeople();
+
+		function pullRefreshPeople() {
+			activate();
 
 		}
-		function loadMorePeople(){
-			apc.params.page+=1;
+
+		function loadMorePeople() {
+			apc.params.page += 1;
 			getAllPeople();
 		}
+
 		function getAllPeople() {
 			peopleService.getAllUsers(apc.params).then(function(response) {
+				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
 			});
 
 		}
-		function activate(){
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
 			getAllPeople();
 		}
 	}
 })(window.angular);
+
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
@@ -874,52 +892,64 @@ angular.module('petal.home')
 	}
 })(window.angular);
 
-(function(angular){
+(function(angular) {
 	'use strict';
 	angular.module('petal.people')
-		.controller('NearbyPeopleController',['$scope','$state','peopleService','userData',NearbyPeopleController]);
+		.controller('NearbyPeopleController', ['$scope', '$state', 'peopleService', NearbyPeopleController]);
 
-	function NearbyPeopleController($scope,$state,peopleService,userData){
-
+	function NearbyPeopleController($scope, $state, peopleService) {
 		var apc = this;
-		apc.currentUser = userData.getUser();
 		apc.getNearbyPeople = getNearbyPeople;
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;
-		apc.peopleList = [];
-		apc.params = {
-			limit: 25,
-			page: 1,
-			distance: 1000
-		};
+
+
 		activate();
-		function pullRefreshPeople(){
-			apc.params.page = 1;
-			apc.peopleList = [];
-			getNearbyPeople();
+
+		function pullRefreshPeople() {
+			activate();
 
 		}
-		function loadMorePeople(){
-			apc.params.page+=1;
+
+		function loadMorePeople() {
+			apc.params.page += 1;
 			getNearbyPeople();
 		}
+
 		function getNearbyPeople() {
 			peopleService.getNearbyUsers(apc.params).then(function(response) {
 				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
-			}).catch(function(err){
-				console.log("nearby error");
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+			}).catch(function(err) {
 				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
 			});
 
 		}
-		function activate(){
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1,
+				distance: 10
+			};
 			getNearbyPeople();
 		}
 	}
 })(window.angular);
+
 (function(angular){
 	'use strict';
 	angular.module('petal.people')
@@ -929,33 +959,285 @@ angular.module('petal.home')
 
 	}
 })(window.angular);
-(function(angular){
+(function(angular) {
 	'use strict';
 	angular.module('petal.people')
-		.controller('ReceivedPeopleController',['$scope','$state',ReceivedPeopleController]);
+		.controller('ReceivedPeopleController', ['$scope', '$state', 'peopleService', ReceivedPeopleController]);
 
-	function ReceivedPeopleController($scope,$state){
+	function ReceivedPeopleController($scope, $state, peopleService) {
+		var apc = this;
+		apc.getReceivedPeople = getReceivedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
 
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getReceivedPeople();
+		}
+
+		function getReceivedPeople() {
+			peopleService.getReceivedUsers(apc.params).then(function(response) {
+				console.log(response);
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			getReceivedPeople();
+		}
 	}
 })(window.angular);
-(function(angular){
+
+(function(angular) {
 	'use strict';
 	angular.module('petal.people')
-		.controller('RequestedPeopleController',['$scope','$state',RequestedPeopleController]);
+		.controller('RequestedPeopleController', ['$scope', '$state', 'peopleService', RequestedPeopleController]);
 
-	function RequestedPeopleController($scope,$state){
+	function RequestedPeopleController($scope, $state, peopleService) {
+		var apc = this;
+		apc.getRequestedPeople = getRequestedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
 
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getRequestedPeople();
+		}
+
+		function getRequestedPeople() {
+			peopleService.getRequestedUsers(apc.params).then(function(response) {
+				console.log(response);
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			getRequestedPeople();
+		}
 	}
 })(window.angular);
-(function(angular){
+
+(function(angular) {
 	'use strict';
 	angular.module('petal.people')
-		.controller('RevealedPeopleController',['$scope','$state',RevealedPeopleController]);
+		.controller('RevealedPeopleController', ['$scope', '$state', 'peopleService', RevealedPeopleController]);
 
-	function RevealedPeopleController($scope,$state){
+	function RevealedPeopleController($scope, $state, peopleService) {
+		var apc = this;
+		apc.getRevealedPeople = getRevealedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
 
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getRevealedPeople();
+		}
+
+		function getRevealedPeople() {
+			peopleService.getRevealedUsers(apc.params).then(function(response) {
+				console.log(response);
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			getRevealedPeople();
+		}
 	}
 })(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.directive('peopleList', ['$ionicPopover', '$state', 'userData',peopleList]);
+
+
+	function peopleList($ionicPopover, $state,userData) {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/people/views/peopleListTemplate.html',
+			scope: {
+				peopleList: '=peopleList'
+			},
+			controller: ['$scope', function($scope) {
+				$scope.currentUser = userData.getUser();
+				
+				$ionicPopover.fromTemplateUrl('app/people/views/peoplePopover.html', {
+					scope: $scope,
+				}).then(function(popover) {
+					$scope.popover = popover;
+				});
+				$scope.showPopover = function(people, $event) {
+					$scope.people = people;
+					$scope.popover.show($event, $scope.people);
+				};
+				$scope.popOverClick = function(type, id) {
+					$scope.popover.hide();
+					if (type == 'chat') {
+						$state.go('chatBox', { user: id });
+					}
+					if (type == 'profile') {
+						$state.go('home.user.userPage', { user: id });
+					}
+				};
+			}]
+		};
+	}
+})(window.angular);
+
+(function(angular) {
+  'use strict';
+  /*
+   *Service for getting a single store with its id
+   */
+  angular.module('petal.people')
+    .service('peopleService', ["$http", "homeService", 'userLocationService', '$q',PeopleService]);
+
+  /*
+   * This servic has a function names getStore which takes id as parameter and returns a promise
+   */
+  function PeopleService($http, homeService, userLocationService,$q) {
+    
+    this.getAllUsers = getAllUsers;
+    this.getRevealedUsers = getRevealedUsers;
+    this.getNearbyUsers = getNearbyUsers;
+    this.getRequestedUsers = getRequestedUsers;
+    this.getReceivedUsers = getReceivedUsers;
+    this.getNearbyUsers = getNearbyUsers;
+
+    function getAllUsers(params) {
+      params.all = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getRevealedUsers(params) {
+      params.revealed = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getReceivedUsers(params) {
+      params.received = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getRequestedUsers(params) {
+      params.requested = true;
+      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+    }
+
+    function getNearbyUsers(params) {
+      params.nearby = true;
+      var defer = $q.defer();
+      userLocationService.getUserLocation().then(function(position) {
+        params.latitude = position.latitude;
+        params.longitude = position.longitude;
+        $http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
+          defer.resolve(users);
+        }).catch(function(err){
+          defer.reject(err);
+        });
+      }).catch(function(err){
+        defer.reject(err);
+      });
+
+      return defer.promise;
+    }
+
+    
+
+
+
+  }
+})(window.angular);
+
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
@@ -966,32 +1248,50 @@ angular.module('petal.home')
 		apc.getAllPosts = getAllPosts;
 		apc.pullRefreshPosts = pullRefreshPosts;
 		apc.loadMorePosts = loadMorePosts;
-		apc.postsList = [];
-		apc.params = {
-			limit: 25,
-			page: 1
-		};
+
 		activate();
-		function pullRefreshPosts(){
-			apc.params.page = 1;
-			apc.postsList = [];
-			getAllPosts();
+
+		function pullRefreshPosts() {
+			activate();
 
 		}
-		function loadMorePosts(){
-			apc.params.page+=1;
+
+		function loadMorePosts() {
+			apc.params.page += 1;
 			getAllPosts();
 		}
+
 		function getAllPosts() {
 			postService.getAllPosts(apc.params).then(function(response) {
-				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					apc.postsList.push(value);
 				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.postsList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
 			});
 
+
 		}
-		function activate(){
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.postsList = [];
+			apc.params = {
+				limit: 3,
+				page: 1
+			};
 			getAllPosts();
 		}
 	}
@@ -1063,72 +1363,42 @@ angular.module('petal.home')
 })(window.angular);
 
 (function(angular) {
-  'use strict';
-  /*
-   *Service for getting a single store with its id
-   */
-  angular.module('petal.people')
-    .service('peopleService', ["$http", "homeService", 'userLocationService', '$q',PeopleService]);
-
-  /*
-   * This servic has a function names getStore which takes id as parameter and returns a promise
-   */
-  function PeopleService($http, homeService, userLocationService,$q) {
-    
-    this.getAllUsers = getAllUsers;
-    this.getRevealedUsers = getRevealedUsers;
-    this.getNearbyUsers = getNearbyUsers;
-    this.getRequestedUsers = getRequestedUsers;
-    this.getReceivedUsers = getReceivedUsers;
-    this.getNearbyUsers = getNearbyUsers;
-
-    function getAllUsers(params) {
-      params.all = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getRevealedUsers(params) {
-      params.revealed = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getReceivedUsers(params) {
-      params.received = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getRequestedUsers(params) {
-      params.requested = true;
-      return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-    }
-
-    function getNearbyUsers(params) {
-      params.nearby = true;
-      var defer = $q.defer();
-      userLocationService.getUserLocation().then(function(position) {
-        params.latitude = position.latitude;
-        params.longitude = position.longitude;
-        $http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
-          defer.resolve(users);
-        }).catch(function(err){
-          defer.reject(err);
-        });
-      }).catch(function(err){
-        defer.reject(err);
-      });
-
-      return defer.promise;
-    }
-
-    
+	'use strict';
+	angular.module('petal.post')
+		.directive('postsList', ['$ionicPopover', '$state', 'userData',postsList]);
 
 
-
-  }
+	function postsList($ionicPopover, $state,userData) {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/post/views/postsListTemplate.html',
+			scope: {
+				postsList: '=postsList'
+			},
+			controller: ['$scope', function($scope) {
+				$scope.currentUser = userData.getUser();
+				
+				$ionicPopover.fromTemplateUrl('app/people/views/peoplePopover.html', {
+					scope: $scope,
+				}).then(function(popover) {
+					$scope.popover = popover;
+				});
+				$scope.showPopover = function(posts, $event) {
+					$scope.posts = posts;
+					$scope.popover.show($event, $scope.posts);
+				};
+				$scope.popOverClick = function(type, id) {
+					$scope.popover.hide();
+					if (type == 'chat') {
+						$state.go('chatBox', { user: id });
+					}
+					if (type == 'profile') {
+						$state.go('home.user.userPage', { user: id });
+					}
+				};
+			}]
+		};
+	}
 })(window.angular);
 
 (function(angular) {

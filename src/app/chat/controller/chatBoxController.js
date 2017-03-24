@@ -73,8 +73,9 @@
 				cbc.myMsg = ' ';
 				cbc.messageLoading = false;
 				
-			}, function(res) {
-				console.log(res);
+			}).catch( function(err) {
+
+				console.log(err);
 			});
 
 

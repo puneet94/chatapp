@@ -8,32 +8,50 @@
 		apc.getAllPosts = getAllPosts;
 		apc.pullRefreshPosts = pullRefreshPosts;
 		apc.loadMorePosts = loadMorePosts;
-		apc.postsList = [];
-		apc.params = {
-			limit: 25,
-			page: 1
-		};
+
 		activate();
-		function pullRefreshPosts(){
-			apc.params.page = 1;
-			apc.postsList = [];
-			getAllPosts();
+
+		function pullRefreshPosts() {
+			activate();
 
 		}
-		function loadMorePosts(){
-			apc.params.page+=1;
+
+		function loadMorePosts() {
+			apc.params.page += 1;
 			getAllPosts();
 		}
+
 		function getAllPosts() {
 			postService.getAllPosts(apc.params).then(function(response) {
-				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					apc.postsList.push(value);
 				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.postsList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
 			});
 
+
 		}
-		function activate(){
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.postsList = [];
+			apc.params = {
+				limit: 3,
+				page: 1
+			};
 			getAllPosts();
 		}
 	}

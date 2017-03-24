@@ -1,0 +1,8 @@
+<ion-content class="has-header">
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="rpc.pullRefreshPeople()">
+        </ion-refresher>
+        <people-list people-list="rpc.peopleList"></people-list>
+        <ion-infinite-scroll on-infinite="rpc.loadMorePeople()" distance="100%" immediate-check="false" ng-if="rpc.canLoadMoreResults && rpc.initialSearchCompleted">
+        </ion-infinite-scroll>
+</ion-content>
+<!---->

@@ -1,0 +1,7 @@
+<div class="list">
+        <div class="item item-avatar" ng-repeat="people in peopleList" ng-click="showPopover(people,$event)" ng-if="currentUser._id!=people._id">
+                <img ng-src="{{people.picture}}">
+                <h2>{{people.anonName||people.googleName}}</h2>
+                <p>{{people.status}}</p>
+        </div>
+</div>

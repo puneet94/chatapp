@@ -1,7 +1,43 @@
-.clearfix:after {
-  content: " ";
-  display: table;
-  clear: both; }
+.leftChat {
+  clear: both;
+  float: left; }
+
+.rightChat {
+  clear: both;
+  float: right; }
+
+.image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  clear: both;
+  margin: 0 10px; }
+  .image img {
+    width: 100%;
+    height: 100%; }
+
+.you p {
+  float: right;
+  margin-right: 5px;
+  background-color: #eee;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px; }
+
+.you .image {
+  float: right; }
+
+.me p {
+  float: left;
+  margin-left: 5px;
+  background-color: #007AFF;
+  padding: 10px;
+  border: 1px solid #007AFF;
+  border-radius: 5px;
+  color: white; }
+
+.me .image {
+  float: left; }
 
 .authenticationModalContainer {
   padding: 24px; }
@@ -100,43 +136,7 @@
   color: white;
   font-weight: 800; }
 
-.leftChat {
-  clear: both;
-  float: left; }
-
-.rightChat {
-  clear: both;
-  float: right; }
-
-.image {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  clear: both;
-  margin: 0 10px; }
-  .image img {
-    width: 100%;
-    height: 100%; }
-
-.you p {
-  float: right;
-  margin-right: 5px;
-  background-color: #eee;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px; }
-
-.you .image {
-  float: right; }
-
-.me p {
-  float: left;
-  margin-left: 5px;
-  background-color: #007AFF;
-  padding: 10px;
-  border: 1px solid #007AFF;
-  border-radius: 5px;
-  color: white; }
-
-.me .image {
-  float: left; }
+.clearfix:after {
+  content: " ";
+  display: table;
+  clear: both; }
