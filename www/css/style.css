@@ -1,10 +1,19 @@
+.overflow-scroll {
+  overflow-y: scroll !important; }
+
+.chatImage {
+  border: 1px solid #eee;
+  border-radius: 10px; }
+
 .leftChat {
   clear: both;
-  float: left; }
+  float: left;
+  border-color: white; }
 
 .rightChat {
   clear: both;
-  float: right; }
+  float: right;
+  border-color: white; }
 
 .image {
   width: 50px;
@@ -19,10 +28,11 @@
 .you p {
   float: right;
   margin-right: 5px;
-  background-color: #eee;
+  background-color: #007AFF;
   padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px; }
+  border: 1px solid #007AFF;
+  border-radius: 5px;
+  color: white; }
 
 .you .image {
   float: right; }
@@ -30,11 +40,10 @@
 .me p {
   float: left;
   margin-left: 5px;
-  background-color: #007AFF;
+  background-color: #eee;
   padding: 10px;
-  border: 1px solid #007AFF;
-  border-radius: 5px;
-  color: white; }
+  border: 1px solid #eee;
+  border-radius: 5px; }
 
 .me .image {
   float: left; }
@@ -121,22 +130,96 @@
 
 .headerCustom {
   padding: 0;
-  margin: 0; }
+  margin: 0;
+  height: 50px; }
 
 .rowCustom {
   padding: 0;
   margin: 0; }
 
 .columnCustom {
-  padding: 10px;
+  color: #eee;
   text-align: center; }
+  .columnCustom .customTabHeading {
+    color: #eee;
+    text-transform: uppercase; }
 
 .columnCustomActive {
   border-bottom: 5px solid white;
   color: white;
   font-weight: 800; }
+  .columnCustomActive .customTabHeading {
+    color: white;
+    font-weight: 800; }
 
-.clearfix:after {
-  content: " ";
-  display: table;
-  clear: both; }
+@font-face {
+  font-family: 'RM';
+  src: url("../lib/ionic/fonts/Raleway-Medium.ttf") format("truetype");
+  font-weight: 300; }
+
+@font-face {
+  font-family: 'RBB';
+  src: url("../lib/ionic/fonts/Roboto-Medium.ttf") format("truetype");
+  font-weight: 300; }
+
+@font-face {
+  font-family: 'COR';
+  src: url("../lib/ionic/fonts/Comfortaa-Regular.ttf") format("truetype");
+  font-weight: 400; }
+
+@font-face {
+  font-family: 'COB';
+  src: url("../lib/ionic/fonts/Comfortaa-Bold.ttf") format("truetype");
+  font-weight: 400; }
+
+@font-face {
+  font-family: 'VR';
+  src: url("../lib/ionic/fonts/VarelaRound-Regular.ttf") format("truetype");
+  font-weight: 500; }
+
+@font-face {
+  font-family: 'MOM';
+  src: url("../lib/ionic/fonts/Montserrat-Medium.ttf") format("truetype");
+  font-weight: 500; }
+
+@font-face {
+  font-family: 'MOR';
+  src: url("../lib/ionic/fonts/Montserrat-Regular.ttf") format("truetype");
+  font-weight: 500; }
+
+* {
+  font-family: 'MOR', sans-serif !important; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'COB', sans-serif !important; }
+
+.singlePostContainer {
+  padding-left: 0px;
+  padding-bottom: 0px; }
+  .singlePostContainer .postUserImage {
+    width: 85%;
+    height: 40px;
+    border: 1px solid #eee;
+    border-radius: 5px; }
+  .singlePostContainer .postTag {
+    padding: 5px;
+    border: 1px solid blue;
+    border-radius: 3px;
+    color: blue;
+    margin-right: 5px; }
+  .singlePostContainer .tagContent {
+    margin-top: 15px; }
+  .singlePostContainer .postInfo {
+    padding: 0;
+    margin-top: 15px;
+    font-size: 14px; }
+    .singlePostContainer .postInfo i {
+      color: blue; }
+    .singlePostContainer .postInfo .infoValue {
+      margin-left: 2px; }
+
+.singlePostContent {
+  margin-top: 15px;
+  line-height: 1.5; }
+  .singlePostContent span {
+    font-size: 16px; }

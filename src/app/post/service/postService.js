@@ -44,7 +44,7 @@
 		}
 
 		function getPopularPosts(params) {
-			params.sort = 'upvotesLength';
+			params.sort = '-upvotesLength';
 			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
 		}
 

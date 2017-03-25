@@ -1,22 +1,31 @@
 <ion-view cache-view="false">
-        <div class="bar bar-header ">
-                <div class="buttons">
+<ion-pane    >
+    <ion-header-bar align-title="left" class="bar-positive">
+  <div class="buttons">
                         <button class="button" ui-sref="home.chat.all">Chats</button>
                 </div>
-                <h4 class="title">User Name
-            <!--<a ui-sref="tabs.userPage({userId:cbc.receiverUserId})" >{{cbc.receiverUser}}</a>-->
-        		</h4>
-        </div>
-        <ion-content class="has-header has-subheader">
+                <h4 class="title">
+            <a ui-sref="tabs.userPage({userId:cbc.receiverUserId})" >
+                <span ng-if="cbc.chatRoom.revealed">
+                    {{ cbc.receiverUser.facebookName || cbc.receiverUser.googleName ||cbc.receiverUser.displayName }}
+                </span>
+                <span ng-if="!cbc.chatRoom.revealed">
+                    {{ cbc.receiverUser.anonName || 'anonUser'}}
+                </span>
+                </a>
+                </h4>
+</ion-header-bar>
+        <!--overflow-scroll="false"-->
+        <ion-content class="has-header" class="chatContent">
                 <ion-refresher pulling-text="Pull to refresh..." on-refresh="cbc.loadMoreChats()">
                 </ion-refresher>
-                <div ng-cloak class="chatBoxPage">
-                        <div ng-repeat="chat in cbc.chatList" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
+                <div ng-cloak class="chatBoxPage" class="list">
+                        <div ng-repeat="chat in cbc.chatList" class="item" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
                                 <div ng-class=" chat.user._id==cbc.currentUser ? 'you' : 'me'">
-                                        <div class="image">
+                                        <!--<div class="image">
                                                 <img ng-src="{{chat.user.picture}}" alt="" />
-                                        </div>
-                                        <img width="120" hight="120" ng-src="{{chat.message}}" ng-if="chat.type=='img'"/>
+                                        </div>-->
+                                        <img class="chatImage" ng-click="cbc.showImageModal(chat.message)" width="130" height="140" ng-src="{{chat.message}}" ng-if="chat.type=='img'"/>
                                         <p ng-if="chat.type!='img'">{{chat.message}}</p>
                                 </div>
                         </div>
@@ -42,10 +51,11 @@
                         <i class="icon ion-ios-camera"></i>
                 </button>
                 <label class="item-input-wrapper">
-                        <input type="text" autofocus placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.messageLoading || cbc.showTempImage" />
+                        <input type="text"  placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.messageLoading || cbc.showTempImage" ng-focus="cbc.scrollBottom()"/>
                 </label>
                 <button class="button button-clear"  ng-disabled="cbc.showTempImage" ng-click="cbc.clickSubmit()">
                         Send
                 </button>
         </ion-footer-bar>
+        </ion-pane>
 </ion-view>

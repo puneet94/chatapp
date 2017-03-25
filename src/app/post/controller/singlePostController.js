@@ -40,8 +40,6 @@
 		}
 		function submitPostUpvote(){
 			upvoteService.createUpvote(apc.currentPost).then(function(res){
-
-				
 				checkPostUpvote();
 			}).catch(function(err){
 				console.log(err);

@@ -97,6 +97,68 @@
 
 (function(angular) {
 	'use strict';
+	angular.module('petal.people', [])
+		.config(['$stateProvider', config]);
+
+
+	function config($stateProvider) {
+		$stateProvider
+			.state('home.people',{
+				url: '/people',
+				abstract: true,
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/peopleParent.html',
+						controller: 'PeopleParentController',
+						controllerAs: 'ppc'
+					}
+				}
+				
+			}).state('home.people.all',{
+				url: '/all',
+				
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/allPeople.html',
+						controller: 'AllPeopleController',
+						controllerAs: 'apc'
+					}
+				}				
+			}).state('home.people.revealed',{
+				url: '/revealed',
+				
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/revealedPeople.html',
+						controller: 'RevealedPeopleController',
+						controllerAs: 'rpc'
+					}
+				}				
+			}).state('home.people.received',{
+				url: '/received',
+				
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/receivedPeople.html',
+						controller: 'ReceivedPeopleController',
+						controllerAs: 'rpc'
+					}
+				}				
+			}).state('home.people.nearby',{
+				url: '/nearby',
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/nearbyPeople.html',
+						controller: 'NearbyPeopleController',
+						controllerAs: 'npc'
+					}
+				}				
+			});
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
 	angular.module('petal.home', [])
 		.config(['$stateProvider', '$authProvider', config]);
 
@@ -170,68 +232,6 @@
 		return defer.promise;
 	}
 
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people', [])
-		.config(['$stateProvider', config]);
-
-
-	function config($stateProvider) {
-		$stateProvider
-			.state('home.people',{
-				url: '/people',
-				abstract: true,
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/peopleParent.html',
-						controller: 'PeopleParentController',
-						controllerAs: 'ppc'
-					}
-				}
-				
-			}).state('home.people.all',{
-				url: '/all',
-				
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/allPeople.html',
-						controller: 'AllPeopleController',
-						controllerAs: 'apc'
-					}
-				}				
-			}).state('home.people.revealed',{
-				url: '/revealed',
-				
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/revealedPeople.html',
-						controller: 'RevealedPeopleController',
-						controllerAs: 'rpc'
-					}
-				}				
-			}).state('home.people.received',{
-				url: '/received',
-				
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/receivedPeople.html',
-						controller: 'ReceivedPeopleController',
-						controllerAs: 'rpc'
-					}
-				}				
-			}).state('home.people.nearby',{
-				url: '/nearby',
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/nearbyPeople.html',
-						controller: 'NearbyPeopleController',
-						controllerAs: 'npc'
-					}
-				}				
-			});
-	}
 })(window.angular);
 
 (function(angular) {
@@ -450,9 +450,9 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', 'Socket', '$stateParams', 'userData', 'homeService','chatService' ,'$ionicScrollDelegate','userService','Upload',ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', ChatBoxController]);
 
-	function ChatBoxController($scope, Socket, $stateParams, userData, homeService,chatService,$ionicScrollDelegate,userService,Upload) {
+	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload) {
 		var cbc = this;
 
 		cbc.currentUser = userData.getUser()._id;
@@ -460,66 +460,91 @@
 		cbc.chatList = [];
 		cbc.chatRoomId = '';
 		cbc.loadMoreChats = loadMoreChats;
+		cbc.scrollBottom = scrollBottom;
+		cbc.showImageModal = showImageModal;
 		cbc.messageLoading = false;
 		cbc.params = {
 			page: 1,
 			limit: 5
 		};
 		activate();
-		function loadMoreChats(){
-			cbc.params.page+=1;
+
+		function loadMoreChats() {
+			cbc.params.page += 1;
 			getChatMessages();
 		}
-		function getReceiver(){
-			userService.getUser(cbc.receiverUserID).then(function(response){
+
+		function getReceiver() {
+			userService.getUser(cbc.receiverUserID).then(function(response) {
 				cbc.receiverUser = response.data;
-			}).catch(function(err){
+			}).catch(function(err) {
 				window.alert(err);
 				console.log(err);
 			});
 		}
+
+		function scrollBottom() {
+			$timeout(function() {
+				$ionicScrollDelegate.scrollBottom(true);
+			});
+		}
+
 		function getChatMessages() {
-			chatService.getChatMessages(cbc.chatRoomId,cbc.params).then(function(res) {
-				
+			chatService.getChatMessages(cbc.chatRoomId, cbc.params).then(function(res) {
+
 				angular.forEach(res.data.docs, function(chat) {
 					cbc.chatList.unshift(chat);
 				});
 			}).catch(function(res) {
-				window.alert(res);
+				window.alert(JSON.stringify(res));
 				console.log(res);
-			}).finally(function(){
-				$ionicScrollDelegate.scrollBottom(true);
+			}).finally(function() {
+				scrollBottom();
 				$scope.$broadcast('scroll.refreshComplete');
 			});
 
 		}
+
 		function activate() {
 			chatService.getChatRoom(cbc.receiverUserID).then(function(res) {
 				console.log(res);
+				cbc.chatRoom = res.data;
 				cbc.chatRoomId = res.data._id;
+
 				socketJoin();
 				getChatMessages();
 			}, function(res) {
-				console.log('the error in getting chatroom');
-				console.log(res);
+				window.alert(JSON.stringify(res));
 			});
 			getReceiver();
+
+
+			loadModal();
+		}
+		function showImageModal(image){
+			$scope.currentImage = image;
+			$scope.modal.show();
+		}
+		function loadModal() {
+			$ionicModal.fromTemplateUrl('app/chat/views/chatImageModal.html', {
+				scope: $scope
+			}).then(function(modal) {
+				$scope.modal = modal;
+			});
 		}
 
-
 		function socketJoin() {
-			console.log("socket joined");
 			Socket.emit('addToChatRoom', { 'roomId': cbc.chatRoomId });
 			Socket.on('messageReceived', function(message) {
-				
+				scrollBottom();
 				cbc.chatList.push(message);
-				$ionicScrollDelegate.scrollBottom(true);
+				
 				//$('.chatBoxUL').animate({ scrollTop: 99999999 }, 'slow');
 			});
 			Socket.on('messageSaved', function(message) {
-				
+				scrollBottom();
 				cbc.chatList.push(message);
-				$ionicScrollDelegate.scrollBottom(true);
+				
 				//$('.chatBoxUL').animate({ scrollTop: 99999999 }, 'slow');
 			});
 		}
@@ -527,13 +552,11 @@
 		cbc.clickSubmit = function() {
 
 			cbc.messageLoading = true;
-			var chatObj = { 'message': cbc.myMsg,receiver:$stateParams.user, 'roomId': cbc.chatRoomId };
+			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
 				cbc.myMsg = ' ';
-				cbc.messageLoading = false;
-				console.log($('#chatInput'));
-				$('#chatInput').focus();
-			}).catch( function(err) {
+				scrollBottom();
+			}).catch(function(err) {
 
 				console.log(err);
 			});
@@ -542,33 +565,28 @@
 		};
 
 
-		cbc.submitUpload = function(){
+		cbc.submitUpload = function() {
 			cbc.file.upload = Upload.upload({
-					url: homeService.baseURL + 'upload/singleUpload',
-					data: { file: cbc.file }
-				});
-
-				cbc.file.upload.then(function(response) {
-					cbc.file.result = response.data;
-					cbc.uploadedImage = response.data;
-					console.log("the banner image");
-					console.log(cbc.uploadedImage);
-					cbc.cancelUpload();
-
-
-
-					var chatObj = { 'message': cbc.uploadedImage,receiver:$stateParams.user, 'roomId': cbc.chatRoomId ,type:'img'};
-			chatService.sendChatMessage(chatObj).then(function(res) {
-				console.log(res);
-				$('#chatInput').focus();
-			}).catch( function(err) {
-
-				console.log(err);
+				url: homeService.baseURL + 'upload/singleUpload',
+				data: { file: cbc.file }
 			});
 
+			cbc.file.upload.then(function(response) {
+				cbc.file.result = response.data;
+				cbc.uploadedImage = response.data;
+				cbc.cancelUpload();
+				var chatObj = { 'message': cbc.uploadedImage, receiver: $stateParams.user, 'roomId': cbc.chatRoomId, type: 'img' };
+				chatService.sendChatMessage(chatObj).then(function(res) {
+					scrollBottom();
+
+				}).catch(function(err) {
+
+					window.alert(err);
 				});
+
+			});
 		};
-		cbc.cancelUpload = function(){
+		cbc.cancelUpload = function() {
 			cbc.showTempImage = false;
 			cbc.tempImageUrl = '';
 		};
@@ -579,20 +597,6 @@
 				cbc.showTempImage = true;
 				cbc.tempImageUrl = file;
 				cbc.formBannerLoading = true;
-				/*
-				file.upload = Upload.upload({
-					url: homeService.baseURL + 'upload/singleUpload',
-					data: { file: file }
-				});
-
-				file.upload.then(function(response) {
-					file.result = response.data;
-					cbc.uploadedImage = response.data;
-					console.log("the banner image");
-					console.log(cbc.uploadedImage);
-					cbc.formBannerLoading = false;
-
-				});*/
 			}
 		};
 
@@ -730,185 +734,6 @@ angular.module('petal.chat')
         });
     }
 })(window.angular);
-(function(angular) {
-    'use strict';
-
-    angular.module('petal.home')
-        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", AuthenticationController]);
-
-    function AuthenticationController($scope, $auth, $state, userData) {
-        var phc = this;
-        console.log("authenticate");
-        phc.isAuth = $auth.isAuthenticated();
-        if(phc.isAuth){
-            $state.go('home.post.all');
-        }
-        console.log(phc.isAuth);
-        phc.authLogout = authLogout;
-
-        phc.socialAuthenticate = socialAuthenticate;
-        console.log($state);
-
-        function socialAuthenticate(provider) {
-
-            $auth.authenticate(provider).then(function(response) {
-                console.log("from here");
-                console.log(response);
-                userData.setUser(response.data.user);
-                alert('login with ' + provider + ' successfull');
-                $state.go('home.post.all');
-            }).catch(function(err){
-                console.log("error");
-                console.log(err);
-            });
-        }
-
-        
-
-
-        function authLogout() {
-            $auth.logout();
-            userData.removeUser();
-            $state.go('authenticate');
-        }
-    }
-
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', HomeController]);
-
-	function HomeController($scope, $state) {
-		var hc = this;
-		hc.badgeValue= '';
-		hc.chatClicked=chatClicked;
-
-		
-
-		function chatClicked(){
-			$state.go('home.chat.all');
-		}
-	}
-})(window.angular);
-
-(function(angular){
-	'use strict';
-  angular.module('petal.home').directive('keepScroll', [
-  '$state', '$timeout', 'ScrollPositions', '$ionicScrollDelegate', function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
-    return {
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        scope.$on('$stateChangeStart', function() {
-           ScrollPositions[$state.current.name] = $ionicScrollDelegate.getScrollPosition();
-           
-        });
-         $timeout(function() {
-          var offset;
-          offset = ScrollPositions[$state.current.name];
-          if (offset) {
-            $ionicScrollDelegate.scrollTo(offset.left, offset.top);
-          }
-        });
-      }
-    };
-  }
-]).factory('ScrollPositions', [
-  function() {
-    return {};
-  }
-]);
-})(window.angular);
-
-
-(function(angular){
-	'use strict';
-	angular.module('petal.home')
-		.service('homeService',['$http',HomeService]);
-
-		function HomeService($http){
-			this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
-		}
-})(window.angular);
-(function(angular){
-  'use strict';
-
-angular.module('petal.home')
-  .service('userAuthService',["$http",'$auth',"baseUrlService",'$mdDialog','userData','$window',UserAuthService]);
-
-/*
-  * This servic has a function to get collection of stores`
-*/
-function UserAuthService($http,$auth,userData){
-  
-  
-        
-}
-
-
-})(window.angular);
-
-(function(angular){
-'use strict';
-
-/**
- * @ngdoc service
- * @name authModApp.userData
- * @description
- * # userData
- * Factory in the authModApp.
- */
-angular.module('petal.home')
-  .factory('userData',['$window','$state','$auth','$http','homeService',userData]);
-
-  function userData($window,$state,$auth,$http,homeService) {
-    var storage = $window.localStorage;
-    var cachedUser={};
-    var obj1 =  {
-      setUser: function (user) {
-        
-        if(user){
-          storage.setItem('user',JSON.stringify(user));
-        }
-        else{
-
-          var userId = $auth.getPayload().sub;
-          if(userId){
-            $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
-              
-              if(obj1.isUserExists()){
-                  storage.removeItem('user');
-              }
-              storage.setItem('user',JSON.stringify(res.data.user));
-            },function(res){
-              console.log(res);
-            });
-          }
-        }
-        
-
-      },
-      getUser: function(){
-
-        return JSON.parse(storage.getItem('user'));
-      },
-      removeUser: function(){
-        cachedUser = null;
-        storage.removeItem('user');
-      },
-      isUserExists: function(){
-        if(obj1.getUser()){
-          return true;
-        }
-        return false;
-      }
-    };
-    return obj1;
-  }
-})(window.angular);
-
 (function(angular) {
 	'use strict';
 	angular.module('petal.people')
@@ -1371,6 +1196,185 @@ angular.module('petal.home')
 })(window.angular);
 
 (function(angular) {
+    'use strict';
+
+    angular.module('petal.home')
+        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", AuthenticationController]);
+
+    function AuthenticationController($scope, $auth, $state, userData) {
+        var phc = this;
+        console.log("authenticate");
+        phc.isAuth = $auth.isAuthenticated();
+        if(phc.isAuth){
+            $state.go('home.post.all');
+        }
+        console.log(phc.isAuth);
+        phc.authLogout = authLogout;
+
+        phc.socialAuthenticate = socialAuthenticate;
+        console.log($state);
+
+        function socialAuthenticate(provider) {
+
+            $auth.authenticate(provider).then(function(response) {
+                console.log("from here");
+                console.log(response);
+                userData.setUser(response.data.user);
+                alert('login with ' + provider + ' successfull');
+                $state.go('home.post.all');
+            }).catch(function(err){
+                console.log("error");
+                console.log(err);
+            });
+        }
+
+        
+
+
+        function authLogout() {
+            $auth.logout();
+            userData.removeUser();
+            $state.go('authenticate');
+        }
+    }
+
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.home')
+		.controller('HomeController', ['$scope', '$state', HomeController]);
+
+	function HomeController($scope, $state) {
+		var hc = this;
+		hc.badgeValue= '';
+		hc.chatClicked=chatClicked;
+
+		
+
+		function chatClicked(){
+			$state.go('home.chat.all');
+		}
+	}
+})(window.angular);
+
+(function(angular){
+	'use strict';
+  angular.module('petal.home').directive('keepScroll', [
+  '$state', '$timeout', 'ScrollPositions', '$ionicScrollDelegate', function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        scope.$on('$stateChangeStart', function() {
+           ScrollPositions[$state.current.name] = $ionicScrollDelegate.getScrollPosition();
+           
+        });
+         $timeout(function() {
+          var offset;
+          offset = ScrollPositions[$state.current.name];
+          if (offset) {
+            $ionicScrollDelegate.scrollTo(offset.left, offset.top);
+          }
+        });
+      }
+    };
+  }
+]).factory('ScrollPositions', [
+  function() {
+    return {};
+  }
+]);
+})(window.angular);
+
+
+(function(angular){
+	'use strict';
+	angular.module('petal.home')
+		.service('homeService',['$http',HomeService]);
+
+		function HomeService($http){
+			this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
+		}
+})(window.angular);
+(function(angular){
+  'use strict';
+
+angular.module('petal.home')
+  .service('userAuthService',["$http",'$auth',"baseUrlService",'$mdDialog','userData','$window',UserAuthService]);
+
+/*
+  * This servic has a function to get collection of stores`
+*/
+function UserAuthService($http,$auth,userData){
+  
+  
+        
+}
+
+
+})(window.angular);
+
+(function(angular){
+'use strict';
+
+/**
+ * @ngdoc service
+ * @name authModApp.userData
+ * @description
+ * # userData
+ * Factory in the authModApp.
+ */
+angular.module('petal.home')
+  .factory('userData',['$window','$state','$auth','$http','homeService',userData]);
+
+  function userData($window,$state,$auth,$http,homeService) {
+    var storage = $window.localStorage;
+    var cachedUser={};
+    var obj1 =  {
+      setUser: function (user) {
+        
+        if(user){
+          storage.setItem('user',JSON.stringify(user));
+        }
+        else{
+
+          var userId = $auth.getPayload().sub;
+          if(userId){
+            $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
+              
+              if(obj1.isUserExists()){
+                  storage.removeItem('user');
+              }
+              storage.setItem('user',JSON.stringify(res.data.user));
+            },function(res){
+              console.log(res);
+            });
+          }
+        }
+        
+
+      },
+      getUser: function(){
+
+        return JSON.parse(storage.getItem('user'));
+      },
+      removeUser: function(){
+        cachedUser = null;
+        storage.removeItem('user');
+      },
+      isUserExists: function(){
+        if(obj1.getUser()){
+          return true;
+        }
+        return false;
+      }
+    };
+    return obj1;
+  }
+})(window.angular);
+
+(function(angular) {
 	'use strict';
 	angular.module('petal.post')
 		.controller('AllPostController', ['$scope', '$state', 'postService', AllPostController]);
@@ -1546,10 +1550,58 @@ angular.module('petal.home')
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('PopularPostController',['$scope','$state',PopularPostController]);
+		.controller('PopularPostController',['$scope','$state','postService',PopularPostController]);
 
-	function PopularPostController($scope,$state){
+	function PopularPostController($scope,$state,postService){
+		var apc = this;
+		apc.getPopularPosts = getPopularPosts;
+		apc.pullRefreshPosts = pullRefreshPosts;
+		apc.loadMorePosts = loadMorePosts;
+		activate();
 
+		function pullRefreshPosts() {
+			activate();
+
+		}
+
+		function loadMorePosts() {
+			apc.params.page += 1;
+			getPopularPosts();
+		}
+
+		function getPopularPosts() {
+			postService.getPopularPosts(apc.params).then(function(response) {
+				angular.forEach(response.data.docs, function(value) {
+					apc.postsList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.postsList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			});
+
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.postsList = [];
+			apc.params = {
+				limit: 3,
+				page: 1
+			};
+			getPopularPosts();
+		}
 	}
 })(window.angular);
 (function(angular){
@@ -1603,8 +1655,6 @@ angular.module('petal.home')
 		}
 		function submitPostUpvote(){
 			upvoteService.createUpvote(apc.currentPost).then(function(res){
-
-				
 				checkPostUpvote();
 			}).catch(function(err){
 				console.log(err);
@@ -1632,10 +1682,10 @@ angular.module('petal.home')
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
-		.directive('postsList', ['$ionicPopover', '$state', 'userData',postsList]);
+		.directive('postsList', ['$ionicPopover', '$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
 
 
-	function postsList($ionicPopover, $state,userData) {
+	function postsList($ionicPopover, $state, userData, postService, upvoteService,$ionicModal) {
 		return {
 			restrict: 'E',
 			templateUrl: 'app/post/views/postsListTemplate.html',
@@ -1643,8 +1693,12 @@ angular.module('petal.home')
 				postsList: '=postsList'
 			},
 			controller: ['$scope', function($scope) {
+				loadPostModal();
+				$scope.getTime = function(time){
+					return moment(time).fromNow(true);
+				};
 				$scope.currentUser = userData.getUser();
-				
+
 				$ionicPopover.fromTemplateUrl('app/people/views/peoplePopover.html', {
 					scope: $scope,
 				}).then(function(popover) {
@@ -1663,6 +1717,86 @@ angular.module('petal.home')
 						$state.go('home.user.userPage', { user: id });
 					}
 				};
+
+				function loadPostModal() {
+					$ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
+						scope: $scope
+					}).then(function(modal) {
+						$scope.modal = modal;
+					});
+				}
+				$scope.postModal = {};
+				$scope.postModal.getSinglePost = getSinglePost;
+
+				$scope.postModal.submitPostUpvote = submitPostUpvote;
+				$scope.postModal.deletePostUpvote = deletePostUpvote;
+				$scope.postModal.getPostDistance = getPostDistance;
+
+				$scope.showPostModal = function(id) {
+					$scope.postModal.id = id;
+					activate();
+					$scope.modal.show();
+				};
+
+				function activate() {
+					getSinglePost();
+					checkPostUpvote();
+				}
+
+				function getSinglePost() {
+					postService.getPost($scope.postModal.id).then(function(response) {
+						$scope.postModal.post = response.data;
+						$scope.postModal.distanceObj = {
+							latitude: $scope.postModal.post.loc[1],
+							longitude: $scope.postModal.post.loc[0],
+							diatance: 0
+						};
+						getPostDistance();
+
+
+					});
+
+				}
+
+				function checkPostUpvote() {
+					upvoteService.getUpvote($scope.postModal.id).then(function(res) {
+
+						$scope.postModal.postUpvoted = res.data;
+						console.log("post upvote");
+						console.log(res);
+						console.log($scope.postModal.postUpvoted);
+					}).catch(function(err) {
+						console.log("check error");
+						console.log(err);
+					});
+				}
+
+				function submitPostUpvote() {
+					upvoteService.createUpvote($scope.postModal.id).then(function(res) {
+						checkPostUpvote();
+						console.log("check submit");
+						console.log(res);
+					}).catch(function(err) {
+						console.log("submit error");
+						console.log(err);
+					});
+				}
+
+				function deletePostUpvote() {
+					upvoteService.deleteUpvote($scope.postModal.id).then(function(res) {
+						checkPostUpvote();
+						console.log("delete ");
+						console.log(res);
+					}).catch(function(err) {
+						console.log("delete error");
+						console.log(err);
+					});
+				}
+
+				function getPostDistance() {
+					postService.getDistance($scope.postModal.distanceObj);
+				}
+
 			}]
 		};
 	}
@@ -1714,7 +1848,7 @@ angular.module('petal.home')
 		}
 
 		function getPopularPosts(params) {
-			params.sort = 'upvotesLength';
+			params.sort = '-upvotesLength';
 			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
 		}
 

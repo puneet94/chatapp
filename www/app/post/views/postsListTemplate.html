@@ -1,20 +1,57 @@
 <div class="list">
-        <div class=" card" ng-repeat="post in postsList track by post._id">
-                <div class="item item-avatar">
-                        <img ng-src="{{post.user.picture}}">
-                        <h2>{{post.user.anonName}}</h2>
-                        <p>{{post.user.status}}</p>
-                </div>
-                <div class="item item-body" ui-sref="singlePost({id:post._id})">
-                        <p>
-                                <span ng-bind="post.content | limitTo:150">
-</span><span ng-if="post.content.length > 150">...</span>
-                        </p>
-                        <p>
-                                <span class="subdued" ng-repeat="interest in post.interests track by $index">
-!{{interest}}
-</span>
-                        </p>
+        <div class="item item item-text-wrap singlePostContainer" ng-repeat="post in postsList track by post._id">
+                <div class="row">
+                        <div class="col col-20">
+                                <img class="postUserImage" ng-src="{{post.user.picture}}">
+                        </div>
+                        <div class="col col-80">
+                                <div>
+                                        <h2>{{post.user.anonName}}</h2>
+                                        <p>{{post.user.status}}</p>
+                                </div>
+                                <div ng-click="showPostModal(post._id)">
+                                        <p class="singlePostContent">
+                                                <span ng-bind="post.content | limitTo:150">
+					</span>
+                                                <span ng-if="post.content.length > 150">...</span>
+                                        </p>
+                                        <p class="tagContent">
+                                                <span class="subdued postTag" ng-repeat="interest in post.interests track by $index">!{{interest}}</span>
+                                        </p>
+                                </div>
+                                <div class="row postInfo">
+                                	<div class="col">
+                                		<i class="icon ion-android-favorite-outline"></i>
+                                		<span class="infoValue">{{post.upvotesLength}}</span>
+                                	</div>
+                                	<div class="col">
+                                		<i class="icon ion-eye"></i>
+                                		<span class="infoValue">{{post.views}}</span>
+                                	</div>
+                                	<div class="col">
+                                		<i class="icon ion-android-time"></i>
+                                		<span class="infoValue">{{getTime(post.time)}}</span>
+                                	</div>
+                                </div>
+                        </div>
                 </div>
         </div>
 </div>
+
+<!--
+<div class="item item-avatar">
+<img ng-src="{{post.user.picture}}">
+<h2>{{post.user.anonName}}</h2>
+<p>{{post.user.status}}</p>
+</div>
+<div class="item item-body" ng-click="showPostModal(post._id)" >
+<p class="singlePostContent">
+<span ng-bind="post.content | limitTo:150">
+</span><span ng-if="post.content.length > 150">...</span>
+</p>
+<p>
+<span class="subdued" ng-repeat="interest in post.interests track by $index">
+!{{interest}}
+</span>
+</p>
+</div>-->
