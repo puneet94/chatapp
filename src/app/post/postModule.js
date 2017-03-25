@@ -71,8 +71,14 @@
 			}).state('singlePost', {
 				url: '/post/:id',
 				templateUrl: 'app/post/views/singlePost.html',
-				controller: 'SinglePostController',
-				controllerAs: 'spc'
+						controller: 'SinglePostController',
+						controllerAs: 'spc'
+				/*views: {
+					'singlePost-tab': {
+						
+					}
+				}*/
+
 
 			});
 	}

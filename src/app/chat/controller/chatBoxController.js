@@ -2,33 +2,42 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', 'Socket', '$stateParams', 'userData', 'chatService' ,'$ionicScrollDelegate',ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', 'Socket', '$stateParams', 'userData', 'homeService','chatService' ,'$ionicScrollDelegate','userService','Upload',ChatBoxController]);
 
-	function ChatBoxController($scope, Socket, $stateParams, userData, chatService,$ionicScrollDelegate) {
+	function ChatBoxController($scope, Socket, $stateParams, userData, homeService,chatService,$ionicScrollDelegate,userService,Upload) {
 		var cbc = this;
 
 		cbc.currentUser = userData.getUser()._id;
-		cbc.receiverUser = $stateParams.user;
+		cbc.receiverUserID = $stateParams.user;
 		cbc.chatList = [];
 		cbc.chatRoomId = '';
 		cbc.loadMoreChats = loadMoreChats;
 		cbc.messageLoading = false;
 		cbc.params = {
 			page: 1,
-			limit: 50
+			limit: 5
 		};
 		activate();
 		function loadMoreChats(){
 			cbc.params.page+=1;
 			getChatMessages();
 		}
+		function getReceiver(){
+			userService.getUser(cbc.receiverUserID).then(function(response){
+				cbc.receiverUser = response.data;
+			}).catch(function(err){
+				window.alert(err);
+				console.log(err);
+			});
+		}
 		function getChatMessages() {
 			chatService.getChatMessages(cbc.chatRoomId,cbc.params).then(function(res) {
 				
 				angular.forEach(res.data.docs, function(chat) {
-					cbc.chatList.push(chat);
+					cbc.chatList.unshift(chat);
 				});
 			}).catch(function(res) {
+				window.alert(res);
 				console.log(res);
 			}).finally(function(){
 				$ionicScrollDelegate.scrollBottom(true);
@@ -37,7 +46,8 @@
 
 		}
 		function activate() {
-			chatService.getChatRoom(cbc.receiverUser).then(function(res) {
+			chatService.getChatRoom(cbc.receiverUserID).then(function(res) {
+				console.log(res);
 				cbc.chatRoomId = res.data._id;
 				socketJoin();
 				getChatMessages();
@@ -45,6 +55,7 @@
 				console.log('the error in getting chatroom');
 				console.log(res);
 			});
+			getReceiver();
 		}
 
 
@@ -72,7 +83,8 @@
 			chatService.sendChatMessage(chatObj).then(function(res) {
 				cbc.myMsg = ' ';
 				cbc.messageLoading = false;
-				
+				console.log($('#chatInput'));
+				$('#chatInput').focus();
 			}).catch( function(err) {
 
 				console.log(err);
@@ -81,11 +93,66 @@
 
 		};
 
+
+		cbc.submitUpload = function(){
+			cbc.file.upload = Upload.upload({
+					url: homeService.baseURL + 'upload/singleUpload',
+					data: { file: cbc.file }
+				});
+
+				cbc.file.upload.then(function(response) {
+					cbc.file.result = response.data;
+					cbc.uploadedImage = response.data;
+					console.log("the banner image");
+					console.log(cbc.uploadedImage);
+					cbc.cancelUpload();
+
+
+
+					var chatObj = { 'message': cbc.uploadedImage,receiver:$stateParams.user, 'roomId': cbc.chatRoomId ,type:'img'};
+			chatService.sendChatMessage(chatObj).then(function(res) {
+				console.log(res);
+				$('#chatInput').focus();
+			}).catch( function(err) {
+
+				console.log(err);
+			});
+
+				});
+		};
+		cbc.cancelUpload = function(){
+			cbc.showTempImage = false;
+			cbc.tempImageUrl = '';
+		};
+		cbc.uploadSingleImage = function(file, errFiles) {
+			cbc.file = file;
+			cbc.errFile = errFiles && errFiles[0];
+			if (file) {
+				cbc.showTempImage = true;
+				cbc.tempImageUrl = file;
+				cbc.formBannerLoading = true;
+				/*
+				file.upload = Upload.upload({
+					url: homeService.baseURL + 'upload/singleUpload',
+					data: { file: file }
+				});
+
+				file.upload.then(function(response) {
+					file.result = response.data;
+					cbc.uploadedImage = response.data;
+					console.log("the banner image");
+					console.log(cbc.uploadedImage);
+					cbc.formBannerLoading = false;
+
+				});*/
+			}
+		};
+
 	}
 })(window.angular);
 
-/*userService.getUserDetails(cbc.receiverUserId, { 'fields': 'displayName firstName' }).then(function(response) {
+/*userService.getUserDetails(cbc.receiverUserIDId, { 'fields': 'displayName firstName' }).then(function(response) {
 					console.log("the receiver");
 					console.log(response.data);
-					cbc.receiverUser = response.data.displayName || (response.data.firstName);
+					cbc.receiverUserID = response.data.displayName || (response.data.firstName);
 				});*/

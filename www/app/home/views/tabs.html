@@ -12,7 +12,9 @@
         <ion-tab title="People"  icon="ion-ios-people" ui-sref="home.people.all">
                 <ion-nav-view name="people-tab"></ion-nav-view>
         </ion-tab>
-
+        <ion-tab hidden="true">
+                <ion-nav-view name="singlePost-tab"></ion-nav-view>
+        </ion-tab>
         
         <ion-tab title="Chat"  icon="ion-chatboxes" ng-click="hc.chatClicked()"  badge="hc.badgeValue">
                 <ion-nav-view name="chat-tab"></ion-nav-view>

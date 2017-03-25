@@ -1,6 +1,6 @@
 (function(angular) {
 	'use strict';
-	angular.module('petal.chat', [])
+	angular.module('petal.chat', ['ngFileUpload'])
 		.config(['$stateProvider', config]);
 
 

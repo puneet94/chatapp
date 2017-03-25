@@ -7,14 +7,14 @@
                 </div>
                 <div class="item item-body" ui-sref="singlePost({id:post._id})">
                         <p>
-                                {{post.content}}
+                                <span ng-bind="post.content | limitTo:150">
+</span><span ng-if="post.content.length > 150">...</span>
                         </p>
                         <p>
-                               <span class="subdued" ng-repeat="interest in post.interests track by $index">
-                                                        !{{interest}}
-        			</span>
+                                <span class="subdued" ng-repeat="interest in post.interests track by $index">
+!{{interest}}
+</span>
                         </p>
                 </div>
         </div>
-        
 </div>

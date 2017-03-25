@@ -16,7 +16,8 @@
                                         <div class="image">
                                                 <img ng-src="{{chat.user.picture}}" alt="" />
                                         </div>
-                                        <p>{{chat.message}}</p>
+                                        <img width="120" hight="120" ng-src="{{chat.message}}" ng-if="chat.type=='img'"/>
+                                        <p ng-if="chat.type!='img'">{{chat.message}}</p>
                                 </div>
                         </div>
                         <div style="clear:both;position: relative;" class="msgBox">
@@ -25,12 +26,25 @@
                                 </div>
                         </div>
                 </div>
+                <!--<div ngf-thumbnail="cbc.f" ngf-size="{width: 20, height: 20, quality: 0.9}" ></div>-->
+                <div ng-if="cbc.showTempImage">
+                    <img ngf-src="cbc.tempImageUrl" width="120" height="120">
+                    <button ng-click="cbc.submitUpload()">
+                        Submit
+                    </button>
+                    <button ng-click="cbc.cancelUpload()">
+                        Cancel
+                    </button>
+                </div>
         </ion-content>
         <ion-footer-bar keyboard-attach class="bar-stable item-input-inset">
+                <button class="button button-clear"  type="file" ngf-select="cbc.uploadSingleImage($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB" >
+                        <i class="icon ion-ios-camera"></i>
+                </button>
                 <label class="item-input-wrapper">
-                        <input type="text" placeholder="Type your message" ng-model="cbc.myMsg" ng-disabled="cbc.messageLoading" />
+                        <input type="text" autofocus placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.messageLoading || cbc.showTempImage" />
                 </label>
-                <button class="button button-clear" ng-click="cbc.clickSubmit()">
+                <button class="button button-clear"  ng-disabled="cbc.showTempImage" ng-click="cbc.clickSubmit()">
                         Send
                 </button>
         </ion-footer-bar>

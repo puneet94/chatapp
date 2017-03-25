@@ -1,55 +1,10 @@
-<ion-content  class="has-header">
-	<ul>
-		<li>Nearby posts1</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li><li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li><li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li><li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li><li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li><li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li><li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-		<li>Nearby posts</li>
-
-	</ul>
+<ion-content class="has-header" keep-scroll>
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="npc.pullRefreshPosts()">
+        </ion-refresher>
+        <posts-list posts-list="npc.postsList"></posts-list>
+        <ion-infinite-scroll on-infinite="npc.loadMorePosts()" distance="100%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
+        </ion-infinite-scroll>
 </ion-content>
+
+
+

@@ -1,12 +1,32 @@
 <ion-view>
         <ion-header-bar align-title="left" class="bar-positive">
                 <div class="buttons">
-                        <button class="button" ui-sref="home.post.all">Left Button</button>
+                        <button class="button" ng-click="spc.back()">Back</button>
                 </div>
-                
-                
         </ion-header-bar>
         <ion-content class="has-header">
-                <h1>SinglePost</h1>
+        	<h1>distance : {{spc.distanceObj.distance}}</h1>
+        	<h1>Upvote length: {{spc.post.upvotesLength}}</h1>
+        	<h1>views length: {{spc.post.views}}</h1>
+                <div class=" card">
+                        <div class="item item-avatar">
+                                <img ng-src="{{spc.post.user.picture}}">
+                                <h2>{{spc.post.user.anonName}}</h2>
+                                <p>{{spc.post.user.status}}</p>
+                        </div>
+                        <div class="item item-body" >
+                                <p>
+                                        <span ng-bind="spc.post.content ">
+				</span>
+                                </p>
+                                <p>
+                                        <span class="subdued" ng-repeat="interest in post.interests track by $index">
+				!{{interest}}
+				</span>
+                                </p>
+                        </div>
+                </div>
+                <button ng-if="!spc.postUpvoted" ng-click="spc.submitPostUpvote()">Upvote</button>
+                <button ng-if="spc.postUpvoted" ng-click="spc.deletePostUpvote()">Upvoted</button>
         </ion-content>
 </ion-view>
