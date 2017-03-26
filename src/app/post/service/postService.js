@@ -59,7 +59,11 @@
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				defer.reject(err);
+				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
+					defer.resolve(response);
+				}).catch(function(err) {
+					defer.reject(err);
+				});
 			});
 			return defer.promise;
 		}

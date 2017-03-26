@@ -24,6 +24,7 @@
 
 		function getReceivedPeople() {
 			peopleService.getReceivedUsers(apc.params).then(function(response) {
+				console.log("respnse");
 				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
@@ -47,7 +48,7 @@
 			apc.initialSearchCompleted = false;
 			apc.peopleList = [];
 			apc.params = {
-				limit: 25,
+				limit: 1,
 				page: 1
 			};
 			getReceivedPeople();

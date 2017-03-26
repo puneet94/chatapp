@@ -24,7 +24,7 @@
     function updateUser(user) {
       return $http.post(homeService.baseURL + 'user/update/', { user: user });
     }
-
+    
 
 
   }

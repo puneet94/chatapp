@@ -3,7 +3,7 @@
 	'use strict';
 
 	var app = angular.module('petal', ['ui.router', 'ionic', 'satellizer', 'ngFileUpload', 'btford.socket-io',
-		'ngCordova', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
+		'ngCordova','toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
 	]);
 	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider',
 		function($urlRouterProvider, $stateProvider, $ionicConfigProvider) {

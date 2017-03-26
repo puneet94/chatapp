@@ -6,28 +6,21 @@
 
     function AuthenticationController($scope, $auth, $state, userData) {
         var phc = this;
-        console.log("authenticate");
         phc.isAuth = $auth.isAuthenticated();
         if(phc.isAuth){
             $state.go('home.post.all');
         }
-        console.log(phc.isAuth);
         phc.authLogout = authLogout;
 
         phc.socialAuthenticate = socialAuthenticate;
-        console.log($state);
 
         function socialAuthenticate(provider) {
-
             $auth.authenticate(provider).then(function(response) {
-                console.log("from here");
-                console.log(response);
+                window.alert('login with ' + provider + ' successfull');
                 userData.setUser(response.data.user);
-                alert('login with ' + provider + ' successfull');
                 $state.go('home.post.all');
             }).catch(function(err){
-                console.log("error");
-                console.log(err);
+                window.alert(JSON.stringify(err));
             });
         }
 

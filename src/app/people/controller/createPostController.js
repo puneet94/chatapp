@@ -17,10 +17,11 @@
 
 		function submitPost() {
 			postService.submitPost(cpc.post).then(function(response) {
-				console.log(response);
+				window.alert(JSON.stringify(response.message));
+				$state.go('home.post.latest');
 			}).catch(function(err) {
 				console.log("post error");
-				console.log(err);
+				window.alert(JSON.stringify(err));
 			});
 		}
 	}

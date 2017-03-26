@@ -1,6 +1,21 @@
-
-	<ion-content class="has-header">
-
-		<button ui-sref="chatBox({user:upc.user._id})">
-			Chat
-		</button> </ion-content>
+<ion-header-bar>
+	
+	<h1 >{{upc.user.facebookName || upc.user.googleName || upc.user.displayName||upc.user.anonName}}</h1>
+</ion-header-bar>
+<ion-content class="has-header">
+        <button ui-sref="chatBox({user:upc.user._id})">
+                Chat
+        </button>
+        <button ng-if="upc.revealChoice==0" ng-click="upc.sendReveal()">
+        	Send Reveal Request
+        </button>
+        <button ng-if="upc.revealChoice==1" ng-click="upc.cancelReveal()">
+        	 Request Sent
+        </button>
+        <button ng-if="upc.revealChoice==2" ng-click="upc.decideReveal()">
+        	Request Received
+        </button>
+        <button ng-if="upc.revealChoice==3" ng-click="upc.deleteReveal()">
+        	Delete Reveal
+        </button>
+</ion-content>

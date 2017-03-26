@@ -13,6 +13,7 @@
 		cbc.chatRoomId = '';
 		cbc.loadMoreChats = loadMoreChats;
 		cbc.scrollBottom = scrollBottom;
+		
 		cbc.showImageModal = showImageModal;
 		cbc.messageLoading = false;
 		cbc.params = {
@@ -36,11 +37,13 @@
 		}
 
 		function scrollBottom() {
+			cbc.messageLoading = false;
 			$timeout(function() {
 				$ionicScrollDelegate.scrollBottom(true);
 			});
+			
 		}
-
+		
 		function getChatMessages() {
 			chatService.getChatMessages(cbc.chatRoomId, cbc.params).then(function(res) {
 
@@ -90,27 +93,26 @@
 			Socket.on('messageReceived', function(message) {
 				scrollBottom();
 				cbc.chatList.push(message);
-				
-				//$('.chatBoxUL').animate({ scrollTop: 99999999 }, 'slow');
 			});
 			Socket.on('messageSaved', function(message) {
 				scrollBottom();
 				cbc.chatList.push(message);
-				
-				//$('.chatBoxUL').animate({ scrollTop: 99999999 }, 'slow');
 			});
 		}
 
 		cbc.clickSubmit = function() {
+			cbc.focusInput = true;
 
+			if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
+				window.cordova.plugins.Keyboard.show();
+			}
 			cbc.messageLoading = true;
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
-				cbc.myMsg = ' ';
+				cbc.myMsg = '';
 				scrollBottom();
 			}).catch(function(err) {
-
-				console.log(err);
+				window.alert(JSON.stringify(err));
 			});
 
 
@@ -148,7 +150,7 @@
 			if (file) {
 				cbc.showTempImage = true;
 				cbc.tempImageUrl = file;
-				cbc.formBannerLoading = true;
+				scrollBottom();
 			}
 		};
 

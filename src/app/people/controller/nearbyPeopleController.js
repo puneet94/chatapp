@@ -34,7 +34,7 @@
 				}
 			}).catch(function(err) {
 				console.log(err);
-
+				window.alert(JSON.stringify(err));
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');

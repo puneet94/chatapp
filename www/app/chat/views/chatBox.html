@@ -1,11 +1,11 @@
 <ion-view cache-view="false">
 <ion-pane    >
-    <ion-header-bar align-title="left" class="bar-positive">
+    <ion-header-bar align-title="left" class="bar-positive ">
   <div class="buttons">
                         <button class="button" ui-sref="home.chat.all">Chats</button>
                 </div>
                 <h4 class="title">
-            <a ui-sref="tabs.userPage({userId:cbc.receiverUserId})" >
+            <a ui-sref="home.user.userPage({user:cbc.receiverUserID})" >
                 <span ng-if="cbc.chatRoom.revealed">
                     {{ cbc.receiverUser.facebookName || cbc.receiverUser.googleName ||cbc.receiverUser.displayName }}
                 </span>
@@ -51,7 +51,7 @@
                         <i class="icon ion-ios-camera"></i>
                 </button>
                 <label class="item-input-wrapper">
-                        <input type="text"  placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.messageLoading || cbc.showTempImage" ng-focus="cbc.scrollBottom()"/>
+                        <input type="text"  is-focused="{{cbc.focusInput}}" placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.showTempImage" ng-focus="cbc.scrollBottom()"/>
                 </label>
                 <button class="button button-clear"  ng-disabled="cbc.showTempImage" ng-click="cbc.clickSubmit()">
                         Send
