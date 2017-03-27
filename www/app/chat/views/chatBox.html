@@ -2,12 +2,12 @@
 <ion-pane    >
     <ion-header-bar align-title="left" class="bar-positive ">
   <div class="buttons">
-                        <button class="button" ui-sref="home.chat.all">Chats</button>
+                        <button class="button" ng-click="cbc.leaveChatBox()" >Chats</button>
                 </div>
                 <h4 class="title">
             <a ui-sref="home.user.userPage({user:cbc.receiverUserID})" >
                 <span ng-if="cbc.chatRoom.revealed">
-                    {{ cbc.receiverUser.facebookName || cbc.receiverUser.googleName ||cbc.receiverUser.displayName }}
+                    {{ cbc.receiverUser.facebookName || cbc.receiverUser.googleName ||cbc.receiverUser.displayName || cbc.receiverUser.anonName || 'anonUser'}}
                 </span>
                 <span ng-if="!cbc.chatRoom.revealed">
                     {{ cbc.receiverUser.anonName || 'anonUser'}}

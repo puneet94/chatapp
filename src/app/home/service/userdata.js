@@ -24,14 +24,14 @@ angular.module('petal.home')
 
           var userId = $auth.getPayload().sub;
           if(userId){
-            $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
+            return $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
               
-              if(obj1.isUserExists()){
+              /*if(obj1.isUserExists()){
                   storage.removeItem('user');
-              }
-              storage.setItem('user',JSON.stringify(res.data.user));
-            },function(res){
+              }*/
+              console.log('response');
               console.log(res);
+              storage.setItem('user',JSON.stringify(res.data));
             });
           }
         }

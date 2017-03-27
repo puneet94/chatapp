@@ -450,9 +450,9 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', '$state',ChatBoxController]);
 
-	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload) {
+	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$state) {
 		var cbc = this;
 
 		cbc.currentUser = userData.getUser()._id;
@@ -551,9 +551,9 @@
 		cbc.clickSubmit = function() {
 			cbc.focusInput = true;
 
-			if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
+			/*if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
 				window.cordova.plugins.Keyboard.show();
-			}
+			}*/
 			cbc.messageLoading = true;
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
@@ -600,6 +600,20 @@
 				cbc.tempImageUrl = file;
 				scrollBottom();
 			}
+		};
+		cbc.leaveChatBox = function(){
+			Socket.emit('removeFromRoom', { 'roomId': cbc.chatRoomId });
+			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
+				console.log("update chat");
+				console.log(res);
+			}).catch(function(err){
+				console.log(err);
+				window.alert(JSON.stringify(err));
+			}).finally(function(){
+				
+				$state.go('home.chat.all',{},{reload:true});
+			});
+			
 		};
 
 	}
@@ -674,6 +688,7 @@
 		rs.getChatRoom = getChatRoom;
 		rs.getAllChatRooms = getAllChatRooms;
 		rs.getRevealedChatRooms = getRevealedChatRooms;
+		rs.updateChatRoom = updateChatRoom;
 
 		function sendChatMessage(chat) {
 			console.log("chat messgae");
@@ -702,6 +717,9 @@
 			params.revealed = true;
 			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
 
+		}
+		function updateChatRoom(id){
+			return $http.post(homeService.baseURL+'chatRoom/'+id);
 		}
 
 		
@@ -778,9 +796,9 @@ angular.module('petal.chat')
 (function(angular) {
 	'use strict';
 	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$stateParams', HomeController]);
+		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', HomeController]);
 
-	function HomeController($scope, $state, userData, Socket, toastr, $stateParams) {
+	function HomeController($scope, $state, userData, Socket, toastr) {
 		var hc = this;
 		hc.badgeValue = '';
 		hc.chatClicked = chatClicked;
@@ -788,14 +806,16 @@ angular.module('petal.chat')
 
 		Socket.on("connect", function() {
 			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
+			Socket.on('newMessageReceived',messageReceived);
 		});
-		Socket.on('messageReceived', function(message) {
+		function messageReceived(message) {
 			console.log(message);
 			if (message.user._id == userData.getUser()._id) {
 
 			} else {
 				if ($state.current.name == 'chatBox') {
-					if ($stateParams.user != message.user._id) {
+					
+					if ($state.params.user != message.user._id) {
 						toastr.info('<p>' + message.user.anonName + '</p><p>' + message.message + '</p>', {
 							allowHtml: true,
 							onTap: function() {
@@ -817,7 +837,7 @@ angular.module('petal.chat')
 				
 
 			}
-		});
+		}
 
 		function chatClicked() {
 			hc.badgeValue = '';
@@ -929,14 +949,14 @@ angular.module('petal.home')
 
           var userId = $auth.getPayload().sub;
           if(userId){
-            $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
+            return $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
               
-              if(obj1.isUserExists()){
+              /*if(obj1.isUserExists()){
                   storage.removeItem('user');
-              }
-              storage.setItem('user',JSON.stringify(res.data.user));
-            },function(res){
+              }*/
+              console.log('response');
               console.log(res);
+              storage.setItem('user',JSON.stringify(res.data));
             });
           }
         }
@@ -1964,16 +1984,41 @@ angular.module('petal.home')
 (function(angular){
 	'use strict';
 	angular.module('petal.user').
-		controller('UserMePageController',['$state','$auth','userData',UserMePageController]);
+		controller('UserMePageController',['$scope','$state','$auth','userData','$ionicModal','userService',UserMePageController]);
 
-		function UserMePageController($state,$auth,userData){
+		function UserMePageController($scope,$state,$auth,userData,$ionicModal,userService){
 			
 			var umpc = this;
 			umpc.logout = logout;
-
+			activate();
+			function getUser(){
+				userData.setUser().then(function(){
+					umpc.user = userData.getUser();
+					$scope.editForm.user = umpc.user;
+				});
+				
+			}
+			function loadPostModal() {
+					$ionicModal.fromTemplateUrl('app/user/views/userEditForm.html', {
+						scope: $scope
+					}).then(function(modal) {
+						$scope.editForm.modal = modal;
+					});
+				}
 			function logout(){
 				$auth.logout();
 				$state.go('authenticate');
+			}
+			function activate(){
+				getUser();
+				$scope.editForm = {};
+				loadPostModal();
+			}
+			$scope.editForm.submitUser = function(){
+				userService.updateUser($scope.editForm.user ).then(function(){
+					window.alert("updated user");
+					$scope.editForm.modal.hide();
+				})
 			}
 		}
 })(window.angular);

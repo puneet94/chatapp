@@ -10,6 +10,7 @@
 		rs.getChatRoom = getChatRoom;
 		rs.getAllChatRooms = getAllChatRooms;
 		rs.getRevealedChatRooms = getRevealedChatRooms;
+		rs.updateChatRoom = updateChatRoom;
 
 		function sendChatMessage(chat) {
 			console.log("chat messgae");
@@ -38,6 +39,9 @@
 			params.revealed = true;
 			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
 
+		}
+		function updateChatRoom(id){
+			return $http.post(homeService.baseURL+'chatRoom/'+id);
 		}
 
 		

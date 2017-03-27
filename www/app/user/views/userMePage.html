@@ -1,6 +1,17 @@
+<ion-header-bar align-title="left" class="bar-positive">
+	<h1 class="title">{{umpc.user.googleName||umpc.user.facebookName}}</h1>
+	<div class="buttons">
+    		<button class="button button-icon icon ion-compose" ng-click="editForm.modal.show()"></button>
+  	</div>
+</ion-header-bar>
+<ion-content class="has-header">
 
-	<ion-content class="has-header">
-
-		<button ng-click="umpc.logout()">
-			Logout
-		</button> </ion-content>
+	<div class="userHeaderSection">
+		<div class="userImageSection">
+			<img class="center userImage" ng-src="{{umpc.user.googlePicture || user.facebookPicture || user.picture}}">
+		</div>
+	</div>
+	<button ng-click="umpc.logout()">
+		Logout
+	</button>
+</ion-content>

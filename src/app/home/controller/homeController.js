@@ -1,9 +1,9 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$stateParams', HomeController]);
+		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', HomeController]);
 
-	function HomeController($scope, $state, userData, Socket, toastr, $stateParams) {
+	function HomeController($scope, $state, userData, Socket, toastr) {
 		var hc = this;
 		hc.badgeValue = '';
 		hc.chatClicked = chatClicked;
@@ -11,14 +11,16 @@
 
 		Socket.on("connect", function() {
 			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
+			Socket.on('newMessageReceived',messageReceived);
 		});
-		Socket.on('messageReceived', function(message) {
+		function messageReceived(message) {
 			console.log(message);
 			if (message.user._id == userData.getUser()._id) {
 
 			} else {
 				if ($state.current.name == 'chatBox') {
-					if ($stateParams.user != message.user._id) {
+					
+					if ($state.params.user != message.user._id) {
 						toastr.info('<p>' + message.user.anonName + '</p><p>' + message.message + '</p>', {
 							allowHtml: true,
 							onTap: function() {
@@ -40,7 +42,7 @@
 				
 
 			}
-		});
+		}
 
 		function chatClicked() {
 			hc.badgeValue = '';

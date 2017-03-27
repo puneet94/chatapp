@@ -2,9 +2,9 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', '$state',ChatBoxController]);
 
-	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload) {
+	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$state) {
 		var cbc = this;
 
 		cbc.currentUser = userData.getUser()._id;
@@ -103,9 +103,9 @@
 		cbc.clickSubmit = function() {
 			cbc.focusInput = true;
 
-			if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
+			/*if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
 				window.cordova.plugins.Keyboard.show();
-			}
+			}*/
 			cbc.messageLoading = true;
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
@@ -152,6 +152,20 @@
 				cbc.tempImageUrl = file;
 				scrollBottom();
 			}
+		};
+		cbc.leaveChatBox = function(){
+			Socket.emit('removeFromRoom', { 'roomId': cbc.chatRoomId });
+			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
+				console.log("update chat");
+				console.log(res);
+			}).catch(function(err){
+				console.log(err);
+				window.alert(JSON.stringify(err));
+			}).finally(function(){
+				
+				$state.go('home.chat.all',{},{reload:true});
+			});
+			
 		};
 
 	}

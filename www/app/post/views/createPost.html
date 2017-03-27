@@ -1,16 +1,32 @@
 <ion-view>
-	<ion-content>
-		{{300-cpc.post.content.length}}
-		<form>
-			<textarea ng-model="cpc.post.content">
-				
-			</textarea>
-			<textarea ng-model="cpc.post.interest">
-				
-			</textarea>
-			<button ng-click="cpc.submitPost()" ng-disabled="!cpc.post.content">
-				Submit
-			</button>
-		</form>		
-	</ion-content>
+        <ion-content>
+                {{300-cpc.post.content.length}}
+                <form>
+                        <div class="row">
+                                <div class="col">
+                                        <label class="item item-input text">
+                                                <textarea rows="20" ng-model="cpc.post.content">
+                        			</textarea>
+                                        </label>
+                                </div>
+                        </div>
+                        <div class="row">
+                                <div class="col">
+                                        <label class="item item-input text">
+                                                <textarea  ng-model="cpc.post.interest" placeholder="Enter tags !food !work">
+                        </textarea>
+                                        </label>
+                                </div>
+                        </div>
+                        <div class="row">
+                                <div class="col">
+                        <button ng-click="cpc.submitPost()" ng-disabled="!cpc.post.content">
+                                Submit
+                        </button>
+                                </div>
+                        </div>
+                        
+                        
+                </form>
+        </ion-content>
 </ion-view>
