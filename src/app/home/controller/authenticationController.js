@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('petal.home')
-        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", AuthenticationController]);
+        .controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", 'userLocationService',AuthenticationController]);
 
-    function AuthenticationController($scope, $auth, $state, userData) {
+    function AuthenticationController($scope, $auth, $state, userData,userLocationService) {
         var phc = this;
         phc.isAuth = $auth.isAuthenticated();
         if(phc.isAuth){
@@ -18,7 +18,12 @@
             $auth.authenticate(provider).then(function(response) {
                 window.alert('login with ' + provider + ' successfull');
                 userData.setUser(response.data.user);
-                $state.go('home.post.all');
+                userLocationService.getUserLocation().then(function(){}).catch(function(err){
+                    window.alert(JSON.stringify(err));
+                }).finally(function(){
+                    $state.go('home.post.all');    
+                });
+                
             }).catch(function(err){
                 window.alert(JSON.stringify(err));
             });

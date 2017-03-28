@@ -5,11 +5,15 @@
   	</div>
 </ion-header-bar>
 <ion-content class="has-header">
-
+<ion-refresher pulling-text="Pull to refresh..." on-refresh="umpc.activate()">
+        </ion-refresher>
 	<div class="userHeaderSection">
 		<div class="userImageSection">
 			<img class="center userImage" ng-src="{{umpc.user.googlePicture || user.facebookPicture || user.picture}}">
 		</div>
+	</div>
+	<div>
+		 <people-list people-list="umpc.peopleList"></people-list>
 	</div>
 	<button ng-click="umpc.logout()">
 		Logout

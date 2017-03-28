@@ -7,6 +7,9 @@
 		var cpc = this;
 		cpc.submitPost = submitPost;
 		cpc.post = {};
+		cpc.goBack = function(){
+			window.history.back();
+		};
 		$scope.$watch(function(){
 			return cpc.post.content;
 		}, function(newVal, oldVal) {
@@ -17,7 +20,7 @@
 
 		function submitPost() {
 			postService.submitPost(cpc.post).then(function(response) {
-				window.alert(JSON.stringify(response.message));
+				window.alert(JSON.stringify(response.data.message));
 				$state.go('home.post.latest');
 			}).catch(function(err) {
 				console.log("post error");
