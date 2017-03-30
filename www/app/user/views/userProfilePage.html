@@ -1,21 +1,88 @@
-<ion-header-bar>
-	
-	<h1 >{{upc.user.facebookName || upc.user.googleName || upc.user.displayName||upc.user.anonName}}</h1>
+
+<ion-header-bar align-title="center" class="bar-positive">
+        <div class="buttons">
+                <button class="button  icon ion-chevron-left  button-icon" ng-click="upc.goBack()"></button>
+        </div>
+        <h1 class="title">{{upc.user.anonName}}</h1>
 </ion-header-bar>
 <ion-content class="has-header">
-        <button ui-sref="chatBox({user:upc.user._id})">
-                Chat
-        </button>
-        <button ng-if="upc.revealChoice==0" ng-click="upc.sendReveal()">
-        	Send Reveal Request
-        </button>
-        <button ng-if="upc.revealChoice==1" ng-click="upc.cancelReveal()">
-        	 Request Sent
-        </button>
-        <button ng-if="upc.revealChoice==2" ng-click="upc.decideReveal()">
-        	Request Received
-        </button>
-        <button ng-if="upc.revealChoice==3" ng-click="upc.deleteReveal()">
-        	Delete Reveal
-        </button>
+        <div class="userHeaderSection">
+                <div class="row row-center text-center">
+                        <div class="col-center col-25 text-right">
+                                <button class="button button-icon icon ion-ios-chatbubble-outline" ui-sref="chatBox({user:upc.user._id})">
+                                </button>
+                        </div>
+                        <div class="col-center col-50">
+                                <div class="userImageSection">
+                                        <img class="center userImage" ng-src="{{ upc.user.picture}}">
+                                </div>
+                        </div>
+                        <div class="col-center col-25 text-left">
+                                <button class="button  button-icon icon ion-person-add" ng-if="upc.revealChoice==0" ng-click="upc.sendReveal()">
+                                </button>
+                                <button class="button  button-icon icon ion-person" ng-if="upc.revealChoice==1" ng-click="upc.cancelReveal()">
+                                </button>
+                                <button class="button  button-icon icon ion-person" ng-if="upc.revealChoice==2" ng-click="upc.decideReveal()">
+                                </button>
+                                <button class="button  button-icon icon  ion-person-stalker" ng-if="upc.revealChoice==3" ng-click="upc.deleteReveal()">
+                                </button>
+                        </div>
+                </div>
+        </div>
+        <div class="userInfoSection">
+                <div class="userStatus text-center">
+                        <p>{{upc.user.status}}</p>
+                </div>
+                <div class="userInterests text-center">
+                        <p class="tagContent">
+                                <span class="subdued postTag" ng-repeat="interest in upc.user.interests track by $index">!{{interest}}</span>
+                        </p>
+                </div>
+        </div>
+        <div class="button-bar">
+                <button class="button" ng-click="upc.activateTab(1)" ng-class="{'button-balanced':upc.activeTab == 1}">Posts</button>
+                <button class="button" ng-click="upc.activateTab(2)" ng-class="{'button-balanced':upc.activeTab == 2}">
+                        Social Profile
+                </button>
+        </div>
+        <div class="userTabsContent">
+                <div ng-if="upc.isTabActive(1)">
+                        <posts-list posts-list="upc.postsList"></posts-list>
+                </div>
+                <div ng-if="upc.isTabActive(2)">
+                        <div ng-if="upc.revealChoice==0">
+                                <h2 class="text-center">
+                                        Send {{upc.user.anonName}} a reveal request to view the social profile
+                                </h2>
+                        </div>
+                        <div ng-if="upc.revealChoice==1">
+                                <h2 class="text-center">
+                                        Reveal request to {{upc.user.anonName}} has been sent. You can view
+                                         social profile once it is accepted
+                                </h2>
+                        </div>
+                        <div ng-if="upc.revealChoice==2">
+                                <h2 class="text-center">
+                                        Reveal request from {{upc.user.anonName}} has been received. You can view
+                                         social profile once you accept the request
+                                </h2>
+                        </div>
+                        <div class="list" ng-if="upc.revealChoice==3">
+                                <div class="item">
+                                        {{upc.user.displayName }}
+                                </div>
+                                <div class="item item-thumbnail-left" >
+                                        <img ng-src="{{upc.user.googlePicture || upc.user.facebookPicture}}">
+                                        <h2 ng-if="upc.user.google">
+                                                <a ng-href="https://plus.google.com/{{upc.user.google}}">{{upc.user.googleName }}</a>
+                                        </h2>
+                                        <a ng-if="upc.user.facebook"
+                                                 ng-href="https://www.facebook.com/{{upc.user.facebook}}"> <h2>{{upc.user.facebookName}}
+                                        </h2></a>
+                                        
+                                </div>
+                                
+                        </div>
+                </div>
+        </div>
 </ion-content>

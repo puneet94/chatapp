@@ -1,9 +1,9 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.user').
-	controller('UserPageController', ['$state', '$auth', 'userService', 'revealService','$stateParams', '$ionicActionSheet',UserPageController]);
+	controller('UserPageController', ['$state', '$auth', 'userService', 'revealService','$stateParams', '$ionicActionSheet','friends','postService',UserPageController]);
 
-	function UserPageController($state, $auth, userService, revealService,$stateParams,$ionicActionSheet) {
+	function UserPageController($state, $auth, userService, revealService,$stateParams,$ionicActionSheet,friends,postService) {
 
 		var upc = this;
 		upc.sendReveal = sendReveal;
@@ -11,15 +11,34 @@
 		upc.decideReveal = decideReveal;
 		upc.deleteReveal = deleteReveal;
 		upc.checkReveal = checkReveal;
+		upc.goBack = goBack;
+		upc.activateTab = activateTab;
+		upc.isTabActive = isTabActive;
 
 		activate();
 
 		function activate() {
 			getUser();
-			checkReveal();
+			upc.revealChoice = friends;
+			upc.activeTab = 1;
+			getUserPosts();
 		}
-
-
+		function getUserPosts(){
+			upc.params = {
+				page: 1,
+				limit: 100,
+				user: $stateParams.user
+			};
+			postService.getAllPosts(upc.params).then(function(res){
+				upc.postsList = res.data.docs;
+			});
+		}
+		function activateTab(tabIndex){
+			upc.activeTab = tabIndex;
+		}
+		function isTabActive(tabIndex){
+			return tabIndex === upc.activeTab;
+		}
 		function sendReveal() {
 			$ionicActionSheet.show({
 				titleText: 'Reveal',
@@ -29,13 +48,9 @@
 				
 				cancelText: 'Cancel',
 				cancel: function() {
-					console.log('CANCELLED');
 				},
 				buttonClicked: function(index) {
-					console.log('BUTTON CLICKED', index);
 					revealService.initiate($stateParams.user).then(function(res){
-						console.log("intitiate reveal response");
-						console.log(res);
 						checkReveal();
 					}).catch(function(err){
 						window.alert(JSON.stringify(err));
@@ -132,11 +147,13 @@
 				upc.revealChoice = res.data;
 			});
 		}
+		function goBack(){
+			window.history.back();
+		}
 		function getUser() {
 			userService.getUser($stateParams.user).then(function(response) {
-				console.log(":page user");
-				console.log(response);
 				upc.user = response.data;
+				
 			});
 		}
 	}

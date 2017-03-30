@@ -17,15 +17,29 @@
 			}).
 			state('home.user.userPage', {
 				url: '/userPage/:user',
+				resolve: {
+					friends: [ '$stateParams', 'revealService', friends]
+				},
 				views: {
 					'user-tab': {
 						templateUrl: 'app/user/views/userProfilePage.html',
 						controller: 'UserPageController',
 						controllerAs: 'upc'
 					}
+				},
+				
+
+			}).state('home.user.userPage.posts', {
+				url: '/posts',
+				views: {
+					'user-posts': {
+						templateUrl: 'app/user/views/userProfilePagePosts.html',
+						controller: 'UserPagePostsController',
+						controllerAs: 'uppc'
+					}
 				}
 
-			}).
+			})
 			/*state('tabs.userProfileSettings', {
 				url: '/userProfileSettings',
 				views: {
@@ -44,7 +58,7 @@
 				}
 
 			}).*/
-			state('home.user.userMePage', {
+			.state('home.user.userMePage', {
 				url: '/userMePage',
 				views: {
 					'user-tab': {
@@ -59,7 +73,12 @@
 		}
 	]);
 
+	function friends($stateParams,revealService){
 
+		return revealService.check($stateParams.user).then(function(response){
+			return response.data;
+		});
+	}
 
 	function redirectIfNotUserAuthenticated($q, $auth, changeBrowserURL) {
 		var defer = $q.defer();

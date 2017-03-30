@@ -1,3 +1,4 @@
+
 <ion-header-bar align-title="left" class="bar-positive">
 	<h1 class="title">{{umpc.user.googleName||umpc.user.facebookName}}</h1>
 	<div class="buttons">
@@ -9,13 +10,50 @@
         </ion-refresher>
 	<div class="userHeaderSection">
 		<div class="userImageSection">
-			<img class="center userImage" ng-src="{{umpc.user.googlePicture || user.facebookPicture || user.picture}}">
+			<img class="center userImage" ng-src="{{umpc.user.googlePicture || umpc.user.facebookPicture || umpc.user.picture}}">
 		</div>
 	</div>
-	<div>
-		 <people-list people-list="umpc.peopleList"></people-list>
-	</div>
+	
 	<button ng-click="umpc.logout()">
 		Logout
 	</button>
+
+	 <div class="button-bar">
+                <button class="button" ng-click="umpc.activateTab(1)" ng-class="{'button-balanced':umpc.activeTab == 1}">Posts</button>
+                <button class="button" ng-click="umpc.activateTab(2)" ng-class="{'button-balanced':umpc.activeTab == 2}">
+                        Social Profile
+                </button>
+                <button class="button" ng-click="umpc.activateTab(3)" ng-class="{'button-balanced':umpc.activeTab == 3}">
+                        Requested
+                </button>
+        </div>
+	<div class="userTabsContent">
+                <div ng-if="umpc.isTabActive(1)">
+                        <posts-list posts-list="umpc.postsList"></posts-list>
+                </div>
+                <div ng-if="umpc.isTabActive(2)">
+                        
+                        <div class="list" >
+                                <div class="item">
+                                        {{umpc.user.displayName }}
+                                </div>
+                                <div class="item item-thumbnail-left" >
+                                        <img ng-src="{{umpc.user.googlePicture || umpc.user.facebookPicture}}">
+                                        <h2 ng-if="umpc.user.google">
+                                                <a ng-href="https://plus.google.com/{{umpc.user.google}}">{{umpc.user.googleName }}</a>
+                                        </h2>
+                                        <a ng-if="umpc.user.facebook"
+                                                 ng-href="https://www.facebook.com/{{umpc.user.facebook}}"> <h2>{{umpc.user.facebookName}}
+                                        </h2></a>
+                                        
+                                </div>
+                                
+                        </div>
+                </div>
+                <div ng-if="umpc.isTabActive(3)">
+             
+		 <people-list people-list="umpc.peopleList"></people-list>
+	
+                </div>
+        </div>
 </ion-content>

@@ -1,7 +1,12 @@
 <div class="list">
-        <div class="item item-avatar" ng-repeat="people in peopleList" ng-click="showPopover(people,$event)" ng-if="currentUser._id!=people._id">
+        <div class="item item-avatar item-icon-right" ng-repeat="people in peopleList" ng-if="currentUser._id!=people._id">
+                
                 <img ng-src="{{people.picture}}">
                 <h2>{{people.anonName||people.googleName}}</h2>
                 <p>{{people.status}}</p>
+                <p class="tagContent">
+                          <span class="subdued postTag" ng-click="setPeopleSearch(interest,$event)" ng-repeat="interest in people.interests track by $index">!{{interest}}</span>
+                 </p>
+                 <i class="icon ion-android-more-vertical"  ng-click="showPopover(people,$event)"></i>
         </div>
 </div>

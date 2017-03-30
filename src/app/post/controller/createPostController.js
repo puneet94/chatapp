@@ -20,7 +20,6 @@
 
 		function submitPost() {
 			postService.submitPost(cpc.post).then(function(response) {
-				window.alert(JSON.stringify(response.data.message));
 				$state.go('home.post.latest');
 			}).catch(function(err) {
 				console.log("post error");

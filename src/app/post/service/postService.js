@@ -55,10 +55,9 @@
 				post.latitude = position.latitude;
 				post.longitude = position.longitude;
 				
-				window.alert(JSON.stringify(position));
+				
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
-					console.log("inside service");
-					console.log(response);
+					
 					defer.resolve(response);
 				}).catch(function(err) {
 					defer.reject(err);

@@ -48,7 +48,7 @@
 			apc.initialSearchCompleted = false;
 			apc.peopleList = [];
 			apc.params = {
-				limit: 1,
+				limit: 25,
 				page: 1
 			};
 			getRevealedPeople();

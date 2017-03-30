@@ -8,8 +8,8 @@
 		apc.getNearbyPeople = getNearbyPeople;
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;
-
-
+		apc.releaseRange = releaseRange;
+		apc.distance = 10;
 		activate();
 
 		function pullRefreshPeople() {
@@ -21,7 +21,9 @@
 			apc.params.page += 1;
 			getNearbyPeople();
 		}
-
+		function releaseRange(){
+			activate();
+		}
 		function getNearbyPeople() {
 			peopleService.getNearbyUsers(apc.params).then(function(response) {
 				console.log(response);
@@ -49,7 +51,7 @@
 			apc.params = {
 				limit: 25,
 				page: 1,
-				distance: 10
+				distance: apc.distance
 			};
 			getNearbyPeople();
 		}

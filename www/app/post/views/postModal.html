@@ -1,18 +1,18 @@
 
 <ion-modal-view>
-        <ion-header-bar class="bar bar-header ">
+        <ion-header-bar class="bar bar-header bar-positive">
           
-          <button class="button  button-primary" ng-click="modal.hide()">Cancel</button>
+          <button class="button button-icon ion-arrow-left-c icon " ng-click="modal.hide()"></button>
         </ion-header-bar>
         <ion-content>
-          <h1>distance : {{postModal.distanceObj.distance}}</h1>
-        	<h1>Upvote length: {{postModal.post.upvotesLength}}</h1>
-        	<h1>views length: {{postModal.post.views}}</h1>
-                <div class=" card">
-                        <div class="item item-avatar">
+          
+        	
+                <div class="item">
+                        <div class="item item-avatar item-icon-right">
                                 <img ng-src="{{postModal.post.user.picture}}">
-                                <h2>{{postModal.post.user.anonName}}</h2>
+                                <h2 ng-click="postModal.userPage(postModal.post.user._id)">{{postModal.post.user.anonName}}</h2>
                                 <p>{{postModal.post.user.status}}</p>
+                                <i style="font-size:20px"  class="icon">{{postModal.distanceObj.distance+" mi"}}</i>
                         </div>
                         <div class="item item-body" >
                                 <p>
@@ -25,7 +25,21 @@
 				</span>
                                 </p>
                         </div>
-                </div>
+                
+                <div class="row postInfo">
+                                    <div class="col">
+                                        <i class="icon ion-android-favorite-outline"></i>
+                                        <span class="infoValue">{{postModal.post.upvotesLength}}</span>
+                                    </div>
+                                    <div class="col text-center">
+                                        <i class="icon ion-eye"></i>
+                                        <span class="infoValue"> {{postModal.post.views+" views"}}</span>
+                                    </div>
+                                    <div class="col text-right">
+                                        <i class="icon ion-android-time"></i>
+                                        <span class="infoValue">{{getTime(postModal.post.time)}}</span>
+                                    </div>
+                                </div></div>
                 <button ng-if="!postModal.postUpvoted" ng-click="postModal.submitPostUpvote()">Upvote</button>
                 <button ng-if="postModal.postUpvoted" ng-click="postModal.deletePostUpvote()">Upvoted</button>
         </ion-content>

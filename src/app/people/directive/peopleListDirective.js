@@ -9,11 +9,19 @@
 			restrict: 'E',
 			templateUrl: 'app/people/views/peopleListTemplate.html',
 			scope: {
-				peopleList: '=peopleList'
+				peopleList: '=peopleList',
+				peopleSearchTextSubmit: '&peopleSearchTextSubmit'
 			},
 			controller: ['$scope', function($scope) {
 				$scope.currentUser = userData.getUser();
-				
+				$scope.setPeopleSearch = function(interest,$event){
+					if($scope.peopleSearchTextSubmit){
+						
+						$scope.peopleSearchTextSubmit({interest:interest});	
+						$event.stopPropagation();
+					}
+					
+				};
 				$ionicPopover.fromTemplateUrl('app/people/views/peoplePopover.html', {
 					scope: $scope,
 				}).then(function(popover) {

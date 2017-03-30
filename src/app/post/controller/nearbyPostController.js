@@ -8,13 +8,17 @@
 		apc.getNearbyPosts = getNearbyPosts;
 		apc.pullRefreshPosts = pullRefreshPosts;
 		apc.loadMorePosts = loadMorePosts;
+		apc.releaseRange = releaseRange;
+		apc.distance = 10;
 		activate();
 
 		function pullRefreshPosts() {
 			activate();
 
 		}
-
+		function releaseRange(){
+			activate();
+		}
 		function loadMorePosts() {
 			apc.params.page += 1;
 			getNearbyPosts();
@@ -49,7 +53,8 @@
 			apc.postsList = [];
 			apc.params = {
 				limit: 3,
-				page: 1
+				page: 1,
+				distance: apc.distance
 			};
 			getNearbyPosts();
 		}

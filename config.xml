@@ -4,8 +4,8 @@
   <description>
        Anonymous chat app
     </description>
-  <author email="you@example.com" href="http://example.com/">
-      Your Name Here
+  <author email="oflinecorp.gmail.com" href="http://petalchat.com/">
+      Petal Chat
     </author>
   <content src="index.html"/>
   <access origin="*"/>

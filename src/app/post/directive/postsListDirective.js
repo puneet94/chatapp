@@ -9,7 +9,8 @@
 			restrict: 'E',
 			templateUrl: 'app/post/views/postsListTemplate.html',
 			scope: {
-				postsList: '=postsList'
+				postsList: '=postsList',
+				postSearchTextSubmit: '&postSearchTextSubmit'
 			},
 			controller: ['$scope', function($scope) {
 				loadPostModal();
@@ -18,6 +19,12 @@
 				};
 				$scope.currentUser = userData.getUser();
 
+				$scope.setPostSearch = function(interest){
+					if($scope.postSearchTextSubmit){
+						$scope.postSearchTextSubmit({interest:interest});	
+					}
+					
+				};
 				$ionicPopover.fromTemplateUrl('app/people/views/peoplePopover.html', {
 					scope: $scope,
 				}).then(function(popover) {
@@ -33,10 +40,16 @@
 						$state.go('chatBox', { user: id });
 					}
 					if (type == 'profile') {
-						$state.go('home.user.userPage', { user: id });
+						$scope.postModal.userPage(id);
 					}
 				};
-
+				function userPage(id){
+					$state.go('home.user.userPage', { user: id });
+					if($scope.modal){
+						$scope.modal.hide();
+					}
+				
+				}
 				function loadPostModal() {
 					$ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
 						scope: $scope
@@ -45,6 +58,7 @@
 					});
 				}
 				$scope.postModal = {};
+				$scope.postModal.userPage = userPage;
 				$scope.postModal.getSinglePost = getSinglePost;
 
 				$scope.postModal.submitPostUpvote = submitPostUpvote;

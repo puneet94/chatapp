@@ -1,10 +1,14 @@
 <ion-content class="has-header" keep-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="npc.pullRefreshPosts()">
         </ion-refresher>
+        <div class="item range">
+                <i class="icon ion-android-walk"></i>
+
+                <input type="range" on-release="npc.releaseRange()"  name="distance" min="10" max="1000" ng-model="npc.distance">
+                
+                {{npc.distance+" mi"}}
+        </div>
         <posts-list posts-list="npc.postsList"></posts-list>
         <ion-infinite-scroll on-infinite="npc.loadMorePosts()" distance="100%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>
-
-
-

@@ -23,7 +23,7 @@
   function() {
     return {};
   }
-]).directive('isFocused', function($timeout) {
+]).directive('isFocused',[ '$timeout',function($timeout) {
       return {
         scope: { trigger: '@isFocused' },
         link: function(scope, element) {
@@ -44,6 +44,6 @@
           });
         }
       };
-    });
+    }]);
 })(window.angular);
 

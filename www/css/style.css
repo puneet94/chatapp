@@ -51,6 +51,15 @@
 .me .image {
   float: left; }
 
+.logoIcon {
+  background-image: url("/img/logo.png");
+  height: 100px;
+  width: 160px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin-left: 25%;
+  margin-top: 30%; }
+
 .authenticationModalContainer {
   padding: 24px; }
 
@@ -93,10 +102,11 @@
   background-color: #3B5998;
   color: #fff;
   padding: 20px;
-  margin-bottom: 0px;
+  margin: 30px;
+  font-size: 20px;
   box-sizing: border-box; }
   .facebookAuthenticateButton .text-container {
-    margin-left: 30%; }
+    margin-left: 5%; }
 
 .loginSeparator {
   position: relative;
@@ -196,6 +206,10 @@
 h1, h2, h3, h4, h5, h6 {
   font-family: 'COB', sans-serif !important; }
 
+.postTag {
+  margin-right: 5px;
+  color: blue; }
+
 .singlePostContainer {
   padding-left: 0px;
   padding-bottom: 0px; }
@@ -205,13 +219,10 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid #eee;
     border-radius: 5px; }
   .singlePostContainer .postTag {
-    padding: 5px;
-    border: 1px solid blue;
-    border-radius: 3px;
     color: blue;
     margin-right: 5px; }
   .singlePostContainer .tagContent {
-    margin-top: 15px; }
+    margin-top: 5px; }
   .singlePostContainer .postInfo {
     padding: 0;
     margin-top: 15px;
@@ -221,11 +232,8 @@ h1, h2, h3, h4, h5, h6 {
     .singlePostContainer .postInfo .infoValue {
       margin-left: 2px; }
 
-.singlePostContent {
-  margin-top: 15px;
-  line-height: 1.5; }
-  .singlePostContent span {
-    font-size: 16px; }
+.singlePostContent span {
+  font-size: 16px; }
 
 .center {
   margin-left: auto;

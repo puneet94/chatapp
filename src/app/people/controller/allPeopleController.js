@@ -8,7 +8,8 @@
 		apc.getAllPeople = getAllPeople;
 		apc.pullRefreshPeople = pullRefreshPeople;
 		apc.loadMorePeople = loadMorePeople;
-
+		apc.searchCrossSubmit = searchCrossSubmit;
+		apc.peopleSearchTextSubmit = peopleSearchTextSubmit;
 
 		activate();
 
@@ -16,7 +17,19 @@
 			activate();
 
 		}
-
+		function searchCrossSubmit(){
+			apc.peopleSearchText = '';
+			apc.showSearchCross = false;
+			activate();
+		}
+		function peopleSearchTextSubmit(interest){
+			apc.showSearchCross = true;
+			if(interest){
+				apc.peopleSearchText = interest;	
+			}
+			
+			activate();
+		}
 		function loadMorePeople() {
 			apc.params.page += 1;
 			getAllPeople();
@@ -50,6 +63,9 @@
 				limit: 25,
 				page: 1
 			};
+			if(apc.peopleSearchText){
+				apc.params.interest = 	apc.peopleSearchText;
+			}
 			getAllPeople();
 		}
 	}
