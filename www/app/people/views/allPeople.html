@@ -15,7 +15,7 @@
                         </button>
         </div>
         
-        <people-list people-list="apc.peopleList" people-search-text-submit="apc.peopleSearchTextSubmit(interest)" ></people-list>
+        <people-list people-list="apc.peopleList" list-type="all" people-search-text-submit="apc.peopleSearchTextSubmit(interest)" ></people-list>
         <ion-infinite-scroll on-infinite="apc.loadMorePeople()" distance="100%" immediate-check="false" ng-if="apc.canLoadMoreResults && apc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>

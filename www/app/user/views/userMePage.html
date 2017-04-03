@@ -2,21 +2,30 @@
 <ion-header-bar align-title="left" class="bar-positive">
 	<h1 class="title">{{umpc.user.googleName||umpc.user.facebookName}}</h1>
 	<div class="buttons">
-    		<button class="button button-icon icon ion-compose" ng-click="editForm.modal.show()"></button>
+    		<button class="button-icon icon ion-compose" ng-click="editForm.modal.show()"></button>
   	</div>
 </ion-header-bar>
 <ion-content class="has-header">
 <ion-refresher pulling-text="Pull to refresh..." on-refresh="umpc.activate()">
         </ion-refresher>
 	<div class="userHeaderSection">
-		<div class="userImageSection">
-			<img class="center userImage" ng-src="{{umpc.user.googlePicture || umpc.user.facebookPicture || umpc.user.picture}}">
-		</div>
+                        <div class="row">
+                            <div class="col col-25">
+                                
+                            </div>
+                            <div class=" col col-50 userImageSection">
+            <img class="center userImage" ng-src="{{umpc.user.googlePicture || umpc.user.facebookPicture || umpc.user.picture}}"/>        
+        </div>
+                <div class="col col-25 text-center col-center">
+                    <button class="pull-right button button-assertive button-small" ng-click="umpc.logout()">
+        Logout
+    </button>       
+                </div>
+                        </div>
+		
 	</div>
 	
-	<button ng-click="umpc.logout()">
-		Logout
-	</button>
+	
 
 	 <div class="button-bar">
                 <button class="button" ng-click="umpc.activateTab(1)" ng-class="{'button-balanced':umpc.activeTab == 1}">Posts</button>
@@ -42,9 +51,8 @@
                                         <h2 ng-if="umpc.user.google">
                                                 <a ng-href="https://plus.google.com/{{umpc.user.google}}">{{umpc.user.googleName }}</a>
                                         </h2>
-                                        <a ng-if="umpc.user.facebook"
-                                                 ng-href="https://www.facebook.com/{{umpc.user.facebook}}"> <h2>{{umpc.user.facebookName}}
-                                        </h2></a>
+                                        <h2 ng-if="umpc.user.facebook" ng-click="umpc.openFacebook(umpc.user.facebook)">{{umpc.user.facebookName}}
+                                        </h2>
                                         
                                 </div>
                                 
@@ -52,7 +60,7 @@
                 </div>
                 <div ng-if="umpc.isTabActive(3)">
              
-		 <people-list people-list="umpc.peopleList"></people-list>
+		 <people-list people-list="umpc.peopleList" list-type="requested"></people-list>
 	
                 </div>
         </div>

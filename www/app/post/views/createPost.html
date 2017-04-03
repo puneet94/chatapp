@@ -22,9 +22,17 @@
                                 <div class="col">
                                         <label class="item item-input text">
                                                 <textarea  ng-model="cpc.post.interests" placeholder="Enter tags !food !work">
-                        </textarea>
+                                                </textarea>
                                         </label>
                                 </div>
+                        </div>
+                        <div>
+                            <img ng-src="{{cpc.post.image}}" width="150" height="150" ng-if="cpc.post.image"/>
+                            <ion-spinner ng-if="cpc.loadingImage" class="spinner-energized"></ion-spinner>
+                            <div>
+                                <button ng-if="!cpc.loadingImage" class="button button-energized" ngf-select="cpc.submitUpload($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB" >Upload Picture</button>
+                            <button class="button button-assertive" ng-if="cpc.post.image" ng-click="cpc.cancelUpload()">Cancel</button>
+                            </div>
                         </div>
                        
                         

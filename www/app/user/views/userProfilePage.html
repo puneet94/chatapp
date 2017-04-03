@@ -18,13 +18,13 @@
                                 </div>
                         </div>
                         <div class="col-center col-25 text-left">
-                                <button class="button  button-icon icon ion-person-add" ng-if="upc.revealChoice==0" ng-click="upc.sendReveal()">
+                                <button class="button  button-icon icon ion-person-add" ng-if="upc.revealChoice==0"   send-reveal="{{upc.user._id}}" after-callback="upc.checkReveal()">
                                 </button>
-                                <button class="button  button-icon icon ion-person" ng-if="upc.revealChoice==1" ng-click="upc.cancelReveal()">
+                                <button class="button  button-icon icon ion-person" ng-if="upc.revealChoice==1" cancel-reveal="{{upc.user._id}}" after-callback="upc.checkReveal()">
                                 </button>
-                                <button class="button  button-icon icon ion-person" ng-if="upc.revealChoice==2" ng-click="upc.decideReveal()">
+                                <button class="button  button-icon icon ion-person" ng-if="upc.revealChoice==2" decide-reveal="{{upc.user._id}}" after-callback="upc.checkReveal()">
                                 </button>
-                                <button class="button  button-icon icon  ion-person-stalker" ng-if="upc.revealChoice==3" ng-click="upc.deleteReveal()">
+                                <button class="button  button-icon icon  ion-person-stalker" ng-if="upc.revealChoice==3" delete-reveal="{{upc.user._id}}" after-callback="upc.checkReveal()">
                                 </button>
                         </div>
                 </div>
@@ -76,9 +76,8 @@
                                         <h2 ng-if="upc.user.google">
                                                 <a ng-href="https://plus.google.com/{{upc.user.google}}">{{upc.user.googleName }}</a>
                                         </h2>
-                                        <a ng-if="upc.user.facebook"
-                                                 ng-href="https://www.facebook.com/{{upc.user.facebook}}"> <h2>{{upc.user.facebookName}}
-                                        </h2></a>
+                                        <h2 ng-if="upc.user.facebook" ng-click="upc.openFacebook(upc.user.facebook)">{{upc.user.facebookName}}
+                                        </h2>
                                         
                                 </div>
                                 

@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.chat')
-		.controller('ChatParentController',['$scope','$state',ChatParentController]);
+		.controller('ChatParentController',[ChatParentController]);
 
-	function ChatParentController($scope,$state){
+	function ChatParentController(){
 
 	}
 })(window.angular);

@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('LatestPostController',['$scope','$state','postService',LatestPostController]);
+		.controller('LatestPostController',['$scope','$state','postService','$ionicLoading',LatestPostController]);
 
-	function LatestPostController($scope,$state,postService){
+	function LatestPostController($scope,$state,postService,$ionicLoading){
 		var apc = this;
 		apc.getLatestPosts = getLatestPosts;
 		apc.pullRefreshPosts = pullRefreshPosts;
@@ -38,6 +38,7 @@
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
 			});
 
 

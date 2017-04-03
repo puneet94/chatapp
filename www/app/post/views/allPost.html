@@ -3,20 +3,29 @@
         </ion-refresher>
 
 
-        <div class="row ">
+        <div class="row padding material-card2">
                 <div class="col col-90">
-                        <div class="item item-input">
+                        <div class="item  item-input">
                                 <input type="text" ng-model="apc.postSearchText" placeholder="Search posts by tags. Eg: football" />
-                                <span ng-if="apc.showSearchCross" class="padding" ng-click="apc.searchCrossSubmit()">
+                                <span ng-if="apc.showSearchCross"  ng-click="apc.searchCrossSubmit()">
                                 	<i  class=" icon ion-close-round">
                                 	</i>
                                 </span>
                         </div>
                 </div>
-                <button ng-if="!spc.showClear " ng-disabled="!apc.postSearchText" class=" col button button-icon icon ion-ios-search" ng-click="apc.postSearchTextSubmit()">
-                        </button>
+                <div class="buttonSearch">
+                        
+                        <div   class="button-icon icon ion-ios-search" ng-click="apc.postSearchTextSubmit()">
+                        </div>        
+                </div>
+                
         </div>
-        <posts-list posts-list="apc.postsList" post-search-text-submit="apc.postSearchTextSubmit(interest)" ></posts-list>
+        <div ng-if="apc.noPosts">
+                <h1>No posts available</h1>
+        </div>
+        <posts-list posts-list="apc.postsList" post-search-text-submit="apc.postSearchTextSubmit(interest)" >
+                <h1>Loading.............</h1>
+        </posts-list>
         <ion-infinite-scroll on-infinite="apc.loadMorePosts()" distance="100%" immediate-check="false" ng-if="apc.canLoadMoreResults && apc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>

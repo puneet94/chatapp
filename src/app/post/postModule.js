@@ -58,16 +58,16 @@
 						controllerAs: 'npc'
 					}
 				}
-			}).state('home.postSubmit', {
+			}).state('postSubmit', {
 				url: '/submit',
-
-				views: {
+				templateUrl: 'app/post/views/createPost.html',
+				controller: 'CreatePostController',
+				controllerAs: 'cpc'
+				/*views: {
 					'postSubmit-tab': {
-						templateUrl: 'app/post/views/createPost.html',
-						controller: 'CreatePostController',
-						controllerAs: 'cpc'
+						
 					}
-				}
+				}*/
 			}).state('singlePost', {
 				url: '/post/:id',
 				templateUrl: 'app/post/views/singlePost.html',

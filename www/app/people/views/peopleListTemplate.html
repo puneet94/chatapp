@@ -1,12 +1,18 @@
 <div class="list">
-        <div class="item item-avatar item-icon-right" ng-repeat="people in peopleList" ng-if="currentUser._id!=people._id">
-                
+        <div class="item item-avatar item-icon-right" user-page="{{people._id}}" ng-repeat="people in peopleList" ng-if="currentUser._id!=people._id">
                 <img ng-src="{{people.picture}}">
                 <h2>{{people.anonName||people.googleName}}</h2>
                 <p>{{people.status}}</p>
                 <p class="tagContent">
-                          <span class="subdued postTag" ng-click="setPeopleSearch(interest,$event)" ng-repeat="interest in people.interests track by $index">!{{interest}}</span>
-                 </p>
-                 <i class="icon ion-android-more-vertical"  ng-click="showPopover(people,$event)"></i>
+                        <span class="subdued postTag" ng-click="setPeopleSearch(interest,$event)" ng-repeat="interest in people.interests track by $index">!{{interest}}</span>
+                </p>
+                <i ng-if="listType=='requested'" class="icon ion-person-add" cancel-reveal="{{people._id}}" after-callback="removeAfterDecided($index)"></i>
+
+                <i ng-if="listType=='received'" class="icon ion-person-add" decide-reveal="{{people._id}}" after-callback="removeAfterDecided($index)"></i>
+
+                <i ng-if="listType=='revealed' " class="icon ion-chatbubbles" chat-page="{{people._id}}"></i>
+                <i ng-if="listType== 'all'" class="icon ion-chatbubbles" chat-page="{{people._id}}"></i>
+
+                
         </div>
 </div>

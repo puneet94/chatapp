@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.people')
-		.controller('PeopleParentController',['$scope','$state',PeopleParentController]);
+		.controller('PeopleParentController',[PeopleParentController]);
 
-	function PeopleParentController($scope,$state){
+	function PeopleParentController(){
 
 	}
 })(window.angular);

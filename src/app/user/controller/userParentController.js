@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.user').
-		controller('UserParentController',['$state','$auth','userData',UserParentController]);
+		controller('UserParentController',[UserParentController]);
 
-		function UserParentController($state,$auth,userData){
+		function UserParentController(){
 			
 		}
 })(window.angular);

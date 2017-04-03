@@ -6,7 +6,7 @@
 	function config($stateProvider, $authProvider) {
 		var fbClientId = '1134208830041632';
 		var redirectUrl = "http://localhost:8100";
-		var redirectUrl2 = "https://petalchat-imanjithreddy.c9users.io";
+		var redirectUrl2 = "https://banana-surprise-31332.herokuapp.com";
 		var authenticateUrl = redirectUrl2 + '/authenticate';
 		$authProvider.facebook({
 			clientId: fbClientId,

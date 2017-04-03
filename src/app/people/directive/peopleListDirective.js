@@ -1,14 +1,15 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.people')
-		.directive('peopleList', ['$ionicPopover', '$state', 'userData',peopleList]);
+		.directive('peopleList', [ 'userData',peopleList]);
 
 
-	function peopleList($ionicPopover, $state,userData) {
+	function peopleList( userData) {
 		return {
 			restrict: 'E',
 			templateUrl: 'app/people/views/peopleListTemplate.html',
 			scope: {
+				listType: '@listType',
 				peopleList: '=peopleList',
 				peopleSearchTextSubmit: '&peopleSearchTextSubmit'
 			},
@@ -22,24 +23,10 @@
 					}
 					
 				};
-				$ionicPopover.fromTemplateUrl('app/people/views/peoplePopover.html', {
-					scope: $scope,
-				}).then(function(popover) {
-					$scope.popover = popover;
-				});
-				$scope.showPopover = function(people, $event) {
-					$scope.people = people;
-					$scope.popover.show($event, $scope.people);
+				$scope.removeAfterDecided = function(index){
+					$scope.peopleList.splice(index,1);
 				};
-				$scope.popOverClick = function(type, id) {
-					$scope.popover.hide();
-					if (type == 'chat') {
-						$state.go('chatBox', { user: id });
-					}
-					if (type == 'profile') {
-						$state.go('home.user.userPage', { user: id });
-					}
-				};
+				
 			}]
 		};
 	}

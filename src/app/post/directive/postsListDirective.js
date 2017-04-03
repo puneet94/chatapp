@@ -1,10 +1,10 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
-		.directive('postsList', ['$ionicPopover', '$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
+		.directive('postsList', ['$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
 
 
-	function postsList($ionicPopover, $state, userData, postService, upvoteService,$ionicModal) {
+	function postsList( $state, userData, postService, upvoteService,$ionicModal) {
 		return {
 			restrict: 'E',
 			templateUrl: 'app/post/views/postsListTemplate.html',
@@ -12,63 +12,55 @@
 				postsList: '=postsList',
 				postSearchTextSubmit: '&postSearchTextSubmit'
 			},
-			controller: ['$scope', function($scope) {
-				loadPostModal();
-				$scope.getTime = function(time){
+			replace: true,
+			//controller: ['scope', ]
+			link: function (scope) {
+				
+				scope.getTime = function(time){
 					return moment(time).fromNow(true);
 				};
-				$scope.currentUser = userData.getUser();
+				scope.currentUser = userData.getUser();
 
-				$scope.setPostSearch = function(interest){
-					if($scope.postSearchTextSubmit){
-						$scope.postSearchTextSubmit({interest:interest});	
+				scope.setPostSearch = function(interest){
+					if(scope.postSearchTextSubmit){
+						scope.postSearchTextSubmit({interest:interest});	
 					}
 					
 				};
-				$ionicPopover.fromTemplateUrl('app/people/views/peoplePopover.html', {
-					scope: $scope,
-				}).then(function(popover) {
-					$scope.popover = popover;
-				});
-				$scope.showPopover = function(posts, $event) {
-					$scope.posts = posts;
-					$scope.popover.show($event, $scope.posts);
-				};
-				$scope.popOverClick = function(type, id) {
-					$scope.popover.hide();
-					if (type == 'chat') {
-						$state.go('chatBox', { user: id });
-					}
-					if (type == 'profile') {
-						$scope.postModal.userPage(id);
-					}
-				};
+				
 				function userPage(id){
 					$state.go('home.user.userPage', { user: id });
-					if($scope.modal){
-						$scope.modal.hide();
+					if(scope.modal){
+						scope.modal.hide();
 					}
 				
 				}
 				function loadPostModal() {
-					$ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
-						scope: $scope
+					return $ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
+						scope: scope
 					}).then(function(modal) {
-						$scope.modal = modal;
+						scope.modal = modal;
 					});
 				}
-				$scope.postModal = {};
-				$scope.postModal.userPage = userPage;
-				$scope.postModal.getSinglePost = getSinglePost;
+				scope.postModal = {};
+				scope.postModal.userPage = userPage;
+				scope.postModal.getSinglePost = getSinglePost;
 
-				$scope.postModal.submitPostUpvote = submitPostUpvote;
-				$scope.postModal.deletePostUpvote = deletePostUpvote;
-				$scope.postModal.getPostDistance = getPostDistance;
+				scope.postModal.submitPostUpvote = submitPostUpvote;
+				scope.postModal.deletePostUpvote = deletePostUpvote;
 
-				$scope.showPostModal = function(id) {
-					$scope.postModal.id = id;
+				scope.showPostModal = function(id) {
+					scope.postModal.id = id;
 					activate();
-					$scope.modal.show();
+					loadPostModal().then(function(){
+
+						scope.modal.show();	
+					});
+					scope.$on('modal.hidden', function() {
+    						
+    						scope.modal.remove();
+  					});
+					
 				};
 
 				function activate() {
@@ -77,27 +69,18 @@
 				}
 
 				function getSinglePost() {
-					postService.getPost($scope.postModal.id).then(function(response) {
-						$scope.postModal.post = response.data;
-						$scope.postModal.distanceObj = {
-							latitude: $scope.postModal.post.loc[1],
-							longitude: $scope.postModal.post.loc[0],
-							diatance: 0
-						};
-						getPostDistance();
-
+					postService.getPost(scope.postModal.id).then(function(response) {
+						scope.postModal.post = response.data;
 
 					});
 
 				}
 
 				function checkPostUpvote() {
-					upvoteService.getUpvote($scope.postModal.id).then(function(res) {
+					upvoteService.getUpvote(scope.postModal.id).then(function(res) {
 
-						$scope.postModal.postUpvoted = res.data;
-						console.log("post upvote");
-						console.log(res);
-						console.log($scope.postModal.postUpvoted);
+						scope.postModal.postUpvoted = res.data;
+						
 					}).catch(function(err) {
 						console.log("check error");
 						console.log(err);
@@ -105,10 +88,9 @@
 				}
 
 				function submitPostUpvote() {
-					upvoteService.createUpvote($scope.postModal.id).then(function(res) {
+					upvoteService.createUpvote(scope.postModal.id).then(function(res) {
 						checkPostUpvote();
-						console.log("check submit");
-						console.log(res);
+						
 					}).catch(function(err) {
 						console.log("submit error");
 						console.log(err);
@@ -116,21 +98,20 @@
 				}
 
 				function deletePostUpvote() {
-					upvoteService.deleteUpvote($scope.postModal.id).then(function(res) {
+					upvoteService.deleteUpvote(scope.postModal.id).then(function(res) {
 						checkPostUpvote();
-						console.log("delete ");
-						console.log(res);
+						
 					}).catch(function(err) {
-						console.log("delete error");
-						console.log(err);
+						
+						window.alert(err);
 					});
 				}
 
-				function getPostDistance() {
-					postService.getDistance($scope.postModal.distanceObj);
-				}
+				
 
-			}]
+			}
 		};
 	}
+
+	
 })(window.angular);

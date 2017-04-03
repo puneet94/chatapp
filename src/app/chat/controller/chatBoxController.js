@@ -2,9 +2,9 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', '$state',ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload','$ionicLoading',ChatBoxController]);
 
-	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$state) {
+	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$ionicLoading) {
 		var cbc = this;
 
 		cbc.currentUser = userData.getUser()._id;
@@ -37,7 +37,7 @@
 		}
 
 		function scrollBottom() {
-			cbc.messageLoading = false;
+			//cbc.messageLoading = false;
 			$timeout(function() {
 				$ionicScrollDelegate.scrollBottom(true);
 			});
@@ -56,6 +56,7 @@
 			}).finally(function() {
 				scrollBottom();
 				$scope.$broadcast('scroll.refreshComplete');
+				$ionicLoading.hide();
 			});
 
 		}
@@ -93,23 +94,27 @@
 			Socket.on('messageReceived', function(message) {
 				scrollBottom();
 				cbc.chatList.push(message);
+				cbc.messageLoading = false;
 			});
 			Socket.on('messageSaved', function(message) {
 				scrollBottom();
 				cbc.chatList.push(message);
+				cbc.messageLoading = false;
 			});
 		}
 
 		cbc.clickSubmit = function() {
+			cbc.messageLoading = true;
 			cbc.focusInput = true;
 
-			/*if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
+			if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
 				window.cordova.plugins.Keyboard.show();
-			}*/
-			cbc.messageLoading = true;
+			}
+			scrollBottom();
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
 				cbc.myMsg = '';
+				
 				scrollBottom();
 			}).catch(function(err) {
 				window.alert(JSON.stringify(err));
@@ -120,6 +125,7 @@
 
 
 		cbc.submitUpload = function() {
+			cbc.messageLoading = true;
 			cbc.file.upload = Upload.upload({
 				url: homeService.baseURL + 'upload/singleUpload',
 				data: { file: cbc.file }
@@ -132,7 +138,7 @@
 				var chatObj = { 'message': cbc.uploadedImage, receiver: $stateParams.user, 'roomId': cbc.chatRoomId, type: 'img' };
 				chatService.sendChatMessage(chatObj).then(function(res) {
 					scrollBottom();
-
+					
 				}).catch(function(err) {
 
 					window.alert(err);
@@ -155,17 +161,16 @@
 		};
 		cbc.leaveChatBox = function(){
 			Socket.emit('removeFromRoom', { 'roomId': cbc.chatRoomId });
+			
 			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
-				console.log("update chat");
-				console.log(res);
 			}).catch(function(err){
 				console.log(err);
 				window.alert(JSON.stringify(err));
 			}).finally(function(){
 				
-				$state.go('home.chat.all',{},{reload:true});
+				
 			});
-			
+			window.history.back();
 		};
 
 	}

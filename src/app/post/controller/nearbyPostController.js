@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('NearbyPostController',['$scope','$state','postService',NearbyPostController]);
+		.controller('NearbyPostController',['$scope','$state','postService','$ionicLoading',NearbyPostController]);
 
-	function NearbyPostController($scope,$state,postService){
+	function NearbyPostController($scope,$state,postService,$ionicLoading){
 		var apc = this;
 		apc.getNearbyPosts = getNearbyPosts;
 		apc.pullRefreshPosts = pullRefreshPosts;
@@ -42,6 +42,7 @@
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
 			});
 
 

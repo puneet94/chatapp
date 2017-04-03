@@ -1,9 +1,9 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
-		.controller('AllPostController', ['$scope', '$state', 'postService', AllPostController]);
+		.controller('AllPostController', ['$scope', '$state', 'postService','$ionicLoading', AllPostController]);
 
-	function AllPostController($scope, $state, postService) {
+	function AllPostController($scope, $state, postService,$ionicLoading) {
 		var apc = this;
 		apc.getAllPosts = getAllPosts;
 		apc.pullRefreshPosts = pullRefreshPosts;
@@ -31,8 +31,10 @@
 			if(interest){
 				apc.postSearchText = interest;	
 			}
+			if(apc.postSearchText){
+				activate();	
+			}
 			
-			activate();
 		}
 		function loadMorePosts() {
 			apc.params.page += 1;
@@ -40,8 +42,14 @@
 		}
 
 		function getAllPosts() {
-
+			apc.noPosts = false;	
 			postService.getAllPosts(apc.params).then(function(response) {
+				if(!response.data.total){
+					apc.noPosts = true;
+				}
+				else{
+					apc.noPosts = false;	
+				}
 				angular.forEach(response.data.docs, function(value) {
 					apc.postsList.push(value);
 				});
@@ -58,6 +66,7 @@
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
 			});
 
 

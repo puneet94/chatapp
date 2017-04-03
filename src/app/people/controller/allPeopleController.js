@@ -1,9 +1,9 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.people')
-		.controller('AllPeopleController', ['$scope', '$state', 'peopleService', AllPeopleController]);
+		.controller('AllPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', AllPeopleController]);
 
-	function AllPeopleController($scope, $state, peopleService) {
+	function AllPeopleController($scope, $state, peopleService,$ionicLoading) {
 		var apc = this;
 		apc.getAllPeople = getAllPeople;
 		apc.pullRefreshPeople = pullRefreshPeople;
@@ -51,6 +51,7 @@
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
 			});
 
 		}

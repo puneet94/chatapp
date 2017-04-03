@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('PostParentController',['$scope','$state',PostParentController]);
+		.controller('PostParentController',[PostParentController]);
 
-	function PostParentController($scope,$state){
+	function PostParentController(){
 		
 	}
 })(window.angular);

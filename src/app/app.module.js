@@ -2,7 +2,7 @@
 
 	'use strict';
 
-	var app = angular.module('petal', ['ui.router', 'ionic','ionic-material', 'satellizer', 'ngFileUpload', 'btford.socket-io',
+	var app = angular.module('petal', ['ionic', 'satellizer', 'ngFileUpload', 'btford.socket-io',
 		'ngCordova','toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
 	]);
 	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider',
@@ -11,7 +11,8 @@
 			$urlRouterProvider.otherwise('/home/post/all');
 		}
 	]);
-	app.run(['$rootScope', '$state', '$ionicPlatform', function($rootScope, $state, $ionicPlatform) {
+	app.run(['$rootScope', '$state', '$ionicPlatform','$ionicLoading' ,function($rootScope, $state, $ionicPlatform,$ionicLoading) {
+		
 		$ionicPlatform.ready(function() {
 			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 			// for form inputs)
@@ -24,8 +25,15 @@
 				// org.apache.cordova.statusbar required
 				StatusBar.styleDefault();
 			}
+			
+
+					
 		});
 
+		$rootScope.$on('$stateChangeStart', function() {
+			
+			$ionicLoading.show();
+		});
 		/*$rootScope.$on('$stateChangeError', function() {
 
 			//hide loading gif

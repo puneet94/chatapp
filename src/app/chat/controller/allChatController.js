@@ -1,9 +1,9 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.chat')
-		.controller('AllChatController', ['$scope', '$state', 'chatService', AllChatController]);
+		.controller('AllChatController', ['$scope', '$state', 'chatService','$ionicLoading', AllChatController]);
 
-	function AllChatController($scope, $state,chatService) {
+	function AllChatController($scope, $state,chatService,$ionicLoading) {
 		var acc = this;
 		acc.params = {
 			page: 1,
@@ -35,6 +35,8 @@
 					acc.chatRoomsList.push(value);
 				});
 				console.log(acc.chatRoomsList);
+			}).finally(function(){
+				$ionicLoading.hide();
 			});
 		}
 

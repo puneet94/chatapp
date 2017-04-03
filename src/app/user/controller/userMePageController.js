@@ -1,9 +1,9 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.user').
-	controller('UserMePageController', ['$scope', '$state', '$auth', 'homeService','userData', '$ionicModal', 'userService', 'peopleService', 'Upload','postService', UserMePageController]);
+	controller('UserMePageController', ['$scope', '$state', '$auth', 'homeService','userData', '$ionicModal', 'userService', 'peopleService', 'Upload','postService','$window', '$ionicLoading',UserMePageController]);
 
-	function UserMePageController($scope, $state, $auth, homeService,userData, $ionicModal, userService, peopleService, Upload,postService) {
+	function UserMePageController($scope, $state, $auth, homeService,userData, $ionicModal, userService, peopleService, Upload,postService,$window,$ionicLoading) {
 
 		var umpc = this;
 		umpc.logout = logout;
@@ -11,8 +11,11 @@
 		umpc.activeTab = 1;
 		umpc.activateTab = activateTab;
 		umpc.isTabActive = isTabActive;
+		umpc.openFacebook = openFacebook;
 		activate();
-
+		function openFacebook(id){
+			$window.open('https://www.facebook.com/'+id, '_system');
+		}
 		function getUser() {
 			userData.setUser().then(function() {
 				umpc.user = userData.getUser();
@@ -21,6 +24,8 @@
 					$scope.editForm.user.interests = '!' + umpc.user.interests.join('!');
 				}
 
+			}).finally(function(){
+				$ionicLoading.hide();
 			});
 
 		}

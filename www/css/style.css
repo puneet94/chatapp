@@ -18,38 +18,28 @@
   float: right;
   border-color: white; }
 
-.image {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  clear: both;
-  margin: 0 10px; }
-  .image img {
-    width: 100%;
-    height: 100%; }
-
 .you p {
-  float: right;
-  margin-right: 5px;
-  background-color: #007AFF;
-  padding: 10px;
-  border: 1px solid #007AFF;
-  border-radius: 5px;
-  color: white; }
-
-.you .image {
-  float: right; }
-
-.me p {
   float: left;
-  margin-left: 5px;
+  margin-right: 5px;
   background-color: #eee;
   padding: 10px;
   border: 1px solid #eee;
   border-radius: 5px; }
 
-.me .image {
+.you img {
   float: left; }
+
+.me p {
+  float: right;
+  color: white;
+  border: 1px solid #007AFF;
+  margin-left: 5px;
+  background-color: #007AFF;
+  padding: 10px;
+  border-radius: 5px; }
+
+.me img {
+  float: right; }
 
 .logoIcon {
   background-image: url("/img/logo.png");
@@ -206,31 +196,53 @@
 h1, h2, h3, h4, h5, h6 {
   font-family: 'COB', sans-serif !important; }
 
+.material-card {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); }
+
+.material-card2 {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
+
+.imageGray {
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: grayscale(100%);
+  filter: gray; }
+
+a {
+  text-decoration: none; }
+
+.buttonSearch {
+  padding-top: 10px; }
+
 .postTag {
   margin-right: 5px;
   color: blue; }
 
+.postTabs {
+  color: black; }
+
 .singlePostContainer {
   padding-left: 0px;
   padding-bottom: 0px; }
+  .singlePostContainer .postUserName a {
+    font-size: 17px; }
   .singlePostContainer .postUserImage {
-    width: 85%;
-    height: 40px;
-    border: 1px solid #eee;
-    border-radius: 5px; }
+    max-width: 50px !important;
+    max-height: 45px !important;
+    border-radius: 5px !important; }
   .singlePostContainer .postTag {
-    color: blue;
+    color: rgba(0, 0, 0, 0.5);
     margin-right: 5px; }
   .singlePostContainer .tagContent {
     margin-top: 5px; }
   .singlePostContainer .postInfo {
-    padding: 0;
-    margin-top: 15px;
-    font-size: 14px; }
-    .singlePostContainer .postInfo i {
-      color: blue; }
+    padding: 0; }
     .singlePostContainer .postInfo .infoValue {
-      margin-left: 2px; }
+      margin-left: 2px;
+      color: black; }
+    .singlePostContainer .postInfo .infoViews {
+      color: red; }
 
 .singlePostContent span {
   font-size: 16px; }

@@ -87,7 +87,7 @@
 		function getDistance(posObj) {
 			var lat1 = posObj.latitude;
 			var lon1 = posObj.longitude;
-			userLocationService.getUserLocation().then(function(position) {
+			return userLocationService.getUserLocation().then(function(position) {
 				var lat2 = position.latitude;
 				var lon2 = position.longitude;
 				var R = 6371; // Radius of the earth in km
@@ -99,7 +99,7 @@
 					Math.sin(dLon / 2) * Math.sin(dLon / 2);
 				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 				var d = R * c; // Distance in km
-				posObj.distance = Math.ceil(d);
+				return Math.ceil(d);
 			}).catch(function(err){
 				console.log(err);
 			});

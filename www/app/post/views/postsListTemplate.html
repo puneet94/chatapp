@@ -1,45 +1,39 @@
 <div class="list ">
-<div class="card" ng-repeat="post in postsList track by post._id">
-        
-
-  <div class="item item-avatar">
-    <img class="postUserImage" ng-src="{{post.user.picture}}">
-    <h2>{{post.user.anonName}}</h2>
-                                        <p class="tagContent">
-                                                <span class="subdued postTag" ng-click="setPostSearch(interest)" ng-repeat="interest in post.interests track by $index">!{{interest}}</span>
-                                        </p>
-  </div>
-
-  <div class="item item-body  item-text-wrap">
-    <div ng-click="showPostModal(post._id)">
-                                        <p class="singlePostContent">
-                                                <span ng-bind="post.content | limitTo:150">
+        <div class="card singlePostContainer material-card2" ng-repeat="post in postsList track by post._id">
+                <div class="item item-avatar item-icon-right">
+                        <img class="postUserImage imageGray" ng-src="{{post.user.picture}}">
+                        <h2 class="postUserName"><a ui-sref="home.user.userPage({user:post.user._id})">{{post.user.anonName}}</a></h2>
+                        <p class="tagContent">
+                                <span class="subdued postTag" ng-click="setPostSearch(interest)" ng-repeat="interest in post.interests track by $index">!{{interest}}</span>
+                        </p>
+                        <distance-view position-cords="post.loc"> </distance-view>
+                </div>
+                <div class="item item-body  item-text-wrap">
+                        <img class="full-image imageGray" ng-src="{{post.image}}" ng-if="post.image">
+                        <div ng-click="showPostModal(post._id)">
+                                <p class="singlePostContent">
+                                        <span ng-bind="post.content | limitTo:150">
                                         </span>
-                                                <span ng-if="post.content.length > 150">...</span>
-                                        </p>
-                                        
-                                </div>
-    <p>
-      <a href="#" class="subdued">1 Like</a>
-      <a href="#" class="subdued">5 Comments</a>
-    </p>
-  </div>
-   <div class="item tabs tabs-secondary tabs-icon-left white-tabs">
-      <a class="tab-item white-tab-text" href="#">
-        <i class="icon ion-android-favorite-outline"></i>
-                                                <span class="infoValue">{{post.upvotesLength}}</span>
-      </a>
-      <a class="tab-item white-tab-text" href="#">
-        <i class="icon ion-eye"></i>
-                                                <span class="infoValue">{{post.views}}</span>
-      </a>
-      <a class="tab-item white-tab-text" href="#">
-        <i class="icon ion-android-time"></i>
-                                                <span class="infoValue">{{getTime(post.time)}}</span>
-      </a>
-    </div>
-</div>
-</div><!--
+                                        <span ng-if="post.content.length > 150">...</span>
+                                </p>
+                        </div>
+                </div>
+                <div class="item tabs tabs-striped postInfo postTabs tabs-color-dark tabs-icon-left ">
+                        <div class="tab-item postTabs infoViews"  >
+                                <i class="icon ion-android-favorite-outline"></i>
+                                <span class="infoValue">{{post.upvotesLength}}</span>
+                        </div>
+                        <div class="tab-item postTabs" >
+                                <i class="icon ion-eye"></i>
+                                <span class="infoValue">{{post.views}}</span>
+                        </div>
+                        <div class="tab-item postTabs" >
+                                <i class="icon ion-android-time"></i>
+                                <span class="infoValue">{{getTime(post.time)}}</span>
+                        </div>
+                </div>
+        </div>
+        <!--
 <div class="list">
         <div class=" item item-text-wrap singlePostContainer" ng-repeat="post in postsList track by post._id">
                 <div class="row">
@@ -56,24 +50,24 @@
                                 <div ng-click="showPostModal(post._id)">
                                         <p class="singlePostContent">
                                                 <span ng-bind="post.content | limitTo:150">
-					</span>
+                                        </span>
                                                 <span ng-if="post.content.length > 150">...</span>
                                         </p>
                                         
                                 </div>
                                 <div class="row postInfo">
-                                	<div class="col">
-                                		<i class="icon ion-android-favorite-outline"></i>
-                                		<span class="infoValue">{{post.upvotesLength}}</span>
-                                	</div>
-                                	<div class="col">
-                                		<i class="icon ion-eye"></i>
-                                		<span class="infoValue">{{post.views}}</span>
-                                	</div>
-                                	<div class="col">
-                                		<i class="icon ion-android-time"></i>
-                                		<span class="infoValue">{{getTime(post.time)}}</span>
-                                	</div>
+                                        <div class="col">
+                                                <i class="icon ion-android-favorite-outline"></i>
+                                                <span class="infoValue">{{post.upvotesLength}}</span>
+                                        </div>
+                                        <div class="col">
+                                                <i class="icon ion-eye"></i>
+                                                <span class="infoValue">{{post.views}}</span>
+                                        </div>
+                                        <div class="col">
+                                                <i class="icon ion-android-time"></i>
+                                                <span class="infoValue">{{getTime(post.time)}}</span>
+                                        </div>
                                 </div>
                         </div>
                 </div>
@@ -97,3 +91,5 @@ previous code
 </span>
 </p>
 </div>-->
+
+</div>

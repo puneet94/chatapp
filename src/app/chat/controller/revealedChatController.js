@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.chat')
-		.controller('RevealedChatController',['$scope','$state','chatService',RevealedChatController]);
+		.controller('RevealedChatController',['$scope','$state','chatService','$ionicLoading',RevealedChatController]);
 
-	function RevealedChatController($scope,$state,chatService){
+	function RevealedChatController($scope,$state,chatService,$ionicLoading){
 		var acc = this;
 		acc.params = {
 			page: 1,
@@ -34,7 +34,9 @@
 				angular.forEach(response.data.docs, function(value) {
 					acc.chatRoomsList.push(value);
 				});
-			});
+			}).finally(function(){
+					$ionicLoading.hide();
+				});
 		}
 
 		function activate() {
