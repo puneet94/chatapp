@@ -27,12 +27,13 @@
 					}
 					
 				};
-				
+				scope.userPage = userPage;
 				function userPage(id){
+					scope.modal.hide();
 					$state.go('home.user.userPage', { user: id });
-					if(scope.modal){
-						scope.modal.hide();
-					}
+					
+						
+					
 				
 				}
 				function loadPostModal() {
@@ -44,14 +45,10 @@
 				}
 				scope.postModal = {};
 				scope.postModal.userPage = userPage;
-				scope.postModal.getSinglePost = getSinglePost;
+				
 
-				scope.postModal.submitPostUpvote = submitPostUpvote;
-				scope.postModal.deletePostUpvote = deletePostUpvote;
-
-				scope.showPostModal = function(id) {
-					scope.postModal.id = id;
-					activate();
+				scope.showPostModal = function(post) {
+					scope.postModal.post = post;
 					loadPostModal().then(function(){
 
 						scope.modal.show();	
@@ -63,13 +60,18 @@
 					
 				};
 
+				/*
+				scope.postModal.getSinglePost = getSinglePost;
+
+				scope.postModal.submitPostUpvote = submitPostUpvote;
+				scope.postModal.deletePostUpvote = deletePostUpvote;
 				function activate() {
 					getSinglePost();
 					checkPostUpvote();
 				}
-
+				
 				function getSinglePost() {
-					postService.getPost(scope.postModal.id).then(function(response) {
+					postService.getPost(scope.postModal.post.id).then(function(response) {
 						scope.postModal.post = response.data;
 
 					});
@@ -77,10 +79,10 @@
 				}
 
 				function checkPostUpvote() {
-					upvoteService.getUpvote(scope.postModal.id).then(function(res) {
+					upvoteService.getUpvote(scope.postModal.post._id).then(function(res) {
 
 						scope.postModal.postUpvoted = res.data;
-						
+					
 					}).catch(function(err) {
 						console.log("check error");
 						console.log(err);
@@ -88,7 +90,7 @@
 				}
 
 				function submitPostUpvote() {
-					upvoteService.createUpvote(scope.postModal.id).then(function(res) {
+					upvoteService.createUpvote(scope.postModal.post._id).then(function(res) {
 						checkPostUpvote();
 						
 					}).catch(function(err) {
@@ -98,7 +100,7 @@
 				}
 
 				function deletePostUpvote() {
-					upvoteService.deleteUpvote(scope.postModal.id).then(function(res) {
+					upvoteService.deleteUpvote(scope.postModal.post._id).then(function(res) {
 						checkPostUpvote();
 						
 					}).catch(function(err) {
@@ -106,7 +108,7 @@
 						window.alert(err);
 					});
 				}
-
+				*/
 				
 
 			}

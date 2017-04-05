@@ -8,15 +8,16 @@
                         </p>
                         <distance-view position-cords="post.loc"> </distance-view>
                 </div>
-                <div class="item item-body  item-text-wrap">
-                        <img class="full-image imageGray" ng-src="{{post.image}}" ng-if="post.image">
-                        <div ng-click="showPostModal(post._id)">
-                                <p class="singlePostContent">
+                <div class="item item-body  item-text-wrap singlePostContent" ng-click="showPostModal(post)">
+                        
+                        <div >
+                                <p >
                                         <span ng-bind="post.content | limitTo:150">
                                         </span>
                                         <span ng-if="post.content.length > 150">...</span>
                                 </p>
                         </div>
+                        <img class="full-image postImage imageGray" ng-src="{{post.image}}" ng-if="post.image">
                 </div>
                 <div class="item tabs tabs-striped postInfo postTabs tabs-color-dark tabs-icon-left ">
                         <div class="tab-item postTabs infoViews"  >

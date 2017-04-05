@@ -1,0 +1,41 @@
+<div class="list ">
+        <div class="row" ng-repeat="post in postsList track by post._id">
+                <div class="col col-20">
+                        <img class="postUserImage2 imageGray material-card" ng-src="{{post.user.picture}}">
+                </div>
+                <div class="col">
+                        <div class="item singlePostContainer2 material-card2">
+                                <div class="item item-icon-right">
+                                        <h2 class="postUserName"><a ui-sref="home.user.userPage({user:post.user._id})">{{post.user.anonName}}</a></h2>
+                                        <div class="tagContent item-text-wrap">
+                                                <span class="subdued postTag" ng-click="setPostSearch(interest)" ng-repeat="interest in post.interests track by $index | limitTo:2">!{{interest}}</span>
+                                        </div>
+                                        <distance-view position-cords="post.loc"> </distance-view>
+                                </div>
+                                <div class="item item-body  item-text-wrap">
+                                        <p ng-click="showPostModal(post._id)" class="postTextContent">
+                                                <div class="singlePostContent">
+                                                        <span ng-bind="post.content | limitTo:100"></span>
+                                                        <span ng-if="post.content.length > 100">...</span>
+                                                </div>
+                                        </p>
+                                        <img class="full-image imageGray" ng-src="{{post.image}}" ng-if="post.image" />
+                                </div>
+                                <div class="item tabs tabs-striped postInfo postTabs tabs-color-dark tabs-icon-left ">
+                                        <div class="tab-item postTabs infoViews">
+                                                <i class="icon ion-android-favorite-outline"></i>
+                                                <span class="infoValue">{{post.upvotesLength}}</span>
+                                        </div>
+                                        <div class="tab-item postTabs">
+                                                <i class="icon ion-eye"></i>
+                                                <span class="infoValue">{{post.views}}</span>
+                                        </div>
+                                        <div class="tab-item postTabs">
+                                                <i class="icon ion-android-time"></i>
+                                                <span class="infoValue">{{getTime(post.time)}}</span>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>

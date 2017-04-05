@@ -1,0 +1,14 @@
+<div>
+	<div ng-if="!loadingUpvote && !postUpvoted"  class="postUpvote" ng-click="submitPostUpvote()">
+		<i class="icon ion-android-favorite-outline"></i>
+		<span class="infoValue">{{'  '+upvotesLength}}</span>
+	</div>
+	
+	<div ng-if="!loadingUpvote && postUpvoted" class="postUpvoted" ng-click="deletePostUpvote()" >
+	<i class=" icon ion-android-favorite "></i>
+		<span class="infoValue">{{'  '+upvotesLength}}</span>
+	</div>
+	<div ng-if="loadingUpvote">
+		<ion-spinner class="spinner-asseritve"></ion-spinner>	 
+	</div>
+</div>

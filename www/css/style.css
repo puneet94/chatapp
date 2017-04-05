@@ -202,11 +202,52 @@ h1, h2, h3, h4, h5, h6 {
 .material-card2 {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
 
+.postModalContent .postModalInterests {
+  border-bottom: 1px solid #ddd;
+  margin: -16px;
+  padding: 10px;
+  padding-left: 16px;
+  margin-bottom: 10px; }
+
+.postModalContent .postModalBody {
+  font-size: 18px;
+  text-transform: capitalize; }
+
+.postModalContent .postModalInfo .infoValue {
+  font-size: 24px;
+  padding-left: 2px; }
+
+.postModalContent .postModalInfo .icon {
+  font-size: 24px; }
+
+.postModalContent .postUpvote {
+  color: red; }
+
+.postModalContent .postUpvoted {
+  color: red; }
+
+.heartBeatAnimation {
+  animation: heartbeat 3s infinite; }
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(0.95); }
+  20% {
+    transform: scale(1); }
+  40% {
+    transform: scale(0.95); }
+  60% {
+    transform: scale(1); }
+  80% {
+    transform: scale(0.95); }
+  100% {
+    transform: scale(0.95); } }
+
 .imageGray {
-  -moz-filter: grayscale(100%);
-  -ms-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: grayscale(100%);
+  -moz-filter: grayscale(80%);
+  -ms-filter: grayscale(80%);
+  -o-filter: grayscale(80%);
+  filter: grayscale(80%);
   filter: gray; }
 
 a {
@@ -222,6 +263,9 @@ a {
 .postTabs {
   color: black; }
 
+.tagContent, .postUserName {
+  padding-left: 5px; }
+
 .singlePostContainer {
   padding-left: 0px;
   padding-bottom: 0px; }
@@ -235,17 +279,25 @@ a {
     color: rgba(0, 0, 0, 0.5);
     margin-right: 5px; }
   .singlePostContainer .tagContent {
-    margin-top: 5px; }
+    margin-top: 5px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6); }
   .singlePostContainer .postInfo {
-    padding: 0; }
+    padding: 0;
+    font-size: 24px; }
     .singlePostContainer .postInfo .infoValue {
       margin-left: 2px;
       color: black; }
     .singlePostContainer .postInfo .infoViews {
       color: red; }
 
-.singlePostContent span {
-  font-size: 16px; }
+.singlePostContent {
+  padding-top: 2px; }
+  .singlePostContent .postImage {
+    padding-top: 10px; }
+  .singlePostContent span {
+    font-size: 16px;
+    text-transform: capitalize; }
 
 .center {
   margin-left: auto;

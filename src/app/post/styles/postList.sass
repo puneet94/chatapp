@@ -1,9 +1,49 @@
+.postModalContent
+
+	.postModalInterests
+		border-bottom: 1px solid #ddd
+		margin: -16px
+		padding: 10px
+		padding-left: 16px
+		margin-bottom: 10px
+	.postModalBody
+		font-size: 18px
+		text-transform: capitalize
+	.postModalInfo
+		.infoValue
+			font-size: 24px
+			padding-left: 2px
+		.icon
+			font-size: 24px
+	.postUpvote
+		color: red
+	
+	.postUpvoted
+		color: red
+.heartBeatAnimation
+	animation: heartbeat 3s infinite
+@keyframes heartbeat
+	0%
+		transform: scale( .95)
+	20%
+		transform: scale( 1)
+	40%
+		transform: scale( .95)
+	60%
+		transform: scale( 1)
+	80%
+		transform: scale( .95)
+	100%
+		transform: scale( .95);
+  
+
+
 .imageGray
-	-webkit-filter: grayscale(100%)
-	-moz-filter: grayscale(100%)
-	-ms-filter: grayscale(100%)
-	-o-filter: grayscale(100%)
-	filter: grayscale(100%)
+	-webkit-filter: grayscale(80%)
+	-moz-filter: grayscale(80%)
+	-ms-filter: grayscale(80%)
+	-o-filter: grayscale(80%)
+	filter: grayscale(80%)
 	filter: gray
 a
 	text-decoration: none
@@ -15,7 +55,8 @@ a
 	
 .postTabs
 	color: black
-.tagContent
+.tagContent,.postUserName
+	padding-left: 5px
 	
 .singlePostContainer
 	
@@ -25,9 +66,11 @@ a
 		a
 			font-size: 17px
 	.postUserImage
+
 		max-width: 50px !important
 		max-height: 45px !important
 		border-radius: 5px !important
+		
 		
 	.postTag
 		
@@ -36,13 +79,20 @@ a
 		
 	.tagContent
 		margin-top: 5px
+		font-size: 14px
+		color: rgba(0,0,0,0.6)
 	.postInfo
 		padding: 0
+		font-size: 24px
 		.infoValue
 			margin-left: 2px
 			color: black
 		.infoViews
 			color: red
 .singlePostContent
+	padding-top: 2px
+	.postImage
+		padding-top: 10px
 	span
 		font-size: 16px
+		text-transform: capitalize

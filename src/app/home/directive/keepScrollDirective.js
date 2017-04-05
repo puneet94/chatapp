@@ -5,7 +5,7 @@
 		function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
 			return {
 				restrict: 'A',
-				link: function(scope, element, attrs) {
+				link: function(scope) {
 					scope.$on('$stateChangeStart', function() {
 						ScrollPositions[$state.current.name] = $ionicScrollDelegate.getScrollPosition();
 
@@ -56,7 +56,7 @@
 				imgSmall: '@srcSmall'
 			},
 
-			link: function(scope, elem, attrs) {
+			link: function(scope, elem) {
 				var imgSmall = new Image();
 				var imgLarge = new Image();
 				imgSmall.src = scope.imgSmall;
