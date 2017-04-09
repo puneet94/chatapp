@@ -11,7 +11,7 @@
 		$authProvider.facebook({
 			clientId: fbClientId,
 			url: authenticateUrl + '/auth/facebook',
-			redirectUri: "https://petalchat-imanjithreddy.c9users.io/"
+			redirectUri: "https://banana-surprise-31332.herokuapp.com/"
 		});
 		$authProvider.google({
 			clientId: '742676837265-33jntkd60p87gkrh48nqe6cdd8ntsfl5.apps.googleusercontent.com',

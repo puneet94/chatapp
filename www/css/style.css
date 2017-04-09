@@ -214,11 +214,11 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: capitalize; }
 
 .postModalContent .postModalInfo .infoValue {
-  font-size: 24px;
+  font-size: 18px;
   padding-left: 2px; }
 
 .postModalContent .postModalInfo .icon {
-  font-size: 24px; }
+  font-size: 20px; }
 
 .postModalContent .postUpvote {
   color: red; }
@@ -287,12 +287,17 @@ a {
     font-size: 24px; }
     .singlePostContainer .postInfo .infoValue {
       margin-left: 2px;
-      color: black; }
+      color: black;
+      font-size: 16px; }
+    .singlePostContainer .postInfo .icon {
+      font-size: 19px;
+      color: blue; }
     .singlePostContainer .postInfo .infoViews {
       color: red; }
 
 .singlePostContent {
-  padding-top: 2px; }
+  padding-top: 2px;
+  padding-bottom: 2px; }
   .singlePostContent .postImage {
     padding-top: 10px; }
   .singlePostContent span {

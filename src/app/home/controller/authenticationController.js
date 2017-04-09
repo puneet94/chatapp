@@ -16,16 +16,20 @@
         phc.socialAuthenticate = socialAuthenticate;
 
         function socialAuthenticate(provider) {
+            $ionicLoading.show();
             $auth.authenticate(provider).then(function(response) {
                 
                 userData.setUser(response.data.user);
                 userLocationService.getUserLocation().then(function(){}).catch(function(err){
+                    $ionicLoading.hide();
                     window.alert(JSON.stringify(err));
                 }).finally(function(){
-                    $state.go('home.post.all');    
+                    //$ionicLoading.hide();
+                    $state.go('home.post.nearby');    
                 });
                 
             }).catch(function(err){
+                $ionicLoading.hide();
                 window.alert(JSON.stringify(err));
             });
         }

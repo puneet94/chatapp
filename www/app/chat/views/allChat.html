@@ -6,10 +6,9 @@
                  
                         <img ng-src="{{chatRoom.creator2.picture}}" />
                         <h2 ng-if="!chatRoom.revealed">{{chatRoom.creator2.anonName}}</h2>
-                        <h2 ng-if="chatRoom.revealed">{{chatRoom.creator2.facebookName || chatRoom.creator2.googleName || chatRoom.creator2.displayName||chatRoom.creator2.anonName}}</h2>
                         <p ng-if="chatRoom.lastMessage.type=='img'"><img style="height:50px;width:50%" ng-src="{{chatRoom.lastMessage.message}}"></p>
                         <p ng-if="chatRoom.lastMessage.type!=='img'">{{chatRoom.lastMessage.message}}</p>
-                        <span ng-if="chatRoom.lastMessageTime>chatRoom.lastLoggedOut" class="badge badge-assertive">{{1 }}</span>
+                        <span ng-if="(chatRoom.lastMessageTime>chatRoom.lastLoggedOut) &&(chatRoom.lastMessage.user==chatRoom.creator2._id)" class="badge badge-assertive">{{1 }}</span>
                 </a>
         </div>
 </ion-content>

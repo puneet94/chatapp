@@ -18,21 +18,23 @@
                                 </p>
                         </div>
                         <img class="full-image postImage imageGray" ng-src="{{post.image}}" ng-if="post.image">
+                        <div class="row postInfo">
+                                <div class="col padding">
+                                       <i class="infoViews icon ion-android-favorite"></i>
+                                        <span class="infoValue">{{post.upvotesLength}}</span>
+                                </div>
+                                <div class="col text-left padding">
+                                          <i class="icon ion-eye"></i>
+                                        <span class="infoValue">{{post.views}}</span>
+                                </div>
+                                <div class="col text-right padding">
+                                       <i class="icon ion-android-time"></i>
+                                        <span class="infoValue">{{getTime(post.time)}}</span>
+                                </div>
+                        </div>
                 </div>
-                <div class="item tabs tabs-striped postInfo postTabs tabs-color-dark tabs-icon-left ">
-                        <div class="tab-item postTabs infoViews"  >
-                                <i class="icon ion-android-favorite-outline"></i>
-                                <span class="infoValue">{{post.upvotesLength}}</span>
-                        </div>
-                        <div class="tab-item postTabs" >
-                                <i class="icon ion-eye"></i>
-                                <span class="infoValue">{{post.views}}</span>
-                        </div>
-                        <div class="tab-item postTabs" >
-                                <i class="icon ion-android-time"></i>
-                                <span class="infoValue">{{getTime(post.time)}}</span>
-                        </div>
-                </div>
+                
+                
         </div>
         <!--
 <div class="list">
