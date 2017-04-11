@@ -1,42 +1,44 @@
 <ion-view cache-view="false">
-         <ion-header-bar align-title="center" class="bar bar-header bar-positive">
-          
-
-          <button class="button button-icon ion-arrow-left-c icon " ng-click="cpc.goBack()"></button>
-          <h1 class="title">Create Post</h1>
-          <button class="button  button-balanced" ng-click="cpc.submitPost()" ng-disabled="!cpc.post.content">Submit</button>
+        <ion-header-bar align-title="center" class="bar bar-header bar-positive">
+                <button class="button button-icon ion-arrow-left-c icon " ng-click="cpc.goBack()"></button>
+                <h1 class="title">Create Post</h1>
+                <button class="button  button-balanced" ng-click="cpc.submitPost()" ng-disabled="!cpc.post.content">Submit</button>
         </ion-header-bar>
-        
         <ion-content>
-                {{300-cpc.post.content.length}}
+                <div class="row">
+                        <div class="col col-80 ">Enter Post Content</div>
+                        <div class="col col-20 text-right">{{300-cpc.post.content.length}}</div>
+                        
+                </div>
+                
+                
+                
+                
                 <form>
                         <div class="row">
                                 <div class="col">
                                         <label class="item item-input text">
                                                 <textarea rows="10" ng-model="cpc.post.content">
-                        			</textarea>
+                                                </textarea>
                                         </label>
                                 </div>
                         </div>
                         <div class="row">
                                 <div class="col">
                                         <label class="item item-input text">
-                                                <textarea  ng-model="cpc.post.interests" placeholder="Enter tags !food !work">
+                                                <textarea ng-model="cpc.post.interests" placeholder="Enter tags !food !work">
                                                 </textarea>
                                         </label>
                                 </div>
                         </div>
                         <div>
-                            <img ng-src="{{cpc.post.image}}" width="150" height="150" ng-if="cpc.post.image"/>
-                            <ion-spinner ng-if="cpc.loadingImage" class="spinner-energized"></ion-spinner>
-                            <div>
-                                <button ng-if="!cpc.loadingImage" class="button button-energized" ngf-select="cpc.submitUpload($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB" >Upload Picture</button>
-                            <button class="button button-assertive" ng-if="cpc.post.image" ng-click="cpc.cancelUpload()">Cancel</button>
-                            </div>
+                                <img ng-src="{{cpc.post.image}}" width="150" height="150" ng-if="cpc.post.image" />
+                                <ion-spinner ng-if="cpc.loadingImage" class="spinner-energized"></ion-spinner>
+                                <div>
+                                        <button ng-if="!cpc.loadingImage" class="button button-energized" ngf-select="cpc.submitUpload($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB">Upload Picture</button>
+                                        <button class="button button-assertive" ng-if="cpc.post.image" ng-click="cpc.cancelUpload()">Cancel</button>
+                                </div>
                         </div>
-                       
-                        
-                        
                 </form>
         </ion-content>
 </ion-view>

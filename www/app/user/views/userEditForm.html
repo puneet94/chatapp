@@ -1,23 +1,28 @@
 <ion-modal-view>
-        <ion-header-bar >
-        <div class="buttons">
-            <button class="button-icon ion-arrow-left-c icon"  ng-click="editForm.modal.hide()">
-                </button>    
-        </div>
-        
+        <ion-header-bar>
+                <div class="buttons">
+                        <button class="button-icon ion-arrow-left-c icon" ng-click="editForm.modal.hide()">
+                        </button>
+                </div>
                 <h1 class="title">Edit Profile</h1>
-                
         </ion-header-bar>
         <ion-content class="has-header">
                 <div class="list">
-                        <div class="item item-thumbnail-left">
-                            <img ng-src="{{editForm.user.picture}}" />
-                            <button ng-if="!loadingImage" class="button button-small button-energized" ngf-select="editForm.uploadUserPicture($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB" >
-                                Change picture
-                            </button>
-                            <p class="center">
-                            <ion-spinner ng-if="loadingImage" class="spinner-energized"></ion-spinner>
-                            </p>
+                        <div class="item item-thumbnail-left item-select">
+                                <img ng-src="{{editForm.user.picture}}" />
+                                <p>
+                                        <button ng-if="!loadingImage" class="button button-small button-energized" ngf-select="editForm.uploadUserPicture($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB">
+                                                Change picture
+                                        </button>
+                                </p>
+                                <p class="center" ng-if="loadingImage" >
+                                        <ion-spinner class="spinner-energized"></ion-spinner>
+                                </p>
+                                <select name="userGender" ng-model="editForm.user.gender">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                </select>
                         </div>
                         <!--<div class="item row">
                             <div class="col col-50">
@@ -27,8 +32,6 @@
                               <input type="text" placeholder="Last Name" ng-model="editForm.user.lastName">
                             </div>
                         </div>-->
-                        
-                        
                         <label class="item item-input">
                                 <input type="text" placeholder="Anonymous Name *for all users" ng-model="editForm.user.anonName">
                         </label>
@@ -39,7 +42,7 @@
                                 <input type="text" placeholder="Status" ng-model="editForm.user.status">
                         </label>
                         <label class="item item-input">
-                                <textarea  placeholder="Interests separated by ! Eg: !food !chat" ng-model="editForm.user.interests"></textarea> 
+                                <textarea placeholder="Interests separated by ! Eg: !food !chat" ng-model="editForm.user.interests"></textarea>
                         </label>
                 </div>
                 <button class="button button-outline button-positive center" ng-click="editForm.submitUser()">

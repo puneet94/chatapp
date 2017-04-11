@@ -1,5 +1,5 @@
 <ion-tabs class="tabs-icon-top tabs-light slide-left-right"  on-swipe-right="hc.goBack()" on-swipe-left="hc.goForward()">
-        <ion-tab title="Home" icon="ion-home" ui-sref="home.post.all">
+        <ion-tab title="Home" icon="ion-home" ui-sref="home.post.nearby">
                 <ion-nav-view name="post-tab"></ion-nav-view>
         </ion-tab>
         <ion-tab title="Profile"  icon="ion-person" ui-sref="home.user.userMePage">
@@ -9,11 +9,14 @@
                 <!--<ion-nav-view name="postSubmit-tab"></ion-nav-view>-->
         </ion-tab>
 
-        <ion-tab title="People"  icon="ion-ios-people" ui-sref="home.people.all">
+        <ion-tab title="People"  icon="ion-ios-people" ui-sref="home.people.nearby">
                 <ion-nav-view name="people-tab"></ion-nav-view>
         </ion-tab>
         <ion-tab title="Chat"  icon="ion-chatboxes" ui-sref="home.chat.all"  on-select="hc.chatClicked()" badge="hc.badgeValue">
                 <ion-nav-view name="chat-tab"></ion-nav-view>
+        </ion-tab>
+         <ion-tab hidden="true">
+                <ion-nav-view name="extra-tab"></ion-nav-view>
         </ion-tab>
 
         

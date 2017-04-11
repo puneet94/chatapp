@@ -15,29 +15,19 @@
 				}
 
 			}).
-			state('home.user.userPage', {
+			state('home.userPage', {
 				url: '/userPage/:user',
 				resolve: {
 					friends: [ '$stateParams', 'revealService', friends]
 				},
 				views: {
-					'user-tab': {
+					'extra-tab': {
 						templateUrl: 'app/user/views/userProfilePage.html',
 						controller: 'UserPageController',
 						controllerAs: 'upc'
 					}
 				},
 				
-
-			}).state('home.user.userPage.posts', {
-				url: '/posts',
-				views: {
-					'user-posts': {
-						templateUrl: 'app/user/views/userProfilePagePosts.html',
-						controller: 'UserPagePostsController',
-						controllerAs: 'uppc'
-					}
-				}
 
 			})
 			/*state('tabs.userProfileSettings', {
@@ -65,6 +55,18 @@
 						templateUrl: 'app/user/views/userMePage.html',
 						controller: 'UserMePageController',
 						controllerAs: 'umpc',
+						
+					}
+				}
+
+			})
+			.state('home.userEditPage', {
+				url: '/userEditPage',
+				views: {
+					'extra-tab': {
+						templateUrl: 'app/user/views/userEditPage.html',
+						controller: 'UserEditPageController',
+						controllerAs: 'uepc',
 						
 					}
 				}

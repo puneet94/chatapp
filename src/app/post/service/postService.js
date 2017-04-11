@@ -22,6 +22,10 @@
 		function getNearbyPosts(params) {
 			params.nearby = true;
 			var defer = $q.defer();
+			if(params.page===0){
+				userLocationService.setUserLocation();
+      			}
+
 			userLocationService.getUserLocation().then(function(position) {
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
@@ -33,6 +37,9 @@
 			}).catch(function(err) {
 				defer.reject(err);
 			});
+
+
+
 
 			return defer.promise;
 
@@ -54,10 +61,10 @@
 			userLocationService.getUserLocation().then(function(position) {
 				post.latitude = position.latitude;
 				post.longitude = position.longitude;
-				
-				
+
+
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
-					
+
 					defer.resolve(response);
 				}).catch(function(err) {
 					defer.reject(err);
@@ -100,7 +107,7 @@
 				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 				var d = R * c; // Distance in km
 				return Math.ceil(d);
-			}).catch(function(err){
+			}).catch(function(err) {
 				console.log(err);
 			});
 

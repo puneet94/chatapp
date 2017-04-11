@@ -26,7 +26,6 @@
 		}
 		function getNearbyPeople() {
 			peopleService.getNearbyUsers(apc.params).then(function(response) {
-				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
@@ -34,9 +33,16 @@
 				if (response.data.total > apc.peopleList.length) {
 					apc.canLoadMoreResults = true;
 				}
+				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
 				console.log(err);
-				window.alert(JSON.stringify(err));
+				if(err.code==3){
+					window.alert("Unable to access your location.Make sure location is turned on.");
+				}
+				else if(err.code==2 || err.code==1){
+					window.alert("Please enable location or gps");
+				}
+				
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');

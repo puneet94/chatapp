@@ -29,7 +29,7 @@
 			},
 			link: function(scope, elem) {
 				elem.bind('click', function(event) {
-					$state.go('home.user.userPage', { user: scope.userPage });
+					$state.go('home.userPage', { user: scope.userPage });
 					event.stopPropagation();
 				});
 			}

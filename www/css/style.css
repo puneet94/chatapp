@@ -11,12 +11,16 @@
 .leftChat {
   clear: both;
   float: left;
-  border-color: white; }
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
 
 .rightChat {
   clear: both;
   float: right;
-  border-color: white; }
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
 
 .you p {
   float: left;
@@ -24,7 +28,8 @@
   background-color: #eee;
   padding: 10px;
   border: 1px solid #eee;
-  border-radius: 5px; }
+  border-radius: 5px;
+  width: 100%; }
 
 .you img {
   float: left; }
@@ -36,6 +41,7 @@
   margin-left: 5px;
   background-color: #007AFF;
   padding: 10px;
+  width: 100%;
   border-radius: 5px; }
 
 .me img {
@@ -302,7 +308,8 @@ a {
     padding-top: 10px; }
   .singlePostContent span {
     font-size: 16px;
-    text-transform: capitalize; }
+    text-transform: capitalize;
+    color: rgba(0, 0, 0, 0.85); }
 
 .center {
   margin-left: auto;

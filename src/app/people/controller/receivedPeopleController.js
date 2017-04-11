@@ -24,11 +24,12 @@
 
 		function getReceivedPeople() {
 			peopleService.getReceivedUsers(apc.params).then(function(response) {
-				console.log("respnse");
+				console.log("response");
 				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
+				console.log(apc.peopleList);
 				apc.initialSearchCompleted = true;
 				if (response.data.total > apc.peopleList.length) {
 					apc.canLoadMoreResults = true;
@@ -49,7 +50,7 @@
 			apc.initialSearchCompleted = false;
 			apc.peopleList = [];
 			apc.params = {
-				limit: 1,
+				limit: 10,
 				page: 1
 			};
 			getReceivedPeople();

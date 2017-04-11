@@ -27,7 +27,7 @@
 				limit: 100,
 				user: $stateParams.user
 			};
-			postService.getAllPosts(upc.params).then(function(res){
+			postService.getLatestPosts(upc.params).then(function(res){
 				upc.postsList = res.data.docs;
 			});
 		}

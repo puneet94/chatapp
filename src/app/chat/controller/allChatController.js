@@ -29,12 +29,12 @@
 
 		function getAllChatRooms() {
 			chatService.getAllChatRooms(acc.params).then(function(response){
-				console.log("all chats");
+				
 
 				angular.forEach(response.data.docs, function(value) {
 					acc.chatRoomsList.push(value);
 				});
-				console.log(acc.chatRoomsList);
+				
 			}).finally(function(){
 				$ionicLoading.hide();
 			});

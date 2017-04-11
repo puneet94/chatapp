@@ -24,6 +24,8 @@
 					$scope.editForm.user.interests = '!' + umpc.user.interests.join('!');
 				}
 
+			}).catch(function(err){
+				window.alert(err);
 			}).finally(function(){
 				$ionicLoading.hide();
 			});

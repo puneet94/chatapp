@@ -15,12 +15,14 @@
 			$http.post(base_url + 'notification/register', {'device_token': device_token})
 				.then(function(response){
 					
-					$ionicLoading.hide();
+					
 					deferred.resolve(response);
 					
 				})
 				.catch(function(data){
 					deferred.reject(data);	
+				}).finally(function(){
+					$ionicLoading.hide();
 				});
 			
 

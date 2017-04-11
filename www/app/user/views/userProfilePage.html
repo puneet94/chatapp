@@ -1,11 +1,11 @@
-
+<ion-view>
 <ion-header-bar align-title="center" class="bar-positive">
         <div class="buttons">
                 <button class="button  icon ion-chevron-left  button-icon" ng-click="upc.goBack()"></button>
         </div>
-        <h1 class="title">{{upc.user.anonName}}</h1>
-</ion-header-bar>
-<ion-content class="has-header">
+        <h1 class="title">{{upc.user.anonName+' '}}<small>({{upc.user.gender[0]||'O'}})</small></h1>
+        </ion-header-bar>
+        <ion-content class="has-header">
         <div class="userHeaderSection">
                 <div class="row row-center text-center">
                         <div class="col-center col-25 text-right">
@@ -85,3 +85,4 @@
                 </div>
         </div>
 </ion-content>
+</ion-view>

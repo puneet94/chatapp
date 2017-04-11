@@ -2,7 +2,8 @@
 <ion-header-bar align-title="left" class="bar-positive">
 	<h1 class="title">{{umpc.user.googleName||umpc.user.facebookName}}</h1>
 	<div class="buttons">
-    		<button class="button-icon icon ion-compose" ng-click="editForm.modal.show()"></button>
+    		<!--<button class="button-icon icon ion-compose" ng-click="editForm.modal.show()"></button>-->
+                        <button class="button-icon icon ion-compose" ui-sref="home.userEditPage"></button>
   	</div>
 </ion-header-bar>
 <ion-content class="has-header">

@@ -43,6 +43,9 @@
     }
 
     function getNearbyUsers(params) {
+      if(params.page===0){
+        userLocationService.setUserLocation();
+      }
       params.nearby = true;
       var defer = $q.defer();
       userLocationService.getUserLocation().then(function(position) {

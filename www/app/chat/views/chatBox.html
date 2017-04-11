@@ -20,11 +20,11 @@
                 <ion-refresher pulling-text="Pull to refresh..." on-refresh="cbc.loadMoreChats()">
                 </ion-refresher>
                 <div ng-cloak class="chatBoxPage" class="list">
-                        <div ng-repeat="chat in cbc.chatList" class="item" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
+                        <div ng-repeat="chat in cbc.chatList" class="item item-text-wrap" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
                                
                                 <div ng-class="chat.user._id==cbc.currentUser ? 'me' : 'you'">
                                         <img class="chatImage" ng-click="cbc.showImageModal(chat.message)" width="130" height="140" ng-src="{{chat.message}}" ng-if="chat.type=='img'"/>
-                                        <p ng-if="chat.type!='img'">{{chat.message}}</p>
+                                        <p ng-if="chat.type!='img'" class="item-text-wrap">{{chat.message}}</p>
                                 </div>
                         </div>
                         <div style="clear:both;position: relative;" class="msgBox">

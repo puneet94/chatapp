@@ -11,7 +11,7 @@
 			$urlRouterProvider.otherwise('/home/post/nearby');
 		}
 	]);
-	app.run(['$rootScope', '$state', '$ionicPlatform', '$ionicLoading', 'RequestsService','$cordovaPushV5', function($rootScope, $state, $ionicPlatform, $ionicLoading, RequestsService,$cordovaPushV5) {
+	app.run(['$rootScope', '$state', '$ionicPlatform', '$ionicLoading', 'RequestsService', '$cordovaPushV5', '$ionicHistory',function($rootScope, $state, $ionicPlatform, $ionicLoading, RequestsService, $cordovaPushV5,$ionicHistory) {
 
 		$ionicPlatform.ready(function() {
 			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -27,12 +27,34 @@
 			}
 
 			notificationFunction();
+			backButtonExit();
 			$rootScope.$on('$stateChangeStart', function() {
 				$ionicLoading.show();
 			});
 		});
 
-		
+		function backButtonExit() {
+			$ionicPlatform.registerBackButtonAction(function(e) {
+				if ($rootScope.backButtonPressedOnceToExit) {
+					ionic.Platform.exitApp();
+				} else if ($ionicHistory.backView()) {
+					$ionicHistory.goBack();
+				} else {
+					$rootScope.backButtonPressedOnceToExit = true;
+					window.plugins.toast.showShortCenter(
+						"Press back button again to exit",
+						function(a) {},
+						function(b) {}
+					);
+					window.setTimeout(function() {
+						$rootScope.backButtonPressedOnceToExit = false;
+					}, 2000);
+				}
+				e.preventDefault();
+				return false;
+			}, 101);
+		}
+
 		function notificationFunction() {
 			var options = {
 				android: {
@@ -55,14 +77,14 @@
 				// register to get registrationId
 				$cordovaPushV5.register().then(function(registrationId) {
 					RequestsService.register(registrationId).then(function(response) {
-								
-							});
+
+					});
 				});
 			});
 
-			
+
 			$rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
-				
+
 				// data.message,
 				// data.title,
 				// data.count,

@@ -36,8 +36,15 @@
 				else{
 					apc.canLoadMoreResults = false;	
 				}
+				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
 				console.log(err);
+				if(err.code==3){
+					window.alert("Unable to acces your location");
+				}
+				else if(err.code==2 || err.code==1){
+					window.alert("Please enable location or gps");
+				}
 
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
@@ -53,7 +60,7 @@
 			apc.initialSearchCompleted = false;
 			apc.postsList = [];
 			apc.params = {
-				limit: 3,
+				limit: 10,
 				page: 1,
 				distance: apc.distance
 			};

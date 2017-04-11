@@ -18,19 +18,15 @@
         function socialAuthenticate(provider) {
             $ionicLoading.show();
             $auth.authenticate(provider).then(function(response) {
-                
                 userData.setUser(response.data.user);
-                userLocationService.getUserLocation().then(function(){}).catch(function(err){
-                    $ionicLoading.hide();
-                    window.alert(JSON.stringify(err));
-                }).finally(function(){
-                    //$ionicLoading.hide();
-                    $state.go('home.post.nearby');    
-                });
-                
+                userLocationService.setUserLocation();
+                $state.go('home.post.nearby'); 
             }).catch(function(err){
+                
                 $ionicLoading.hide();
-                window.alert(JSON.stringify(err));
+                window.alert(err);
+            }).finally(function(){
+                $ionicLoading.hide();
             });
         }
 
