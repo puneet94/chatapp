@@ -1,7 +1,12 @@
-<div class="list">
-        <div class="item item-avatar item-icon-right" user-page="{{people._id}}" ng-repeat="people in peopleList" ng-if="currentUser._id!=people._id">
-                <img ng-src="{{people.picture}}">
-                <h2>{{people.anonName||people.googleName}}</h2>
+<div class="list peopleList">
+        <div class="item item-avatar item-icon-right peopleListContainer" user-page="{{people._id}}" ng-repeat="people in peopleList" ng-if="currentUser._id!=people._id">
+                <img class="personAvatar" ng-src="{{listType=='revealed' &&(people.facebookPicture||people.googlePicture) || people.picture}}">
+               <h2 class="peopleName">
+                        <span ng-if="listType=='revealed' ">{{people.facebookName || people.googleName ||people.anonName}}</span>
+                        <span ng-if="listType!='revealed'">{{people.anonName}}</span>
+                        <span class=" peopleGender">({{people.gender[0]||'O'}})</span>
+               </h2>
+                
                 <p>{{people.status}}</p>
                 <p class="tagContent">
                         <span class="subdued postTag" ng-click="setPeopleSearch(interest,$event)" ng-repeat="interest in people.interests track by $index">!{{interest}}</span>

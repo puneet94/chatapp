@@ -2,9 +2,9 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', '$timeout', '$ionicModal', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload','$ionicLoading',ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', '$timeout',  'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload','$ionicLoading','$window',ChatBoxController]);
 
-	function ChatBoxController($scope, $timeout, $ionicModal, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$ionicLoading) {
+	function ChatBoxController($scope, $timeout, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$ionicLoading,$window) {
 		var cbc = this;
 
 		cbc.currentUser = userData.getUser()._id;
@@ -13,8 +13,6 @@
 		cbc.chatRoomId = '';
 		cbc.loadMoreChats = loadMoreChats;
 		cbc.scrollBottom = scrollBottom;
-		
-		cbc.showImageModal = showImageModal;
 		cbc.messageLoading = false;
 		cbc.params = {
 			page: 1,
@@ -37,7 +35,6 @@
 		}
 
 		function scrollBottom() {
-			//cbc.messageLoading = false;
 			$timeout(function() {
 				$ionicScrollDelegate.scrollBottom(true);
 			});
@@ -63,7 +60,6 @@
 
 		function activate() {
 			chatService.getChatRoom(cbc.receiverUserID).then(function(res) {
-				console.log(res);
 				cbc.chatRoom = res.data;
 				cbc.chatRoomId = res.data._id;
 
@@ -75,30 +71,22 @@
 			getReceiver();
 
 
-			loadModal();
+		
 		}
-		function showImageModal(image){
-			$scope.currentImage = image;
-			$scope.modal.show();
-		}
-		function loadModal() {
-			$ionicModal.fromTemplateUrl('app/chat/views/chatImageModal.html', {
-				scope: $scope
-			}).then(function(modal) {
-				$scope.modal = modal;
-			});
-		}
+		
 
 		function socketJoin() {
 			Socket.emit('addToChatRoom', { 'roomId': cbc.chatRoomId });
 			Socket.on('messageReceived', function(message) {
-				scrollBottom();
+				
 				cbc.chatList.push(message);
+				scrollBottom();
 				cbc.messageLoading = false;
 			});
 			Socket.on('messageSaved', function(message) {
-				scrollBottom();
+				
 				cbc.chatList.push(message);
+				scrollBottom();
 				cbc.messageLoading = false;
 			});
 		}
@@ -163,14 +151,17 @@
 			Socket.emit('removeFromRoom', { 'roomId': cbc.chatRoomId });
 			
 			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
+
 			}).catch(function(err){
-				console.log(err);
-				window.alert(JSON.stringify(err));
+				window.alert(err);
 			}).finally(function(){
 				
 				
 			});
-			window.history.back();
+			
+				$window.history.back();
+			
+			
 		};
 
 	}

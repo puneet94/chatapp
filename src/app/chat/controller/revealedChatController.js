@@ -29,8 +29,7 @@
 
 		function getRevealedChatRooms() {
 			chatService.getRevealedChatRooms(acc.params).then(function(response){
-				console.log("Chatrroms");
-				console.log(response);
+				
 				angular.forEach(response.data.docs, function(value) {
 					acc.chatRoomsList.push(value);
 				});

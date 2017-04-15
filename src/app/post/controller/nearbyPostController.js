@@ -26,6 +26,7 @@
 
 		function getNearbyPosts() {
 			postService.getNearbyPosts(apc.params).then(function(response) {
+				
 				angular.forEach(response.data.docs, function(value) {
 					apc.postsList.push(value);
 				});
@@ -38,13 +39,8 @@
 				}
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
-				console.log(err);
-				if(err.code==3){
-					window.alert("Unable to acces your location");
-				}
-				else if(err.code==2 || err.code==1){
-					window.alert("Please enable location or gps");
-				}
+				window.alert(err);
+				
 
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');

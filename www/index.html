@@ -8,16 +8,12 @@
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://maps.googleapis.com/ https://maps.google.com http://localhost:35729 https://maps.gstatic.com/ https://mts0.googleapis.com/ 'unsafe-inline' 'unsafe-eval'">
         <link rel="manifest" href="manifest.json">
         
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js')
-          
-      }
-    </script>
-    		<link rel="stylesheet" type="text/css" href="lib/angular-toastr/dist/angular-toastr.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="lib/angular-toastr/dist/angular-toastr.min.css">
         <link href="lib/ionic/css/ionic.css" rel="stylesheet">
         <!--<link href="lib/ionic-material/dist/ionic.material.min.css" rel="stylesheet">-->
         <link href="css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="lib/css-ripple-effect/dist/ripple.min.css">
         <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="css/ionic.app.css" rel="stylesheet">
     -->
@@ -27,7 +23,7 @@
         <!-- cordova script (this will be a 404 during development) -->
         <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
         <script src="cordova.js"></script>
-        <script src="lib/jquery/dist/jquery.min.js"></script>
+        <!--<script src="lib/jquery/dist/jquery.min.js"></script>-->
         <script src="lib/ng-file-upload-shim/ng-file-upload-shim.min.js"></script>
         <!-- for no html5 browsers support -->
         <script src="lib/ng-file-upload/ng-file-upload.min.js"></script>

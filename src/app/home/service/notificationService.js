@@ -1,36 +1,60 @@
-(function(angular){
+(function(angular) {
 	'use strict';
-	angular.module('petal.home')
-	.service('RequestsService', ['homeService','$http', '$q', '$ionicLoading',  RequestsService]);
+	
+		angular.module('petal.home')
+			.service('RequestsService', ['homeService', '$http', '$q', '$ionicLoading', '$cordovaPushV5', '$auth', RequestsService]);
+	
 
-	function RequestsService(homeService,$http, $q, $ionicLoading){
+	function RequestsService(homeService, $http, $q, $ionicLoading, $cordovaPushV5, $auth) {
 
 		var base_url = homeService.baseURL;
 
-		function register(device_token){
+		function register() {
 
 			var deferred = $q.defer();
-			$ionicLoading.show();
-
-			$http.post(base_url + 'notification/register', {'device_token': device_token})
-				.then(function(response){
-					
-					
-					deferred.resolve(response);
-					
-				})
-				.catch(function(data){
-					deferred.reject(data);	
-				}).finally(function(){
-					$ionicLoading.hide();
-				});
 			
+			var options = {
+				android: {
+					senderID: "679461840115"
+				},
+				ios: {
+					alert: "true",
+					badge: "true",
+					sound: "true"
+				},
+				windows: {}
+			};
 
-			return deferred.promise;			
+			$cordovaPushV5.initialize(options).then(function() {
+				// start listening for new notifications
+				$cordovaPushV5.onNotification();
+				// start listening for errors
+				$cordovaPushV5.onError();
+
+				// register to get registrationId
+				if ($auth.isAuthenticated()) {
+					$cordovaPushV5.register().then(function(registrationId) {
+						$http.post(base_url + 'notification/register', { 'device_token': registrationId })
+							.then(function(response) {
+								deferred.resolve(response);
+							})
+							.catch(function(data) {
+								deferred.reject(data);
+							}).finally(function() {
+								$ionicLoading.hide();
+							});
+					});
+				}
+
+			});
+
+
+			return deferred.promise;
 
 		}
 		return {
 			register: register
 		};
 	}
+
 })(window.angular);

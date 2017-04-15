@@ -20,6 +20,7 @@
 		}
 
 		function activate() {
+			$ionicLoading.hide();
 			$scope.editForm = {};
 			getUser();
 			
@@ -27,11 +28,10 @@
 
 		$scope.editForm.submitUser = function() {
 			$ionicLoading.show();
-			console.log($scope.editForm.user);
+			
 			userService.updateUser($scope.editForm.user).then(function(res) {
 				window.alert("updated user");
-				
-				console.log(res);
+				$state.go('home.user.userMePage');
 			}).catch(function(err){
 				window.alert(err);
 			}).finally(function(){

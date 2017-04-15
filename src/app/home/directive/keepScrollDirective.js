@@ -1,5 +1,37 @@
 (function(angular) {
 	'use strict';
+	var imageModal = function($ionicModal) {
+		return {
+			restrict: 'A',
+			scope: {
+
+				imageModal: '@'
+			},
+			link: function($scope, elem) {
+
+				function showImageModal(image) {
+					loadModal().then(function() {
+						$scope.currentImage = image;
+						$scope.modal.show();
+					});
+
+				}
+
+				function loadModal() {
+					return $ionicModal.fromTemplateUrl('app/chat/views/chatImageModal.html', {
+						scope: $scope
+					}).then(function(modal) {
+						$scope.modal = modal;
+					});
+				}
+				elem.bind('click', function(event) {
+					showImageModal($scope.imageModal);
+					event.stopPropagation();
+				});
+			}
+		};
+
+	};
 	angular.module('petal.home').directive('keepScroll', [
 		'$state', '$timeout', 'ScrollPositions', '$ionicScrollDelegate',
 		function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
@@ -48,7 +80,7 @@
 	}]).directive('lazyImg', function() {
 		return {
 			/*     <lazy-img src-large="http://youbaku.com/uploads/places_images/large/{{img}}" src-small="http://youbaku.com/athumb.php?file={{img}}&small" />
-*/
+			 */
 			replace: true,
 			template: '<div class="lazy-img"><div class="sm"><img src="{{imgSmall}}" class="small"/></div><div style="padding-bottom: 75%;"></div><img src="{{imgLarge}}" class="large"/></div>',
 			scope: {
@@ -69,5 +101,7 @@
 				};
 			}
 		};
-	});
+	}).directive('imageModal', ['$ionicModal', imageModal]);
+
+
 })(window.angular);

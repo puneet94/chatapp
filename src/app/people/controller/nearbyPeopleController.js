@@ -35,14 +35,7 @@
 				}
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
-				console.log(err);
-				if(err.code==3){
-					window.alert("Unable to access your location.Make sure location is turned on.");
-				}
-				else if(err.code==2 || err.code==1){
-					window.alert("Please enable location or gps");
-				}
-				
+				window.alert(err);				
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');

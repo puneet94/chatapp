@@ -30,7 +30,7 @@
 				scope.userPage = userPage;
 				function userPage(id){
 					scope.modal.hide();
-					$state.go('home.user.userPage', { user: id });
+					$state.go('home.userPage', { user: id });
 					
 						
 					
@@ -49,6 +49,7 @@
 
 				scope.showPostModal = function(post) {
 					scope.postModal.post = post;
+					scope.postModal.post.views+=1;
 					loadPostModal().then(function(){
 
 						scope.modal.show();	

@@ -29,8 +29,7 @@ angular.module('petal.home')
               /*if(obj1.isUserExists()){
                   storage.removeItem('user');
               }*/
-              console.log('response');
-              console.log(res);
+            
               storage.setItem('user',JSON.stringify(res.data));
             });
           }

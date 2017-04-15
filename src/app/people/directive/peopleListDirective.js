@@ -8,6 +8,7 @@
 		return {
 			restrict: 'E',
 			templateUrl: 'app/people/views/peopleListTemplate.html',
+			replace: true,
 			scope: {
 				listType: '@listType',
 				peopleList: '=peopleList',

@@ -1,16 +1,16 @@
-<ion-view cache-view="false">
+<ion-view >
 <ion-pane    ng-cloak>
     <ion-header-bar align-title="left" class="bar-positive ">
   
                 <button class="button-icon ion-arrow-left-c icon"  ng-click="cbc.leaveChatBox()" >
                 </button>
                 <h4 class="title">
-            <a ui-sref="home.user.userPage({user:cbc.receiverUserID})" >
+            <a ui-sref="home.userPage({user:cbc.receiverUserID})" >
                 <span ng-if="cbc.chatRoom.revealed">
-                    {{ cbc.receiverUser.facebookName || cbc.receiverUser.googleName ||cbc.receiverUser.displayName || cbc.receiverUser.anonName || 'anonUser'}}
+                    {{ cbc.receiverUser.facebookName || cbc.receiverUser.googleName || cbc.receiverUser.anonName }}
                 </span>
                 <span ng-if="!cbc.chatRoom.revealed">
-                    {{ cbc.receiverUser.anonName || 'anonUser'}}
+                    {{ cbc.receiverUser.anonName }}
                 </span>
                 </a>
                 </h4>
@@ -23,7 +23,7 @@
                         <div ng-repeat="chat in cbc.chatList" class="item item-text-wrap" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
                                
                                 <div ng-class="chat.user._id==cbc.currentUser ? 'me' : 'you'">
-                                        <img class="chatImage" ng-click="cbc.showImageModal(chat.message)" width="130" height="140" ng-src="{{chat.message}}" ng-if="chat.type=='img'"/>
+                                        <img class="chatImage" image-modal="{{chat.message}}" width="130" height="140" ng-src="{{chat.message}}" ng-if="chat.type=='img'"/>
                                         <p ng-if="chat.type!='img'" class="item-text-wrap">{{chat.message}}</p>
                                 </div>
                         </div>
@@ -46,11 +46,11 @@
         </ion-content>
         <ion-footer-bar keyboard-attach class="bar-stable item-input-inset">
                 <button class=" button-icon icon ion-ios-camera"  type="file" ngf-select="cbc.uploadSingleImage($file, $invalidFiles)" ng-disabled="cbc.showTempImage || cbc.messageLoading" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB" >
-                        <!--<i class="icon ion-ios-camera"></i>-->
+                        
                 </button>
                 <label class="item-input-wrapper">
                         <input type="text"  is-focused="{{cbc.focusInput}}" placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.showTempImage" ng-focus="cbc.scrollBottom()"/>
-                        <!--never disable this input unless uploading image failing which the kryboard disappears-->
+                        <!--never disable this input unless uploading image failing which the keyboard disappears-->
                 </label>
                 <button class="button button-dark"  ng-disabled="cbc.showTempImage || !cbc.myMsg || cbc.messageLoading" ng-click="cbc.clickSubmit()">
                         Send

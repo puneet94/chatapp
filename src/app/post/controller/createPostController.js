@@ -35,7 +35,7 @@
 				homeService.deleteUpload(cpc.post.imageId).then(function(response){
 					cpc.post.image = '';
 					cpc.post.imageId = '';
-					console.log(cpc.post);
+					
 					
 				});
 			}

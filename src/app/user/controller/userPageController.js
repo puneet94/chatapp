@@ -12,6 +12,7 @@
 		upc.isTabActive = isTabActive;
 		upc.openFacebook = openFacebook;
 		activate();
+		
 		function openFacebook(id){
 			$window.open('https://www.facebook.com/'+id, '_system');
 		}
@@ -39,17 +40,21 @@
 		}
 		
 		function checkReveal(){
-			
 			revealService.check($stateParams.user).then(function(res){
-				upc.revealChoice = res.data;
+				upc.revealChoice = res.data.status;
 			});
 		}
 		function goBack(){
-			window.history.back();
+			$window.history.back();
 		}
 		function getUser() {
+
 			userService.getUser($stateParams.user).then(function(response) {
 				upc.user = response.data;
+				
+
+			}).catch(function(err){
+				window.alert(err);
 				
 			}).finally(function(){
 				$ionicLoading.hide();

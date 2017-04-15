@@ -6,7 +6,7 @@
                 <div class="item postModalContent">
                         <div class="item item-avatar item-icon-right">
                                 <img ng-src="{{postModal.post.user.picture}}">
-                                <h2 ng-click="modal.hide()"><a ui-sref="home.user.userPage({user:postModal.post.user._id})">{{postModal.post.user.anonName}}</a></h2>
+                                <h2 ng-click="modal.hide()"><a ui-sref="home.userPage({user:postModal.post.user._id})">{{postModal.post.user.anonName}}</a></h2>
                                 <p>{{postModal.post.user.status}}</p>
                                 <distance-view position-cords="postModal.post.loc"> </distance-view>
                         </div>

@@ -13,20 +13,17 @@
 		rs.updateChatRoom = updateChatRoom;
 
 		function sendChatMessage(chat) {
-			console.log("chat messgae");
-			console.log(chat);
+			
 			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
 		}
 
 		function getChatMessages(chatRoomId,params) {
-			console.log("params");
-			console.log(params);
+			
 			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
 		}
 
 		function getChatRoom(user) {
-			console.log("get chat room");
-			console.log(user);
+			
 			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
 
 		}

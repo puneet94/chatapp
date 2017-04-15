@@ -22,10 +22,10 @@
 		function getNearbyPosts(params) {
 			params.nearby = true;
 			var defer = $q.defer();
-			if(params.page===0){
+			if(params.page===1){
 				userLocationService.setUserLocation();
       			}
-
+      			userLocationService.setUserLocation();
 			userLocationService.getUserLocation().then(function(position) {
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
@@ -70,11 +70,9 @@
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				alert("errr");
+				
 				window.alert(JSON.stringify(err));
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
-					console.log("inside service catch");
-					console.log(response);
 					defer.resolve(response);
 				}).catch(function(err) {
 					defer.reject(err);
@@ -92,9 +90,10 @@
 		}
 
 		function getDistance(posObj) {
+			var defer = $q.defer();
 			var lat1 = posObj.latitude;
 			var lon1 = posObj.longitude;
-			return userLocationService.getUserLocation().then(function(position) {
+			userLocationService.getUserLocation().then(function(position) {
 				var lat2 = position.latitude;
 				var lon2 = position.longitude;
 				var R = 6371; // Radius of the earth in km
@@ -106,10 +105,12 @@
 					Math.sin(dLon / 2) * Math.sin(dLon / 2);
 				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 				var d = R * c; // Distance in km
-				return Math.ceil(d);
+			
+				defer.resolve(Math.ceil(d));
 			}).catch(function(err) {
 				console.log(err);
 			});
+			return defer.promise;
 
 		}
 

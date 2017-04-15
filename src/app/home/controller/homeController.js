@@ -16,13 +16,18 @@
 
 		function messageReceived(message) {
 			console.log(message);
+			var messageString = message.message;
+			if(message.type && message.type=='img'){
+				messageString = 'New image';
+			}
+			var userName = message.user.anonName||message.user.facebookName ;
 			if (message.user._id == userData.getUser()._id) {
 
 			} else {
 				if ($state.current.name == 'chatBox') {
 
 					if ($state.params.user != message.user._id) {
-						toastr.info('<p>' + message.user.anonName + '</p><p>' + message.message + '</p>', {
+						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
 							allowHtml: true,
 							onTap: function() {
 								$state.go('chatBox', { user: message.user._id });
@@ -31,7 +36,7 @@
 					}
 				} else {
 
-					toastr.info('<p>' + message.user.anonName + '</p><p>' + message.message + '</p>', {
+					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
 						allowHtml: true,
 						onTap: function() {
 							$state.go('chatBox', { user: message.user._id });

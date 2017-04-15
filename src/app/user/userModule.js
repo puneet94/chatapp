@@ -18,7 +18,7 @@
 			state('home.userPage', {
 				url: '/userPage/:user',
 				resolve: {
-					friends: [ '$stateParams', 'revealService', friends]
+					friends: [ '$stateParams', 'revealService','$q', friends]
 				},
 				views: {
 					'extra-tab': {
@@ -75,24 +75,19 @@
 		}
 	]);
 
-	function friends($stateParams,revealService){
-
-		return revealService.check($stateParams.user).then(function(response){
-			return response.data;
-		});
-	}
-
-	function redirectIfNotUserAuthenticated($q, $auth, changeBrowserURL) {
+	function friends($stateParams,revealService,$q){
 		var defer = $q.defer();
 
-		if ($auth.isAuthenticated()) {
-			defer.resolve();
 
-		} else {
-			defer.reject();
-			changeBrowserURL.changeBrowserURLMethod('/home');
-		}
+		revealService.check($stateParams.user).then(function(response){
+			
+			defer.resolve(response.data.status);
+			//return ;
+		}).catch(function(err){
+			alert(err);
+		});
 		return defer.promise;
 	}
 
+	
 })(window.angular);

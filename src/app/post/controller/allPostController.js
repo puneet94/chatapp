@@ -77,7 +77,7 @@
 			apc.initialSearchCompleted = false;
 			apc.postsList = [];
 			apc.params = {
-				limit: 3,
+				limit: 5,
 				page: 1,
 
 			};

@@ -208,6 +208,17 @@ h1, h2, h3, h4, h5, h6 {
 .material-card2 {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
 
+.peopleList .peopleListContainer .personAvatar {
+  border-radius: 5px;
+  max-width: 45px;
+  max-height: 50px; }
+
+.peopleList .peopleListContainer .peopleName {
+  font-weight: 600; }
+  .peopleList .peopleListContainer .peopleName .peopleGender {
+    font-size: 12px;
+    font-weight: 400; }
+
 .postModalContent .postModalInterests {
   border-bottom: 1px solid #ddd;
   margin: -16px;
@@ -317,7 +328,7 @@ a {
   display: block; }
 
 .userImage {
-  border-radius: 50%;
+  border-radius: 5px;
   border: 1px solid #eee;
   width: 130px;
   height: 130px; }
