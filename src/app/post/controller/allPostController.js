@@ -44,15 +44,11 @@
 		function getAllPosts() {
 			apc.noPosts = false;	
 			postService.getAllPosts(apc.params).then(function(response) {
-				if(!response.data.total){
-					apc.noPosts = true;
-				}
-				else{
-					apc.noPosts = false;	
-				}
+				
 				angular.forEach(response.data.docs, function(value) {
 					apc.postsList.push(value);
 				});
+				apc.noPosts =!response.data.total;
 				apc.initialSearchCompleted = true;
 				if (response.data.total > apc.postsList.length) {
 					apc.canLoadMoreResults = true;

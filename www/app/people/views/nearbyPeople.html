@@ -8,6 +8,9 @@
                 
                 {{npc.distance+" mi"}}
         </div>
+        <div ng-if="apc.noPeople">
+                <h1 class="noPostsHeader">No users nearby</h1>
+        </div>
         <people-list people-list="npc.peopleList"></people-list>
         <ion-infinite-scroll on-infinite="npc.loadMorePeople()" distance="100%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
         </ion-infinite-scroll>

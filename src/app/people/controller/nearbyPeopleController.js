@@ -29,6 +29,7 @@
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
+				apc.noPeople =!response.data.total;
 				apc.initialSearchCompleted = true;
 				if (response.data.total > apc.peopleList.length) {
 					apc.canLoadMoreResults = true;

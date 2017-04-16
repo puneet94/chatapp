@@ -22,7 +22,7 @@
 		function getNearbyPosts(params) {
 			params.nearby = true;
 			var defer = $q.defer();
-			if(params.page===1){
+			if(params.page==1){
 				userLocationService.setUserLocation();
       			}
       			userLocationService.setUserLocation();

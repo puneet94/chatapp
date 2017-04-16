@@ -208,6 +208,95 @@ h1, h2, h3, h4, h5, h6 {
 .material-card2 {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
 
+.ng-move,
+.ng-enter,
+.ng-leave {
+  transition: all linear 1s; }
+
+.ng-leave.ng-leave-active,
+.ng-move,
+.ng-enter {
+  opacity: 0; }
+
+.ng-leave,
+.ng-move.ng-move-active,
+.ng-enter.ng-enter-active {
+  opacity: 1; }
+
+.linear-background .name-seperator {
+  position: absolute;
+  top: 15px;
+  width: 100%;
+  background-color: #fff;
+  height: 15px;
+  left: 60px; }
+
+.linear-background .name-right {
+  position: absolute;
+  top: 0px;
+  width: 60px;
+  right: 0;
+  background-color: #fff;
+  height: 40px; }
+
+.linear-background .name-bottom {
+  position: absolute;
+  top: 40px;
+  width: 100%;
+  background-color: #fff;
+  height: 30px;
+  left: 75px; }
+
+.linear-background .pic-right {
+  position: absolute;
+  width: 15px;
+  background-color: #fff;
+  height: 60px;
+  left: 60px;
+  top: 0px; }
+
+.linear-background .pic-left {
+  position: absolute;
+  width: 5px;
+  background-color: white;
+  height: 90px;
+  left: 10px;
+  top: 2px; }
+
+.linear-background .header-seperator {
+  position: absolute;
+  width: 100%;
+  background-color: #fff;
+  height: 15px;
+  top: 60px; }
+
+.linear-background .content-seperator {
+  position: absolute;
+  background: #fff;
+  width: 100%;
+  height: 10px;
+  top: 100px; }
+
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -468px 0; }
+  100% {
+    background-position: 468px 0; } }
+
+.linear-background {
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: #f6f7f8;
+  background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+  background-size: 1000px 104px;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  border: 15px solid white; }
+
 .peopleList .peopleListContainer .personAvatar {
   border-radius: 5px;
   max-width: 45px;
@@ -224,7 +313,8 @@ h1, h2, h3, h4, h5, h6 {
   margin: -16px;
   padding: 10px;
   padding-left: 16px;
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  font-size: 13px; }
 
 .postModalContent .postModalBody {
   font-size: 18px;
@@ -300,14 +390,14 @@ a {
     font-size: 14px;
     color: rgba(0, 0, 0, 0.6); }
   .singlePostContainer .postInfo {
-    padding: 0;
-    font-size: 24px; }
+    padding-top: 15px;
+    padding-bottom: 0; }
     .singlePostContainer .postInfo .infoValue {
       margin-left: 2px;
       color: black;
-      font-size: 16px; }
+      font-size: 14px; }
     .singlePostContainer .postInfo .icon {
-      font-size: 19px;
+      font-size: 16px;
       color: blue; }
     .singlePostContainer .postInfo .infoViews {
       color: red; }
@@ -321,6 +411,12 @@ a {
     font-size: 16px;
     text-transform: capitalize;
     color: rgba(0, 0, 0, 0.85); }
+
+.noPostsHeader {
+  color: #9E9E9E;
+  padding-top: 100px;
+  font-size: 32px;
+  text-align: center; }
 
 .center {
   margin-left: auto;

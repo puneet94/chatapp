@@ -25,6 +25,9 @@
 				angular.forEach(response.data.docs, function(value) {
 					apc.postsList.push(value);
 				});
+				if(!response.data.total){
+					apc.noPosts = true;
+				}
 				apc.initialSearchCompleted = true;
 				if (response.data.total > apc.postsList.length) {
 					apc.canLoadMoreResults = true;

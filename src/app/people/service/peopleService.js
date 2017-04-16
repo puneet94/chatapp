@@ -43,7 +43,7 @@
 		}
 
 		function getNearbyUsers(params) {
-			if (params.page === 1) {
+			if (params.page == 1) {
 				userLocationService.setUserLocation();
 			}
 			params.nearby = true;

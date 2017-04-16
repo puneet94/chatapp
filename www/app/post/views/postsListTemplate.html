@@ -1,7 +1,7 @@
 <div class="list ">
-        <div class="card singlePostContainer material-card2" ng-repeat="post in postsList track by post._id">
+        <div class="card singlePostContainer material-card2 fade-in" ng-repeat="post in postsList track by post._id">
                 <div class="item item-avatar item-icon-right">
-                        <img class="postUserImage imageGray" ng-src="{{post.user.picture}}">
+                        <img class="postUserImage " ng-src="{{post.user.picture}}">
                         <h2 class="postUserName"><a ui-sref="home.userPage({user:post.user._id})">{{post.user.anonName}}</a></h2>
                         <p class="tagContent">
                                 <span class="subdued postTag" ng-click="setPostSearch(interest)" ng-repeat="interest in post.interests track by $index">!{{interest}}</span>
@@ -19,15 +19,15 @@
                         </div>
                         <img class="full-image postImage imageGray" ng-src="{{post.image}}" ng-if="post.image">
                         <div class="row postInfo">
-                                <div class="col padding">
+                                <div class="col ">
                                        <i class="infoViews icon ion-android-favorite-outline"></i>
                                         <span class="infoValue">{{post.upvotesLength}}</span>
                                 </div>
-                                <div class="col text-left padding">
+                                <div class="col text-left ">
                                           <i class="icon ion-eye"></i>
                                         <span class="infoValue">{{post.views}}</span>
                                 </div>
-                                <div class="col text-right padding">
+                                <div class="col text-left ">
                                        <i class="icon ion-android-time"></i>
                                         <span class="infoValue">{{getTime(post.time)}}</span>
                                 </div>

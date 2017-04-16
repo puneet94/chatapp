@@ -1,6 +1,25 @@
 <ion-content class="has-header" keep-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="lpc.pullRefreshPosts()">
         </ion-refresher>
+        <div ng-if="lpc.noPosts">
+                <h1 class="noPostsHeader">No posts available</h1>
+        </div>
+        <div ng-if="!lpc.initialSearchCompleted">
+               <div  ng-repeat="placeholderItem in [1,2,3,4]" class="card linear-background">
+                        <div class="pic-right">
+                        </div>
+                        
+                        <div class="name-right"></div>
+                        <div class="name-bottom"></div>
+                        <div class="name-seperator">
+                        </div>
+                        <div class="header-seperator">
+                        </div>
+                        <div class="content-seperator">
+                                
+                        </div>
+                </div>
+        </div>
         <posts-list posts-list="lpc.postsList"></posts-list>
         <ion-infinite-scroll on-infinite="lpc.loadMorePosts()" distance="100%" immediate-check="false" ng-if="lpc.canLoadMoreResults && lpc.initialSearchCompleted">
         </ion-infinite-scroll>

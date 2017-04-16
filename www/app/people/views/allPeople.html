@@ -6,16 +6,28 @@
                         <div class="item item-input">
                                 <input type="text" ng-model="apc.peopleSearchText" placeholder="Search peopl by interests. Eg: football" />
                                 <span ng-if="apc.showSearchCross" class="padding" ng-click="apc.searchCrossSubmit()">
-                                	<i  class=" icon ion-close-round">
-                                	</i>
+                                        <i  class=" icon ion-close-round">
+                                        </i>
                                 </span>
                         </div>
                 </div>
                 <button ng-if="!spc.showClear " ng-disabled="!apc.peopleSearchText" class="col button button-icon icon ion-ios-search" ng-click="apc.peopleSearchTextSubmit()">
-                        </button>
+                </button>
         </div>
         
-        <people-list people-list="apc.peopleList" list-type="all" people-search-text-submit="apc.peopleSearchTextSubmit(interest)" ></people-list>
+        <div ng-if="!apc.initialSearchCompleted" ng-repeat="item in [1,2,3,4]" class="linear-background">
+                <div class="pic-right">
+                </div>
+                <div class="content-top">
+                </div>
+                <div class="name-right"></div>
+                <div class="name-bottom"></div>
+                <div class="name-seperator">
+                </div>
+                <div class="header-seperator">
+                </div>
+        </div>
+        <people-list people-list="apc.peopleList" list-type="all" people-search-text-submit="apc.peopleSearchTextSubmit(interest)"></people-list>
         <ion-infinite-scroll on-infinite="apc.loadMorePeople()" distance="100%" immediate-check="false" ng-if="apc.canLoadMoreResults && apc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>

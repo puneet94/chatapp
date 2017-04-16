@@ -14,6 +14,7 @@
 		cbc.loadMoreChats = loadMoreChats;
 		cbc.scrollBottom = scrollBottom;
 		cbc.messageLoading = false;
+		cbc.messageTryCount = 0;
 		cbc.params = {
 			page: 1,
 			limit: 5
@@ -92,6 +93,7 @@
 		}
 
 		cbc.clickSubmit = function() {
+
 			cbc.messageLoading = true;
 			cbc.focusInput = true;
 
@@ -101,11 +103,18 @@
 			scrollBottom();
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
-				cbc.myMsg = '';
-				
+				cbc.myMsg = '';	
 				scrollBottom();
+				cbc.messageTryCount = 0;
 			}).catch(function(err) {
+				cbc.messageTryCount+=1;
 				window.alert(JSON.stringify(err));
+				if(cbc.messageTryCount<=3){
+					cbc.clickSubmit();	
+				}
+				
+			}).finally(function(){
+				cbc.messageLoading = false;
 			});
 
 
