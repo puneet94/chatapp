@@ -84,7 +84,7 @@
 			defer.resolve(response.data.status);
 			//return ;
 		}).catch(function(err){
-			alert(err);
+			
 		});
 		return defer.promise;
 	}

@@ -30,7 +30,7 @@
 			userService.getUser(cbc.receiverUserID).then(function(response) {
 				cbc.receiverUser = response.data;
 			}).catch(function(err) {
-				window.alert(err);
+				
 				console.log(err);
 			});
 		}
@@ -49,7 +49,7 @@
 					cbc.chatList.unshift(chat);
 				});
 			}).catch(function(res) {
-				window.alert(JSON.stringify(res));
+				
 				console.log(res);
 			}).finally(function() {
 				scrollBottom();
@@ -67,7 +67,7 @@
 				socketJoin();
 				getChatMessages();
 			}, function(res) {
-				window.alert(JSON.stringify(res));
+				
 			});
 			getReceiver();
 
@@ -84,12 +84,13 @@
 				scrollBottom();
 				cbc.messageLoading = false;
 			});
-			Socket.on('messageSaved', function(message) {
+			/*Socket.on('messageSaved', function(message) {
 				
 				cbc.chatList.push(message);
 				scrollBottom();
+				console.log(message);
 				cbc.messageLoading = false;
-			});
+			});*/
 		}
 
 		cbc.clickSubmit = function() {
@@ -104,11 +105,14 @@
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
 				cbc.myMsg = '';	
+				cbc.chatList.push(res.data.message);
 				scrollBottom();
+				
+				cbc.messageLoading = false;
 				cbc.messageTryCount = 0;
 			}).catch(function(err) {
 				cbc.messageTryCount+=1;
-				window.alert(JSON.stringify(err));
+				
 				if(cbc.messageTryCount<=3){
 					cbc.clickSubmit();	
 				}
@@ -138,7 +142,7 @@
 					
 				}).catch(function(err) {
 
-					window.alert(err);
+					
 				});
 
 			});
@@ -162,7 +166,7 @@
 			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
 
 			}).catch(function(err){
-				window.alert(err);
+				
 			}).finally(function(){
 				
 				

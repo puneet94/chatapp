@@ -71,7 +71,7 @@
 				});
 			}).catch(function(err) {
 				
-				window.alert(JSON.stringify(err));
+				
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
 					defer.resolve(response);
 				}).catch(function(err) {

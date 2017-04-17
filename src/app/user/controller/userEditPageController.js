@@ -33,7 +33,7 @@
 				window.alert("updated user");
 				$state.go('home.user.userMePage');
 			}).catch(function(err){
-				window.alert(err);
+				
 			}).finally(function(){
 				userData.setUser();
 				$ionicLoading.hide();

@@ -451,7 +451,7 @@
 			defer.resolve(response.data.status);
 			//return ;
 		}).catch(function(err){
-			alert(err);
+			
 		});
 		return defer.promise;
 	}
@@ -539,7 +539,7 @@
 			userService.getUser(cbc.receiverUserID).then(function(response) {
 				cbc.receiverUser = response.data;
 			}).catch(function(err) {
-				window.alert(err);
+				
 				console.log(err);
 			});
 		}
@@ -558,7 +558,7 @@
 					cbc.chatList.unshift(chat);
 				});
 			}).catch(function(res) {
-				window.alert(JSON.stringify(res));
+				
 				console.log(res);
 			}).finally(function() {
 				scrollBottom();
@@ -576,7 +576,7 @@
 				socketJoin();
 				getChatMessages();
 			}, function(res) {
-				window.alert(JSON.stringify(res));
+				
 			});
 			getReceiver();
 
@@ -593,12 +593,13 @@
 				scrollBottom();
 				cbc.messageLoading = false;
 			});
-			Socket.on('messageSaved', function(message) {
+			/*Socket.on('messageSaved', function(message) {
 				
 				cbc.chatList.push(message);
 				scrollBottom();
+				console.log(message);
 				cbc.messageLoading = false;
-			});
+			});*/
 		}
 
 		cbc.clickSubmit = function() {
@@ -613,11 +614,14 @@
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
 				cbc.myMsg = '';	
+				cbc.chatList.push(res.data.message);
 				scrollBottom();
+				
+				cbc.messageLoading = false;
 				cbc.messageTryCount = 0;
 			}).catch(function(err) {
 				cbc.messageTryCount+=1;
-				window.alert(JSON.stringify(err));
+				
 				if(cbc.messageTryCount<=3){
 					cbc.clickSubmit();	
 				}
@@ -647,7 +651,7 @@
 					
 				}).catch(function(err) {
 
-					window.alert(err);
+					
 				});
 
 			});
@@ -671,7 +675,7 @@
 			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
 
 			}).catch(function(err){
-				window.alert(err);
+				
 			}).finally(function(){
 				
 				
@@ -855,7 +859,7 @@ angular.module('petal.chat')
 			}).catch(function(err) {
 
 				$ionicLoading.hide();
-				window.alert(err);
+				
 			}).finally(function() {
 				//$ionicLoading.hide();
 			});
@@ -1365,8 +1369,9 @@ angular.module('petal.home')
 				}
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
-				window.alert(err);				
+				console.log(err);
 			}).finally(function() {
+				apc.initialSearchCompleted = true;
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 				$ionicLoading.hide();
@@ -1981,7 +1986,7 @@ angular.module('petal.home')
 					apc.canLoadMoreResults = false;	
 				}
 			}).catch(function(err) {
-				window.alert(JSON.stringify(err));
+				
 
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
@@ -2036,7 +2041,7 @@ angular.module('petal.home')
 				$state.go('home.post.latest');
 			}).catch(function(err) {
 				console.log("post error");
-				window.alert(JSON.stringify(err));
+				
 			});
 		}
 
@@ -2177,13 +2182,14 @@ angular.module('petal.home')
 				}
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
-				window.alert(err);
+				console.log(err);
 				
 
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 				$ionicLoading.hide();
+				apc.initialSearchCompleted = true;
 			});
 
 
@@ -2604,7 +2610,7 @@ angular.module('petal.home')
 				});
 			}).catch(function(err) {
 				
-				window.alert(JSON.stringify(err));
+				
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
 					defer.resolve(response);
 				}).catch(function(err) {
@@ -2689,7 +2695,7 @@ angular.module('petal.home')
 				window.alert("updated user");
 				$state.go('home.user.userMePage');
 			}).catch(function(err){
-				window.alert(err);
+				
 			}).finally(function(){
 				userData.setUser();
 				$ionicLoading.hide();
@@ -2742,7 +2748,7 @@ angular.module('petal.home')
 				umpc.user = userData.getUser();
 
 			}).catch(function(err){
-				window.alert(JSON.stringify(err));
+				
 			}).finally(function(){
 				$ionicLoading.hide();
 			});
@@ -2844,7 +2850,7 @@ angular.module('petal.home')
 				
 
 			}).catch(function(err){
-				window.alert(err);
+				
 				
 			}).finally(function(){
 				$ionicLoading.hide();

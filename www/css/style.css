@@ -312,6 +312,17 @@ h1, h2, h3, h4, h5, h6 {
 .me img {
   float: right; }
 
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block; }
+
+.userImage {
+  border-radius: 5px;
+  border: 1px solid #eee;
+  width: 130px;
+  height: 130px; }
+
 .peopleList .peopleListContainer .personAvatar {
   border-radius: 5px;
   max-width: 45px;
@@ -432,14 +443,3 @@ a {
   padding-top: 100px;
   font-size: 32px;
   text-align: center; }
-
-.center {
-  margin-left: auto;
-  margin-right: auto;
-  display: block; }
-
-.userImage {
-  border-radius: 5px;
-  border: 1px solid #eee;
-  width: 130px;
-  height: 130px; }

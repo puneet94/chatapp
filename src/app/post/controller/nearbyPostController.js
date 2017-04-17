@@ -41,13 +41,14 @@
 				}
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
-				window.alert(err);
+				console.log(err);
 				
 
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 				$ionicLoading.hide();
+				apc.initialSearchCompleted = true;
 			});
 
 

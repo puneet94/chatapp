@@ -54,7 +54,7 @@
 				
 
 			}).catch(function(err){
-				window.alert(err);
+				
 				
 			}).finally(function(){
 				$ionicLoading.hide();

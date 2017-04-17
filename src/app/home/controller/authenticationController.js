@@ -33,7 +33,7 @@
 			}).catch(function(err) {
 
 				$ionicLoading.hide();
-				window.alert(err);
+				
 			}).finally(function() {
 				//$ionicLoading.hide();
 			});

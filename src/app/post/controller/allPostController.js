@@ -57,7 +57,7 @@
 					apc.canLoadMoreResults = false;	
 				}
 			}).catch(function(err) {
-				window.alert(JSON.stringify(err));
+				
 
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
