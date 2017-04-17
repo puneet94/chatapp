@@ -1,33 +1,33 @@
 <ion-view cache-view="false">
-  <div class="text-center">
-        <div class="">
-        
-      </div>
-  </div>
-    
-      
-      <h1 class="text-center padding" >
+        <div class="text-center image-background">
+                <div class="authenticationContent">
+                        <h1 class="text-center padding">
         Petal Chat
       </h1>
-      <h5 class="text-center padding">
+                        <h5 class="text-center padding">
         Bringing people closer
       </h5>
-        <div class=" margin facebookAuthenticateButton" ng-click="ac.socialAuthenticate('facebook')">
-                <span class="icon-container">
+                        <div class=" margin facebookAuthenticateButton" ng-click="ac.socialAuthenticate('facebook')">
+                                <span class="icon-container">
       <i class="icon ion-social-facebook" aria-hidden="true"></i>
     </span>
-                <span class="text-container">
+                                <span class="text-container">
       Log in with Facebook
     </span>
-                </button>
-        </div>
-        <div class="googleAuthenticateButton" ng-click="ac.socialAuthenticate('google')">
-                <span class="icon-container">
+                                </button>
+                        </div>
+                        <div class="subdued privacyPolicy" ng-click="ac.loadPostModal()">
+                          Privacy policy
+                        </div>
+                        <div class="googleAuthenticateButton" ng-click="ac.socialAuthenticate('google')">
+                                <span class="icon-container">
       <i class="fa fa-facebook" aria-hidden="true"></i>
     </span>
-                <span class="text-container">
-      Log in with Google
+                                <span class="text-container">
+      <!--Log in with Google-->
     </span>
-                </button>
+                                </button>
+                        </div>
+                </div>
         </div>
 </ion-view>

@@ -1,52 +1,3 @@
-.chatRoomRed {
-  background-color: red; }
-
-.overflow-scroll {
-  overflow-y: scroll !important; }
-
-.chatImage {
-  border: 1px solid #eee;
-  border-radius: 10px; }
-
-.leftChat {
-  clear: both;
-  float: left;
-  border-color: white;
-  max-width: 100%;
-  padding: 5px 16px; }
-
-.rightChat {
-  clear: both;
-  float: right;
-  border-color: white;
-  max-width: 100%;
-  padding: 5px 16px; }
-
-.you p {
-  float: left;
-  margin-right: 5px;
-  background-color: #eee;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  width: 100%; }
-
-.you img {
-  float: left; }
-
-.me p {
-  float: right;
-  color: white;
-  border: 1px solid #007AFF;
-  margin-left: 5px;
-  background-color: #007AFF;
-  padding: 10px;
-  width: 100%;
-  border-radius: 5px; }
-
-.me img {
-  float: right; }
-
 .logoIcon {
   background-image: url("/img/logo.png");
   height: 100px;
@@ -202,6 +153,17 @@
 h1, h2, h3, h4, h5, h6 {
   font-family: 'COB', sans-serif !important; }
 
+.image-background {
+  background-image: url("https://puneet94.github.io/image2.PNG");
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; }
+  .image-background .authenticationContent {
+    padding-top: 50%; }
+    .image-background .authenticationContent h1, .image-background .authenticationContent h5 {
+      color: white; }
+
 .material-card {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); }
 
@@ -283,6 +245,10 @@ h1, h2, h3, h4, h5, h6 {
   100% {
     background-position: 468px 0; } }
 
+.privacyPolicy {
+  color: white;
+  text-decoration: underline; }
+
 .linear-background {
   animation-duration: 2s;
   animation-fill-mode: forwards;
@@ -296,6 +262,55 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   border: 15px solid white; }
+
+.chatRoomRed {
+  background-color: red; }
+
+.overflow-scroll {
+  overflow-y: scroll !important; }
+
+.chatImage {
+  border: 1px solid #eee;
+  border-radius: 10px; }
+
+.leftChat {
+  clear: both;
+  float: left;
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
+
+.rightChat {
+  clear: both;
+  float: right;
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
+
+.you p {
+  float: left;
+  margin-right: 5px;
+  background-color: #eee;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  width: 100%; }
+
+.you img {
+  float: left; }
+
+.me p {
+  float: right;
+  color: white;
+  border: 1px solid #007AFF;
+  margin-left: 5px;
+  background-color: #007AFF;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px; }
+
+.me img {
+  float: right; }
 
 .peopleList .peopleListContainer .personAvatar {
   border-radius: 5px;

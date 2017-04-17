@@ -34,9 +34,7 @@
 			if(cpc.post.imageId){
 				homeService.deleteUpload(cpc.post.imageId).then(function(response){
 					cpc.post.image = '';
-					cpc.post.imageId = '';
-					
-					
+					cpc.post.imageId = '';					
 				});
 			}
 
