@@ -9,13 +9,14 @@
 
 		var base_url = homeService.baseURL;
 
-		function register() {
+		function register(vibrate) {
 
 			var deferred = $q.defer();
 			
 			var options = {
 				android: {
-					senderID: "679461840115"
+					senderID: "679461840115",
+					vibrate: false
 				},
 				ios: {
 					alert: "true",
@@ -24,10 +25,17 @@
 				},
 				windows: {}
 			};
-
+			if(vibrate){
+				options.android.vibrate = true;
+				//options.android.forceShow =true;
+			}
+			
 			$cordovaPushV5.initialize(options).then(function() {
 				// start listening for new notifications
-				$cordovaPushV5.onNotification();
+				$cordovaPushV5.onNotification(function(){
+					console.log("insideeee notification");
+					console.log(arguments);
+				});
 				// start listening for errors
 				$cordovaPushV5.onError();
 

@@ -27,6 +27,8 @@
       			}
       			userLocationService.setUserLocation();
 			userLocationService.getUserLocation().then(function(position) {
+				console.log("from position service");
+				console.log(position);
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
 				$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
@@ -57,11 +59,9 @@
 
 		function submitPost(post) {
 			var defer = $q.defer();
-
 			userLocationService.getUserLocation().then(function(position) {
 				post.latitude = position.latitude;
 				post.longitude = position.longitude;
-
 
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
 
@@ -70,12 +70,12 @@
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				
-				
+				console.log("location may be");
+				console.log(err);
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
 					defer.resolve(response);
-				}).catch(function(err) {
-					defer.reject(err);
+				}).catch(function(err2) {
+					defer.reject(err2);
 				});
 			});
 			return defer.promise;

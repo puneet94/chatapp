@@ -1,3 +1,4 @@
+<ion-view>
 <ion-content class="has-header" keep-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="npc.pullRefreshPosts()">
         </ion-refresher>
@@ -6,7 +7,7 @@
 
                 <input type="range" on-release="npc.releaseRange()"  name="distance" min="10" max="1000" ng-model="npc.distance">
                 
-                {{npc.distance||'NA'+" mi"}}
+                {{npc.distance+" mi"}}
         </div>
         <div ng-if="npc.noPosts">
                 <h1 class="noPostsHeader">No posts available</h1>
@@ -31,3 +32,4 @@
         <ion-infinite-scroll on-infinite="npc.loadMorePosts()" distance="100%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>
+</ion-view>

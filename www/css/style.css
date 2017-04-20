@@ -1,3 +1,67 @@
+.chatRoomRed {
+  background-color: red; }
+
+.overflow-scroll {
+  overflow-y: scroll !important; }
+
+.chatImage {
+  border: 1px solid #eee;
+  border-radius: 10px; }
+
+.leftChat {
+  clear: both;
+  float: left;
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
+
+.rightChat {
+  clear: both;
+  float: right;
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
+
+.you p {
+  float: left;
+  margin-right: 5px;
+  background-color: #eee;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  width: 100%;
+  background-color: rgba(0, 0, 255, 0.15);
+  color: black;
+  font-size: 17px; }
+
+.you img {
+  float: left; }
+
+.me p {
+  float: right;
+  color: white;
+  border: 1px solid #007AFF;
+  margin-left: 5px;
+  background-color: #387ef5;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  font-size: 17px; }
+
+.me img {
+  float: right; }
+
+.peopleList .peopleListContainer .personAvatar {
+  border-radius: 5px;
+  max-width: 45px;
+  max-height: 50px; }
+
+.peopleList .peopleListContainer .peopleName {
+  font-weight: 600; }
+  .peopleList .peopleListContainer .peopleName .peopleGender {
+    font-size: 12px;
+    font-weight: 400; }
+
 .logoIcon {
   background-image: url("/img/logo.png");
   height: 100px;
@@ -173,7 +237,7 @@ h1, h2, h3, h4, h5, h6 {
 .ng-move,
 .ng-enter,
 .ng-leave {
-  transition: all linear 1s; }
+  transition: all linear 0.5s; }
 
 .ng-leave.ng-leave-active,
 .ng-move,
@@ -250,7 +314,7 @@ h1, h2, h3, h4, h5, h6 {
   text-decoration: underline; }
 
 .linear-background {
-  animation-duration: 2s;
+  animation-duration: 1.3s;
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;
   animation-name: placeHolderShimmer;
@@ -262,77 +326,6 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   border: 15px solid white; }
-
-.chatRoomRed {
-  background-color: red; }
-
-.overflow-scroll {
-  overflow-y: scroll !important; }
-
-.chatImage {
-  border: 1px solid #eee;
-  border-radius: 10px; }
-
-.leftChat {
-  clear: both;
-  float: left;
-  border-color: white;
-  max-width: 100%;
-  padding: 5px 16px; }
-
-.rightChat {
-  clear: both;
-  float: right;
-  border-color: white;
-  max-width: 100%;
-  padding: 5px 16px; }
-
-.you p {
-  float: left;
-  margin-right: 5px;
-  background-color: #eee;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  width: 100%; }
-
-.you img {
-  float: left; }
-
-.me p {
-  float: right;
-  color: white;
-  border: 1px solid #007AFF;
-  margin-left: 5px;
-  background-color: #007AFF;
-  padding: 10px;
-  width: 100%;
-  border-radius: 5px; }
-
-.me img {
-  float: right; }
-
-.center {
-  margin-left: auto;
-  margin-right: auto;
-  display: block; }
-
-.userImage {
-  border-radius: 5px;
-  border: 1px solid #eee;
-  width: 130px;
-  height: 130px; }
-
-.peopleList .peopleListContainer .personAvatar {
-  border-radius: 5px;
-  max-width: 45px;
-  max-height: 50px; }
-
-.peopleList .peopleListContainer .peopleName {
-  font-weight: 600; }
-  .peopleList .peopleListContainer .peopleName .peopleGender {
-    font-size: 12px;
-    font-weight: 400; }
 
 .postModalContent .postModalInterests {
   border-bottom: 1px solid #ddd;
@@ -347,7 +340,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: capitalize; }
 
 .postModalContent .postModalInfo .infoValue {
-  font-size: 18px;
+  font-size: 14px;
   padding-left: 2px; }
 
 .postModalContent .postModalInfo .icon {
@@ -421,7 +414,8 @@ a {
     .singlePostContainer .postInfo .infoValue {
       margin-left: 2px;
       color: black;
-      font-size: 14px; }
+      font-size: 11px;
+      text-transform: lowercase; }
     .singlePostContainer .postInfo .icon {
       font-size: 16px;
       color: blue; }
@@ -443,3 +437,14 @@ a {
   padding-top: 100px;
   font-size: 32px;
   text-align: center; }
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block; }
+
+.userImage {
+  border-radius: 5px;
+  border: 1px solid #eee;
+  width: 130px;
+  height: 130px; }

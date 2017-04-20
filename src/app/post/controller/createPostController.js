@@ -25,7 +25,7 @@
 				$state.go('home.post.latest');
 			}).catch(function(err) {
 				console.log("post error");
-				
+				console.log(err);
 			});
 		}
 

@@ -17,7 +17,7 @@
 			link: function (scope) {
 				
 				scope.getTime = function(time){
-					return moment(time).fromNow(true);
+					return moment(time).fromNow();
 				};
 				scope.currentUser = userData.getUser();
 

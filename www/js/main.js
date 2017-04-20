@@ -1,85 +1,102 @@
 (function(angular) {
 
 	'use strict';
-		
 
-		var app = angular.module('petal', ['ionic', 'satellizer', 'ngFileUpload', 'btford.socket-io',
-			'ngCordova', 'toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
-		]);
-		app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider',
-			function($urlRouterProvider, $stateProvider, $ionicConfigProvider) {
-				$ionicConfigProvider.tabs.position("bottom");
-				$urlRouterProvider.otherwise('/home/post/all');
+
+	var app = angular.module('petal', ['ionic', 'satellizer', 'ngFileUpload', 'btford.socket-io',
+		'ngCordova', 'toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
+	]);
+	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider',
+		function($urlRouterProvider, $stateProvider, $ionicConfigProvider) {
+			$ionicConfigProvider.tabs.position("bottom");
+			$urlRouterProvider.otherwise('/home/post/all');
+		}
+	]);
+	app.run(['$rootScope', '$state', '$ionicPlatform', '$ionicLoading', 'RequestsService', '$cordovaPushV5', '$ionicHistory', function($rootScope, $state, $ionicPlatform, $ionicLoading, RequestsService, $cordovaPushV5, $ionicHistory) {
+
+		$ionicPlatform.ready(function() {
+			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+			// for form inputs)
+			if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+				cordova.plugins.Keyboard.disableScroll(true);
+				//window.pushNotification = window.plugins.pushNotification;
+				appStatus();
+				notificationFunction();
+				backButtonExit();
 			}
-		]);
-		app.run(['$rootScope', '$state', '$ionicPlatform', '$ionicLoading', 'RequestsService', '$cordovaPushV5', '$ionicHistory', function($rootScope, $state, $ionicPlatform, $ionicLoading, RequestsService, $cordovaPushV5, $ionicHistory) {
+			if (window.StatusBar) {
+				// org.apache.cordova.statusbar required
+				StatusBar.styleDefault();
+			}
 
-			$ionicPlatform.ready(function() {
-				// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-				// for form inputs)
-				if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-					cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-					cordova.plugins.Keyboard.disableScroll(true);
-					//window.pushNotification = window.plugins.pushNotification;
-					notificationFunction();
-					backButtonExit();
+			window.onerror = function(errorMsg, url, lineNumber) {
+				return false;
+			};
+			$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
+				if (fromState.name != 'chatBox') {
+					//$ionicLoading.show();
+
 				}
-				if (window.StatusBar) {
-					// org.apache.cordova.statusbar required
-					StatusBar.styleDefault();
-				}
-
-				window.onerror = function(errorMsg, url, lineNumber) {
-					return false;
-				};
-				$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
-					if (fromState.name != 'chatBox') {
-						//$ionicLoading.show();
-
-					}
-				});
-
-				$rootScope.$on("$stateChangeError", function() {
-					$state.go('home.post.all');
-					$ionicLoading.hide();
-				});
 			});
 
-			function backButtonExit() {
-				$ionicPlatform.registerBackButtonAction(function(e) {
-					if ($rootScope.backButtonPressedOnceToExit) {
-						ionic.Platform.exitApp();
-					} else if ($ionicHistory.backView()) {
-						$ionicHistory.goBack();
-					} else {
-						$rootScope.backButtonPressedOnceToExit = true;
-						window.plugins.toast.showShortCenter(
-							"Press back button again to exit",
-							function(a) {},
-							function(b) {}
-						);
-						window.setTimeout(function() {
-							$rootScope.backButtonPressedOnceToExit = false;
-						}, 2000);
-					}
-					e.preventDefault();
-					return false;
-				}, 101);
-			}
+			$rootScope.$on("$stateChangeError", function() {
+				$state.go('home.post.all');
+				$ionicLoading.hide();
+			});
+		});
 
-			function notificationFunction() {
+		function backButtonExit() {
+			$ionicPlatform.registerBackButtonAction(function(e) {
+				if ($rootScope.backButtonPressedOnceToExit) {
+					ionic.Platform.exitApp();
+				} else if ($ionicHistory.backView()) {
+					$ionicHistory.goBack();
+				} else {
+					$rootScope.backButtonPressedOnceToExit = true;
+					window.plugins.toast.showShortCenter(
+						"Press back button again to exit",
+						function(a) {},
+						function(b) {}
+					);
+					window.setTimeout(function() {
+						$rootScope.backButtonPressedOnceToExit = false;
+					}, 2000);
+				}
+				e.preventDefault();
+				return false;
+			}, 101);
+		}
+
+		function appStatus() {
+			$ionicPlatform.on('pause', function() {
+				console.log("pause");
+				RequestsService.register('vibrate');
+			});
+			// The resume event fires when the native platform
+			//  pulls the application out from the background.
+			$ionicPlatform.on('resume', function() {
+				console.log("resume");
 				RequestsService.register();
 
-				$rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
-				});
+			});
+		}
 
-				// triggered every time error occurs
-				$rootScope.$on('$cordovaPushV5:errorOcurred', function(event, e) {
+		function notificationFunction() {
+			RequestsService.register();
 
-				});
-			}
-		}]);
-	
+			$rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
+				console.log(data);
+				console.log(event);
+			});
+
+			// triggered every time error occurs
+			$rootScope.$on('$cordovaPushV5:errorOcurred', function(event, e) {
+
+			});
+		}
+	}]);
+
 })(window.angular);
 // red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green,,
 //light-green, lime, yellow, amber, orange, deep-orange, brown, grey, blue-grey
@@ -575,8 +592,8 @@
 
 				socketJoin();
 				getChatMessages();
-			}, function(res) {
-				
+			}, function(err) {
+				console.log(err);
 			});
 			getReceiver();
 
@@ -620,6 +637,7 @@
 				cbc.messageLoading = false;
 				cbc.messageTryCount = 0;
 			}).catch(function(err) {
+				console.log(err);
 				cbc.messageTryCount+=1;
 				
 				if(cbc.messageTryCount<=3){
@@ -648,9 +666,10 @@
 				var chatObj = { 'message': cbc.uploadedImage, receiver: $stateParams.user, 'roomId': cbc.chatRoomId, type: 'img' };
 				chatService.sendChatMessage(chatObj).then(function(res) {
 					scrollBottom();
-					
+					cbc.chatList.push(res.data.message);
+					cbc.messageLoading = false;
 				}).catch(function(err) {
-
+					console.log(err);
 					
 				});
 
@@ -675,7 +694,7 @@
 			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
 
 			}).catch(function(err){
-				
+				console.log(err);
 			}).finally(function(){
 				
 				
@@ -903,7 +922,6 @@ angular.module('petal.chat')
 		});
 
 		function messageReceived(message) {
-			console.log(message);
 			var messageString = message.message;
 			if(message.type && message.type=='img'){
 				messageString = 'New image';
@@ -973,39 +991,70 @@ angular.module('petal.chat')
 
 (function(angular) {
 	'use strict';
-	angular.module('petal.home').directive('distanceView', ['postService', '$timeout', function(postService, $timeout) {
-		return {
-			restrict: 'E',
-			templateUrl: 'app/home/views/distanceViewTemplate.html',
-			scope: {
-				positionCords: '='
-			},
-			replace: true,
-			link: function(scope) {
-				$timeout(getDistance, 1000);
+	angular.module('petal.home')
+		.directive('distanceView', ['postService', '$timeout', function(postService, $timeout) {
+			return {
+				restrict: 'E',
+				templateUrl: 'app/home/views/distanceViewTemplate.html',
+				scope: {
+					positionCords: '='
+				},
+				replace: true,
+				link: function(scope) {
+					$timeout(getDistance, 1000);
 
-				function getDistance() {
-					if (scope.positionCords) {
-						scope.distanceObj = {
-							latitude: scope.positionCords[1],
-							longitude: scope.positionCords[0],
+					function getDistance() {
+						if (scope.positionCords) {
+							scope.distanceObj = {
+								latitude: scope.positionCords[1],
+								longitude: scope.positionCords[0],
 
-						};
-						postService.getDistance(scope.distanceObj).then(function(res) {
-							scope.distanceObj.distance = res + ' mi';
-						}).catch(function(err) {
+							};
+							postService.getDistance(scope.distanceObj).then(function(res) {
+								scope.distanceObj.distance = res + ' mi';
+							}).catch(function(err) {
+								scope.distanceObj.distance = '';
+							});
+						} else {
+							scope.distanceObj = {};
 							scope.distanceObj.distance = '';
-						});
-					} else {
-						scope.distanceObj = {};
-						scope.distanceObj.distance = '';
+						}
 					}
+
+
 				}
+			};
+		}]);
+		/*.directive('expandingTextarea', [function() {
+			return {
+				restrict: 'A',
+				controller: function($scope, $element, $attrs, $timeout) {
+					$element.css('min-height', '0');
+					$element.css('resize', 'none');
+					$element.css('overflow-y', 'hidden');
+					setHeight(0);
+					$timeout(setHeightToScrollHeight);
 
+					function setHeight(height) {
+						$element.css('height', height + 'px');
+						$element.css('max-height', height + 'px');
+					}
 
-			}
-		};
-	}]);
+					function setHeightToScrollHeight() {
+						setHeight(0);
+						var scrollHeight = angular.element($element)[0]
+							.scrollHeight;
+						if (scrollHeight !== undefined) {
+							setHeight(scrollHeight);
+						}
+					}
+
+					$scope.$watch(function() {
+						return angular.element($element)[0].value;
+					}, setHeightToScrollHeight);
+				}
+			};
+		}])*/
 })(window.angular);
 
 (function(angular) {
@@ -1122,8 +1171,8 @@ angular.module('petal.chat')
 		.service('homeService',['$http','Upload',HomeService]);
 
 		function HomeService($http,Upload){
-			//this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
-			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
+			this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
+			//this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
 			this.deleteUpload = deleteUpload;
 			this.submitUpload = submitUpload;
 			var that = this;
@@ -1149,13 +1198,14 @@ angular.module('petal.chat')
 
 		var base_url = homeService.baseURL;
 
-		function register() {
+		function register(vibrate) {
 
 			var deferred = $q.defer();
 			
 			var options = {
 				android: {
-					senderID: "679461840115"
+					senderID: "679461840115",
+					vibrate: false
 				},
 				ios: {
 					alert: "true",
@@ -1164,10 +1214,17 @@ angular.module('petal.chat')
 				},
 				windows: {}
 			};
-
+			if(vibrate){
+				options.android.vibrate = true;
+				//options.android.forceShow =true;
+			}
+			
 			$cordovaPushV5.initialize(options).then(function() {
 				// start listening for new notifications
-				$cordovaPushV5.onNotification();
+				$cordovaPushV5.onNotification(function(){
+					console.log("insideeee notification");
+					console.log(arguments);
+				});
 				// start listening for errors
 				$cordovaPushV5.onError();
 
@@ -1296,7 +1353,7 @@ angular.module('petal.home')
 
 		function getAllPeople() {
 			peopleService.getAllUsers(apc.params).then(function(response) {
-				console.log(response);
+				
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
@@ -1428,12 +1485,11 @@ angular.module('petal.home')
 
 		function getReceivedPeople() {
 			peopleService.getReceivedUsers(apc.params).then(function(response) {
-				console.log("response");
-				console.log(response);
+				
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
-				console.log(apc.peopleList);
+				apc.noPeople =!response.data.total;
 				apc.initialSearchCompleted = true;
 				if (response.data.total > apc.peopleList.length) {
 					apc.canLoadMoreResults = true;
@@ -1546,11 +1602,11 @@ angular.module('petal.home')
 
 		function getRevealedPeople() {
 			peopleService.getRevealedUsers(apc.params).then(function(response) {
-				console.log("response");
-				console.log(response);
+				
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});
+				apc.noPeople =!response.data.total;
 				apc.initialSearchCompleted = true;
 				if (response.data.total > apc.peopleList.length) {
 					apc.canLoadMoreResults = true;
@@ -2041,7 +2097,7 @@ angular.module('petal.home')
 				$state.go('home.post.latest');
 			}).catch(function(err) {
 				console.log("post error");
-				
+				console.log(err);
 			});
 		}
 
@@ -2363,7 +2419,7 @@ angular.module('petal.home')
 			link: function (scope) {
 				
 				scope.getTime = function(time){
-					return moment(time).fromNow(true);
+					return moment(time).fromNow();
 				};
 				scope.currentUser = userData.getUser();
 
@@ -2566,6 +2622,8 @@ angular.module('petal.home')
       			}
       			userLocationService.setUserLocation();
 			userLocationService.getUserLocation().then(function(position) {
+				console.log("from position service");
+				console.log(position);
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
 				$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
@@ -2596,11 +2654,9 @@ angular.module('petal.home')
 
 		function submitPost(post) {
 			var defer = $q.defer();
-
 			userLocationService.getUserLocation().then(function(position) {
 				post.latitude = position.latitude;
 				post.longitude = position.longitude;
-
 
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
 
@@ -2609,12 +2665,12 @@ angular.module('petal.home')
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				
-				
+				console.log("location may be");
+				console.log(err);
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
 					defer.resolve(response);
-				}).catch(function(err) {
-					defer.reject(err);
+				}).catch(function(err2) {
+					defer.reject(err2);
 				});
 			});
 			return defer.promise;
@@ -2953,26 +3009,38 @@ angular.module('petal.home')
 	 *Service for getting a single store with its id
 	 */
 	angular.module('petal.user')
-		.service('userLocationService', ['$cordovaGeolocation', 'userService', '$q', UserLocationService]);
+		.service('userLocationService', ['$cordovaGeolocation', 'userService', '$q', '$http', UserLocationService]);
 
 	/*
 	 * This servic has a function names getStore which takes id as parameter and returns a promise
 	 */
-	function UserLocationService($cordovaGeolocation, userService, $q) {
+	function UserLocationService($cordovaGeolocation, userService, $q, $http) {
 		this.getUserLocation = getUserLocation;
 		this.setUserLocation = setUserLocation;
 
 		function getUserLocation() {
 			var deferred = $q.defer();
 			var options = { timeout: 10000, enableHighAccuracy: false };
+
 			$cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 				var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 				deferred.resolve(positions);
-			}).catch(function() {
+			}).catch(function(err) {
+				window.console.log("first catch");
+				window.console.log(err);
 				if (navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(function(position) {
+						window.console.log("seconddddd one");
 						var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 						deferred.resolve(positions);
+					}, function() {
+						$http.post('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDCa1LUe1vOczX1hO_iGYgyo8p_jYuGOPU').then(function(data) {
+							window.console.log("from the maps");
+							window.console.log(data);
+						}).catch(function(err3) {
+							window.console.log("third err");
+							window.console.log(err3);
+						});
 					});
 				} else {
 					/*if (err.code == 3) {
@@ -2982,7 +3050,10 @@ angular.module('petal.home')
 					}*/
 					deferred.reject('Not able to acces your location.Make sure location is enabled');
 				}
+
 			});
+
+
 			return deferred.promise;
 		}
 

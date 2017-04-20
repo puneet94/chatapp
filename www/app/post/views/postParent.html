@@ -8,5 +8,7 @@
                         <div class=" col ripple col-20 columnCustom " ui-sref="home.post.all" ui-sref-active="columnCustomActive"><h5 class="customTabHeading">All</h5></div>
                 </div>
         </ion-header-bar>
-        <div ui-view="post-tab">Loading</div>
+        <ion-nav-view  name="post-tab" animation="slide-left-right">
+          Loading
+        </ion-nav-view>
 </ion-view>

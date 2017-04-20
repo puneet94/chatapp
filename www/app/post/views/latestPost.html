@@ -1,3 +1,6 @@
+<ion-view >
+  
+
 <ion-content class="has-header" keep-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="lpc.pullRefreshPosts()">
         </ion-refresher>
@@ -24,6 +27,7 @@
         <ion-infinite-scroll on-infinite="lpc.loadMorePosts()" distance="100%" immediate-check="false" ng-if="lpc.canLoadMoreResults && lpc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>
+</ion-view>
 
 
 

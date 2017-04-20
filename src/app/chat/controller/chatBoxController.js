@@ -66,8 +66,8 @@
 
 				socketJoin();
 				getChatMessages();
-			}, function(res) {
-				
+			}, function(err) {
+				console.log(err);
 			});
 			getReceiver();
 
@@ -111,6 +111,7 @@
 				cbc.messageLoading = false;
 				cbc.messageTryCount = 0;
 			}).catch(function(err) {
+				console.log(err);
 				cbc.messageTryCount+=1;
 				
 				if(cbc.messageTryCount<=3){
@@ -139,9 +140,10 @@
 				var chatObj = { 'message': cbc.uploadedImage, receiver: $stateParams.user, 'roomId': cbc.chatRoomId, type: 'img' };
 				chatService.sendChatMessage(chatObj).then(function(res) {
 					scrollBottom();
-					
+					cbc.chatList.push(res.data.message);
+					cbc.messageLoading = false;
 				}).catch(function(err) {
-
+					console.log(err);
 					
 				});
 
@@ -166,7 +168,7 @@
 			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
 
 			}).catch(function(err){
-				
+				console.log(err);
 			}).finally(function(){
 				
 				

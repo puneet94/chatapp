@@ -15,7 +15,6 @@
 		});
 
 		function messageReceived(message) {
-			console.log(message);
 			var messageString = message.message;
 			if(message.type && message.type=='img'){
 				messageString = 'New image';
