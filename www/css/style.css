@@ -51,17 +51,6 @@
 .me img {
   float: right; }
 
-.peopleList .peopleListContainer .personAvatar {
-  border-radius: 5px;
-  max-width: 45px;
-  max-height: 50px; }
-
-.peopleList .peopleListContainer .peopleName {
-  font-weight: 600; }
-  .peopleList .peopleListContainer .peopleName .peopleGender {
-    font-size: 12px;
-    font-weight: 400; }
-
 .logoIcon {
   background-image: url("/img/logo.png");
   height: 100px;
@@ -113,7 +102,7 @@
   background-color: #3B5998;
   color: #fff;
   padding: 20px;
-  margin: 30px;
+  margin: 0 30px;
   font-size: 20px;
   box-sizing: border-box; }
   .facebookAuthenticateButton .text-container {
@@ -139,6 +128,11 @@
     padding: 10px;
     background-color: white;
     padding-top: 0; }
+
+.profileInfoText {
+  color: white;
+  padding-top: 5px;
+  padding-bottom: 10px; }
 
 .authModalText {
   font-size: 18px;
@@ -326,6 +320,17 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   border: 15px solid white; }
+
+.peopleList .peopleListContainer .personAvatar {
+  border-radius: 5px;
+  max-width: 45px;
+  max-height: 50px; }
+
+.peopleList .peopleListContainer .peopleName {
+  font-weight: 600; }
+  .peopleList .peopleListContainer .peopleName .peopleGender {
+    font-size: 12px;
+    font-weight: 400; }
 
 .postModalContent .postModalInterests {
   border-bottom: 1px solid #ddd;

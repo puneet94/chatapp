@@ -1,18 +1,20 @@
-<ion-view>
-<ion-content class="has-header" keep-scroll>
-        <div class="list">
-                <a class="item item-avatar"  
-                 ng-repeat="chatRoom in rpc.chatRoomsList" ui-sref="chatBox({user:chatRoom.creator2._id})">
-                 
-                 
-                        <img ng-src="{{chatRoom.creator2.googlePicture||chatRoom.creator2.facebookPicture||chatRoom.creator2.picture}}" />
-        
-                        <h2 >{{chatRoom.creator2.facebookName || chatRoom.creator2.googleName || chatRoom.creator2.displayName||chatRoom.creator2.anonName}}</h2>
-                        <p ng-if="chatRoom.lastMessage.type=='img'"><img style="height:50px;width:50%" ng-src="{{chatRoom.lastMessage.message}}"></p>
-                        <p ng-if="chatRoom.lastMessage.type!=='img'">{{chatRoom.lastMessage.message}}</p>
-                        <span ng-if="chatRoom.lastMessageTime>chatRoom.lastLoggedOut" class="badge badge-assertive">{{1 }}</span>
-                </a>
-        </div>
-</ion-content>
+<ion-view cache-view="false">
+        <ion-content class="has-header">
+                <ion-refresher pulling-text="Pull to refresh..." on-refresh="rpc.pullRefreshChats()">
+                </ion-refresher>
+                <div class="list">
+                        <a class="item item-avatar" ng-repeat="chatRoom in rpc.chatRoomsList" ui-sref="chatBox({user:chatRoom.creator2._id})">
+                                <img ng-src="{{chatRoom.creator2.googlePicture||chatRoom.creator2.facebookPicture||chatRoom.creator2.picture}}" />
+                                <h2>{{chatRoom.creator2.facebookName||chatRoom.creator2.googleName }}
+                                </h2>
+                                <p ng-if="chatRoom.lastMessage.type=='img'">
+                                        <img style="height:50px;width:50%" ng-src="{{chatRoom.lastMessage.message}}">
+                                </p>
+                                <p ng-if="chatRoom.lastMessage.type!=='img'">{{chatRoom.lastMessage.message}}</p>
+                                <span ng-if="chatRoom.newChat||(chatRoom.lastMessageTime>chatRoom.lastLoggedOut)" class="badge badge-assertive">{{1 }}</span>
+                        </a>
+                </div>
+                <ion-infinite-scroll on-infinite="rpc.loadMoreChats()" distance="100%" immediate-check="false" ng-if="rpc.canLoadMoreResults && rpc.initialSearchCompleted">
+                </ion-infinite-scroll>
+        </ion-content>
 </ion-view>
-<!---->

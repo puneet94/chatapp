@@ -479,25 +479,120 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.chat')
-		.controller('AllChatController', ['$scope', '$state', 'chatService','$ionicLoading', AllChatController]);
+		.service('chatService', ['$http', '$stateParams', 'homeService', ReviewService]);
 
-	function AllChatController($scope, $state,chatService,$ionicLoading) {
+	function ReviewService($http, $stateParams, homeService) {
+		var rs = this;
+		rs.sendChatMessage = sendChatMessage;
+		rs.getChatMessages = getChatMessages;
+		rs.getChatRoom = getChatRoom;
+		rs.getAllChatRooms = getAllChatRooms;
+		rs.getRevealedChatRooms = getRevealedChatRooms;
+		rs.updateChatRoom = updateChatRoom;
+
+		function sendChatMessage(chat) {
+			
+			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
+		}
+
+		function getChatMessages(chatRoomId,params) {
+			
+			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
+		}
+
+		function getChatRoom(user) {
+			
+			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
+
+		}
+		function getAllChatRooms(params) {
+			params.revealed = false;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
+		}
+		function getRevealedChatRooms(params) {
+			params.revealed = true;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
+		}
+		function updateChatRoom(id){
+			return $http.post(homeService.baseURL+'chatRoom/'+id);
+		}
+
+		
+
+
+	}
+})(window.angular);
+
+(function(angular){
+'use strict';
+angular.module('petal.chat').factory('Socket', ['socketFactory','homeService',SocketFactory]);
+    
+    function SocketFactory(socketFactory,homeService) {
+        return socketFactory({
+            prefix: '',
+            ioSocket: io.connect(homeService.baseURL)
+        });
+    }
+
+})(window.angular);
+(function(angular){
+'use strict';
+
+
+
+angular.module('petal.chat')
+	.factory('SocketUserService', ['socketFactory','userData','homeService',socketFactoryFunction]);
+    function socketFactoryFunction(socketFactory,userData,homeService) {
+        return socketFactory({
+            prefix: '',
+            ioSocket: io.connect(homeService.baseURL+userData.getUser()._id)
+        });
+    }
+})(window.angular);
+(function(angular) {
+	'use strict';
+	angular.module('petal.chat')
+		.controller('AllChatController', ['$scope', '$state', 'chatService', '$ionicLoading', 'Socket',AllChatController]);
+
+	function AllChatController($scope, $state, chatService, $ionicLoading,Socket) {
 		var acc = this;
-		acc.params = {
-			page: 1,
-			limit: 25
-		};
-		acc.chatRoomsList = [];
 		acc.getAllChatRooms = getAllChatRooms;
 		acc.loadMoreChats = loadMoreChats;
 		acc.pullRefreshChats = pullRefreshChats;
 		activate();
+		Socket.on('newMessageReceived', messageReceived);
 
+		function messageReceived(message){
+		
+		
+			console.log("from");
+			var newChatRoom = {};
+			newChatRoom.creator2 = message.user;
+			newChatRoom.newChat = true;
+			newChatRoom.lastMessage = {
+				user:message.user._id,
+				_id:message._id,
+				message:message.message,
+				type: message.type
+			};
+			
+			console.log(newChatRoom);
+
+			for(var ch=0;ch<acc.chatRoomsList.length;ch++){
+				console.log("calling");
+				if(newChatRoom.creator2._id==acc.chatRoomsList[ch].creator2._id){
+					
+					acc.chatRoomsList.splice(ch,1);
+					acc.chatRoomsList.unshift(newChatRoom);
+					return;
+				}
+			}
+			
+		}
 		function pullRefreshChats() {
-			acc.params.page = 1;
-			acc.chatRoomsList = [];
-			getAllChatRooms();
-
+			activate();
 		}
 
 		function loadMoreChats() {
@@ -506,19 +601,34 @@
 		}
 
 		function getAllChatRooms() {
-			chatService.getAllChatRooms(acc.params).then(function(response){
-				
-
+			chatService.getAllChatRooms(acc.params).then(function(response) {
 				angular.forEach(response.data.docs, function(value) {
 					acc.chatRoomsList.push(value);
 				});
+				acc.noPosts =!response.data.total;
 				
-			}).finally(function(){
+				acc.initialSearchCompleted = true;
+				if (response.data.total > acc.chatRoomsList.length) {
+					acc.canLoadMoreResults = true;
+				}
+				else{
+					acc.canLoadMoreResults = false;	
+				}
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
 				$ionicLoading.hide();
 			});
 		}
 
 		function activate() {
+			acc.canLoadMoreResults = false;
+			acc.initialSearchCompleted = false;
+			acc.params = {
+				page: 1,
+				limit: 25
+			};
+			acc.chatRoomsList = [];
 			getAllChatRooms();
 		}
 	}
@@ -726,25 +836,17 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.chat')
-		.controller('RevealedChatController',['$scope','$state','chatService','$ionicLoading',RevealedChatController]);
+		.controller('RevealedChatController',['$scope','$state','chatService','$ionicLoading','Socket',RevealedChatController]);
 
-	function RevealedChatController($scope,$state,chatService,$ionicLoading){
+	function RevealedChatController($scope,$state,chatService,$ionicLoading,Socket){
 		var acc = this;
-		acc.params = {
-			page: 1,
-			limit: 25
-		};
-		acc.chatRoomsList = [];
 		acc.getRevealedChatRooms = getRevealedChatRooms;
 		acc.loadMoreChats = loadMoreChats;
 		acc.pullRefreshChats = pullRefreshChats;
 		activate();
-
+		
 		function pullRefreshChats() {
-			acc.params.page = 1;
-			acc.chatRoomsList = [];
-			getRevealedChatRooms();
-
+			activate();
 		}
 
 		function loadMoreChats() {
@@ -753,95 +855,39 @@
 		}
 
 		function getRevealedChatRooms() {
-			chatService.getRevealedChatRooms(acc.params).then(function(response){
-				
+			chatService.getRevealedChatRooms(acc.params).then(function(response) {
 				angular.forEach(response.data.docs, function(value) {
 					acc.chatRoomsList.push(value);
 				});
-			}).finally(function(){
-					$ionicLoading.hide();
-				});
+				acc.noPosts =!response.data.total;
+
+				console.log(acc.chatRoomsList);
+				acc.initialSearchCompleted = true;
+				if (response.data.total > acc.chatRoomsList.length) {
+					acc.canLoadMoreResults = true;
+				}
+				else{
+					acc.canLoadMoreResults = false;	
+				}
+			}).finally(function() {
+				
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
 		}
 
 		function activate() {
+			acc.canLoadMoreResults = false;
+			acc.initialSearchCompleted = false;
+			acc.params = {
+				page: 1,
+				limit: 25
+			};
+			acc.chatRoomsList = [];
 			getRevealedChatRooms();
 		}
 	}
-})(window.angular);
-(function(angular) {
-	'use strict';
-	angular.module('petal.chat')
-		.service('chatService', ['$http', '$stateParams', 'homeService', ReviewService]);
-
-	function ReviewService($http, $stateParams, homeService) {
-		var rs = this;
-		rs.sendChatMessage = sendChatMessage;
-		rs.getChatMessages = getChatMessages;
-		rs.getChatRoom = getChatRoom;
-		rs.getAllChatRooms = getAllChatRooms;
-		rs.getRevealedChatRooms = getRevealedChatRooms;
-		rs.updateChatRoom = updateChatRoom;
-
-		function sendChatMessage(chat) {
-			
-			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
-		}
-
-		function getChatMessages(chatRoomId,params) {
-			
-			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
-		}
-
-		function getChatRoom(user) {
-			
-			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
-
-		}
-		function getAllChatRooms(params) {
-			params.revealed = false;
-			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
-
-		}
-		function getRevealedChatRooms(params) {
-			params.revealed = true;
-			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
-
-		}
-		function updateChatRoom(id){
-			return $http.post(homeService.baseURL+'chatRoom/'+id);
-		}
-
-		
-
-
-	}
-})(window.angular);
-
-(function(angular){
-'use strict';
-angular.module('petal.chat').factory('Socket', ['socketFactory','homeService',SocketFactory]);
-    
-    function SocketFactory(socketFactory,homeService) {
-        return socketFactory({
-            prefix: '',
-            ioSocket: io.connect(homeService.baseURL)
-        });
-    }
-
-})(window.angular);
-(function(angular){
-'use strict';
-
-
-
-angular.module('petal.chat')
-	.factory('SocketUserService', ['socketFactory','userData','homeService',socketFactoryFunction]);
-    function socketFactoryFunction(socketFactory,userData,homeService) {
-        return socketFactory({
-            prefix: '',
-            ioSocket: io.connect(homeService.baseURL+userData.getUser()._id)
-        });
-    }
 })(window.angular);
 (function(angular) {
 	'use strict';
@@ -922,11 +968,12 @@ angular.module('petal.chat')
 		});
 
 		function messageReceived(message) {
+			
 			var messageString = message.message;
 			if(message.type && message.type=='img'){
 				messageString = 'New image';
 			}
-			var userName = message.user.anonName||message.user.facebookName ;
+			var userName = message.user.anonName||message.user.facebookName ||message.user.googleName ;
 			if (message.user._id == userData.getUser()._id) {
 
 			} else {
@@ -935,15 +982,17 @@ angular.module('petal.chat')
 					if ($state.params.user != message.user._id) {
 						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
 							allowHtml: true,
+							maxOpened: 1, 
 							onTap: function() {
 								$state.go('chatBox', { user: message.user._id });
 							}
 						});
 					}
 				} else {
-
+					
 					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
 						allowHtml: true,
+						maxOpened: 1, 
 						onTap: function() {
 							$state.go('chatBox', { user: message.user._id });
 						}
@@ -1205,7 +1254,7 @@ angular.module('petal.chat')
 			var options = {
 				android: {
 					senderID: "679461840115",
-					vibrate: false
+					vibrate: "true"
 				},
 				ios: {
 					alert: "true",
@@ -1214,10 +1263,10 @@ angular.module('petal.chat')
 				},
 				windows: {}
 			};
-			if(vibrate){
-				options.android.vibrate = true;
+			/*if(vibrate){
+				//options.android.vibrate = true;
 				//options.android.forceShow =true;
-			}
+			}*/
 			
 			$cordovaPushV5.initialize(options).then(function() {
 				// start listening for new notifications
@@ -2173,7 +2222,6 @@ angular.module('petal.home')
 				}
 			}).catch(function(err) {
 				console.log(err);
-
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
@@ -3005,15 +3053,11 @@ angular.module('petal.home')
 })(window.angular);
 (function(angular) {
 	'use strict';
-	/*
-	 *Service for getting a single store with its id
-	 */
+	
 	angular.module('petal.user')
 		.service('userLocationService', ['$cordovaGeolocation', 'userService', '$q', '$http', UserLocationService]);
 
-	/*
-	 * This servic has a function names getStore which takes id as parameter and returns a promise
-	 */
+	
 	function UserLocationService($cordovaGeolocation, userService, $q, $http) {
 		this.getUserLocation = getUserLocation;
 		this.setUserLocation = setUserLocation;
@@ -3026,28 +3070,30 @@ angular.module('petal.home')
 				var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 				deferred.resolve(positions);
 			}).catch(function(err) {
-				window.console.log("first catch");
-				window.console.log(err);
+				
 				if (navigator.geolocation) {
+					
+					
 					navigator.geolocation.getCurrentPosition(function(position) {
-						window.console.log("seconddddd one");
+						
 						var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 						deferred.resolve(positions);
 					}, function() {
 						$http.post('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDCa1LUe1vOczX1hO_iGYgyo8p_jYuGOPU').then(function(data) {
 							window.console.log("from the maps");
 							window.console.log(data);
-						}).catch(function(err3) {
-							window.console.log("third err");
-							window.console.log(err3);
+							var coords= {latitude: data.location.lat, longitude: data.location.lng};
+							deferred.resolve(coords);
+						}).catch(function() {
+							
 						});
 					});
 				} else {
-					/*if (err.code == 3) {
+					if (err.code == 3) {
 						window.alert("Unable to access your location.Make sure location is turned on.");
 					} else if (err.code == 2 || err.code == 1) {
 						window.alert("Please enable location or gps");
-					}*/
+					}
 					deferred.reject('Not able to acces your location.Make sure location is enabled');
 				}
 

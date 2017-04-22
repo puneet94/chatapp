@@ -15,11 +15,12 @@
 		});
 
 		function messageReceived(message) {
+			
 			var messageString = message.message;
 			if(message.type && message.type=='img'){
 				messageString = 'New image';
 			}
-			var userName = message.user.anonName||message.user.facebookName ;
+			var userName = message.user.anonName||message.user.facebookName ||message.user.googleName ;
 			if (message.user._id == userData.getUser()._id) {
 
 			} else {
@@ -28,15 +29,17 @@
 					if ($state.params.user != message.user._id) {
 						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
 							allowHtml: true,
+							maxOpened: 1, 
 							onTap: function() {
 								$state.go('chatBox', { user: message.user._id });
 							}
 						});
 					}
 				} else {
-
+					
 					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
 						allowHtml: true,
+						maxOpened: 1, 
 						onTap: function() {
 							$state.go('chatBox', { user: message.user._id });
 						}

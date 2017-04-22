@@ -36,7 +36,6 @@
 				}
 			}).catch(function(err) {
 				console.log(err);
-
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');

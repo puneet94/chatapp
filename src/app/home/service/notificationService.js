@@ -16,7 +16,7 @@
 			var options = {
 				android: {
 					senderID: "679461840115",
-					vibrate: false
+					vibrate: "true"
 				},
 				ios: {
 					alert: "true",
@@ -25,10 +25,10 @@
 				},
 				windows: {}
 			};
-			if(vibrate){
-				options.android.vibrate = true;
+			/*if(vibrate){
+				//options.android.vibrate = true;
 				//options.android.forceShow =true;
-			}
+			}*/
 			
 			$cordovaPushV5.initialize(options).then(function() {
 				// start listening for new notifications

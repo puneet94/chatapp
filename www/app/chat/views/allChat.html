@@ -1,5 +1,7 @@
-<ion-view>
-<ion-content class="has-header" keep-scroll>
+<ion-view cache-view="false">
+<ion-content class="has-header" >
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="acc.pullRefreshChats()">
+        </ion-refresher>
         <div class="list">
                 <a class="item item-avatar"  
                  ng-repeat="chatRoom in acc.chatRoomsList" ui-sref="chatBox({user:chatRoom.creator2._id})">
@@ -9,9 +11,11 @@
                         <h2 >{{chatRoom.creator2.anonName}}</h2>
                         <p ng-if="chatRoom.lastMessage.type=='img'"><img style="height:50px;width:50%" ng-src="{{chatRoom.lastMessage.message}}"></p>
                         <p ng-if="chatRoom.lastMessage.type!=='img'">{{chatRoom.lastMessage.message}}</p>
-                        <span ng-if="(chatRoom.lastMessageTime>chatRoom.lastLoggedOut) &&(chatRoom.lastMessage.user==chatRoom.creator2._id)" class="badge badge-assertive">{{1 }}</span>
+                        <span ng-if="chatRoom.newChat||(chatRoom.lastMessageTime>chatRoom.lastLoggedOut) &&(chatRoom.lastMessage.user==chatRoom.creator2._id)" class="badge badge-assertive">{{1 }}</span>
                 </a>
         </div>
+         <ion-infinite-scroll on-infinite="acc.loadMoreChats()" distance="100%" immediate-check="false" ng-if="acc.canLoadMoreResults && acc.initialSearchCompleted">
+        </ion-infinite-scroll>
 </ion-content>
 </ion-view>
 <!---->
