@@ -18,17 +18,23 @@
 
 			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
 		}
-
+		function getFilteredPosts(defer,params){
+			$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
+					console.log("without position");
+					defer.resolve(posts);
+				}).catch(function(err2) {
+					defer.reject(err2);
+				});
+		}
 		function getNearbyPosts(params) {
 			params.nearby = true;
 			var defer = $q.defer();
+			
 			if(params.page==1){
 				userLocationService.setUserLocation();
       			}
-      			userLocationService.setUserLocation();
+      			
 			userLocationService.getUserLocation().then(function(position) {
-				console.log("from position service");
-				console.log(position);
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
 				$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
@@ -37,11 +43,9 @@
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				defer.reject(err);
+				window.console.log(err);
+				getFilteredPosts(defer,params);
 			});
-
-
-
 
 			return defer.promise;
 
@@ -59,6 +63,7 @@
 
 		function submitPost(post) {
 			var defer = $q.defer();
+			console.log("entered submit post");
 			userLocationService.getUserLocation().then(function(position) {
 				post.latitude = position.latitude;
 				post.longitude = position.longitude;
@@ -70,9 +75,8 @@
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				console.log("location may be");
-				console.log(err);
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
+				
 					defer.resolve(response);
 				}).catch(function(err2) {
 					defer.reject(err2);

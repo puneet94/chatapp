@@ -12,9 +12,6 @@
 		Socket.on('newMessageReceived', messageReceived);
 
 		function messageReceived(message){
-		
-		
-			console.log("from");
 			var newChatRoom = {};
 			newChatRoom.creator2 = message.user;
 			newChatRoom.newChat = true;
@@ -24,17 +21,16 @@
 				message:message.message,
 				type: message.type
 			};
-			
-			console.log(newChatRoom);
+		
 
 			for(var ch=0;ch<acc.chatRoomsList.length;ch++){
-				console.log("calling");
 				if(newChatRoom.creator2._id==acc.chatRoomsList[ch].creator2._id){
-					
-					acc.chatRoomsList.splice(ch,1);
-					acc.chatRoomsList.unshift(newChatRoom);
-					return;
-				}
+					if (newChatRoom.lastMessage._id !== acc.chatRoomsList[ch].lastMessage._id) {
+						acc.chatRoomsList.splice(ch,1);
+						acc.chatRoomsList.unshift(newChatRoom);
+						return;
+					}
+			}
 			}
 			
 		}

@@ -21,10 +21,11 @@
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				cordova.plugins.Keyboard.disableScroll(true);
 				//window.pushNotification = window.plugins.pushNotification;
-				appStatus();
-				notificationFunction();
+				//appStatus();
+				notificationFunction();	
 				backButtonExit();
 			}
+
 			if (window.StatusBar) {
 				// org.apache.cordova.statusbar required
 				StatusBar.styleDefault();
@@ -70,13 +71,11 @@
 
 		function appStatus() {
 			$ionicPlatform.on('pause', function() {
-				console.log("pause");
-				RequestsService.register('vibrate');
+				RequestsService.register();
 			});
 			// The resume event fires when the native platform
 			//  pulls the application out from the background.
 			$ionicPlatform.on('resume', function() {
-				console.log("resume");
 				RequestsService.register();
 
 			});

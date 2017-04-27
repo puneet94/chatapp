@@ -21,10 +21,11 @@
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				cordova.plugins.Keyboard.disableScroll(true);
 				//window.pushNotification = window.plugins.pushNotification;
-				appStatus();
-				notificationFunction();
+				//appStatus();
+				notificationFunction();	
 				backButtonExit();
 			}
+
 			if (window.StatusBar) {
 				// org.apache.cordova.statusbar required
 				StatusBar.styleDefault();
@@ -70,13 +71,11 @@
 
 		function appStatus() {
 			$ionicPlatform.on('pause', function() {
-				console.log("pause");
-				RequestsService.register('vibrate');
+				RequestsService.register();
 			});
 			// The resume event fires when the native platform
 			//  pulls the application out from the background.
 			$ionicPlatform.on('resume', function() {
-				console.log("resume");
 				RequestsService.register();
 
 			});
@@ -479,81 +478,6 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.chat')
-		.service('chatService', ['$http', '$stateParams', 'homeService', ReviewService]);
-
-	function ReviewService($http, $stateParams, homeService) {
-		var rs = this;
-		rs.sendChatMessage = sendChatMessage;
-		rs.getChatMessages = getChatMessages;
-		rs.getChatRoom = getChatRoom;
-		rs.getAllChatRooms = getAllChatRooms;
-		rs.getRevealedChatRooms = getRevealedChatRooms;
-		rs.updateChatRoom = updateChatRoom;
-
-		function sendChatMessage(chat) {
-			
-			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
-		}
-
-		function getChatMessages(chatRoomId,params) {
-			
-			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
-		}
-
-		function getChatRoom(user) {
-			
-			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
-
-		}
-		function getAllChatRooms(params) {
-			params.revealed = false;
-			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
-
-		}
-		function getRevealedChatRooms(params) {
-			params.revealed = true;
-			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
-
-		}
-		function updateChatRoom(id){
-			return $http.post(homeService.baseURL+'chatRoom/'+id);
-		}
-
-		
-
-
-	}
-})(window.angular);
-
-(function(angular){
-'use strict';
-angular.module('petal.chat').factory('Socket', ['socketFactory','homeService',SocketFactory]);
-    
-    function SocketFactory(socketFactory,homeService) {
-        return socketFactory({
-            prefix: '',
-            ioSocket: io.connect(homeService.baseURL)
-        });
-    }
-
-})(window.angular);
-(function(angular){
-'use strict';
-
-
-
-angular.module('petal.chat')
-	.factory('SocketUserService', ['socketFactory','userData','homeService',socketFactoryFunction]);
-    function socketFactoryFunction(socketFactory,userData,homeService) {
-        return socketFactory({
-            prefix: '',
-            ioSocket: io.connect(homeService.baseURL+userData.getUser()._id)
-        });
-    }
-})(window.angular);
-(function(angular) {
-	'use strict';
-	angular.module('petal.chat')
 		.controller('AllChatController', ['$scope', '$state', 'chatService', '$ionicLoading', 'Socket',AllChatController]);
 
 	function AllChatController($scope, $state, chatService, $ionicLoading,Socket) {
@@ -565,9 +489,6 @@ angular.module('petal.chat')
 		Socket.on('newMessageReceived', messageReceived);
 
 		function messageReceived(message){
-		
-		
-			console.log("from");
 			var newChatRoom = {};
 			newChatRoom.creator2 = message.user;
 			newChatRoom.newChat = true;
@@ -577,17 +498,16 @@ angular.module('petal.chat')
 				message:message.message,
 				type: message.type
 			};
-			
-			console.log(newChatRoom);
+		
 
 			for(var ch=0;ch<acc.chatRoomsList.length;ch++){
-				console.log("calling");
 				if(newChatRoom.creator2._id==acc.chatRoomsList[ch].creator2._id){
-					
-					acc.chatRoomsList.splice(ch,1);
-					acc.chatRoomsList.unshift(newChatRoom);
-					return;
-				}
+					if (newChatRoom.lastMessage._id !== acc.chatRoomsList[ch].lastMessage._id) {
+						acc.chatRoomsList.splice(ch,1);
+						acc.chatRoomsList.unshift(newChatRoom);
+						return;
+					}
+			}
 			}
 			
 		}
@@ -833,20 +753,46 @@ angular.module('petal.chat')
 
 	}
 })(window.angular);
-(function(angular){
+(function(angular) {
 	'use strict';
 	angular.module('petal.chat')
-		.controller('RevealedChatController',['$scope','$state','chatService','$ionicLoading','Socket',RevealedChatController]);
+		.controller('RevealedChatController', ['$scope', '$state', 'chatService', '$ionicLoading', 'Socket', RevealedChatController]);
 
-	function RevealedChatController($scope,$state,chatService,$ionicLoading,Socket){
+	function RevealedChatController($scope, $state, chatService, $ionicLoading, Socket) {
 		var acc = this;
 		acc.getRevealedChatRooms = getRevealedChatRooms;
 		acc.loadMoreChats = loadMoreChats;
 		acc.pullRefreshChats = pullRefreshChats;
 		activate();
-		
+
 		function pullRefreshChats() {
 			activate();
+		}
+		Socket.on('newMessageReceived', messageReceived);
+
+		function messageReceived(message) {
+			var newChatRoom = {};
+			newChatRoom.creator2 = message.user;
+			newChatRoom.newChat = true;
+			newChatRoom.lastMessage = {
+				user: message.user._id,
+				_id: message._id,
+				message: message.message,
+				type: message.type
+			};
+
+
+			for (var ch = 0; ch < acc.chatRoomsList.length; ch++) {
+				if (newChatRoom.creator2._id == acc.chatRoomsList[ch].creator2._id) {
+					if (newChatRoom.lastMessage._id !== acc.chatRoomsList[ch].lastMessage._id) {
+						acc.chatRoomsList.splice(ch, 1);
+						acc.chatRoomsList.unshift(newChatRoom);
+						return;
+					}
+
+				}
+			}
+
 		}
 
 		function loadMoreChats() {
@@ -859,18 +805,17 @@ angular.module('petal.chat')
 				angular.forEach(response.data.docs, function(value) {
 					acc.chatRoomsList.push(value);
 				});
-				acc.noPosts =!response.data.total;
+				acc.noPosts = !response.data.total;
 
 				console.log(acc.chatRoomsList);
 				acc.initialSearchCompleted = true;
 				if (response.data.total > acc.chatRoomsList.length) {
 					acc.canLoadMoreResults = true;
-				}
-				else{
-					acc.canLoadMoreResults = false;	
+				} else {
+					acc.canLoadMoreResults = false;
 				}
 			}).finally(function() {
-				
+
 				$scope.$broadcast('scroll.refreshComplete');
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 				$ionicLoading.hide();
@@ -888,6 +833,82 @@ angular.module('petal.chat')
 			getRevealedChatRooms();
 		}
 	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.chat')
+		.service('chatService', ['$http', '$stateParams', 'homeService', ReviewService]);
+
+	function ReviewService($http, $stateParams, homeService) {
+		var rs = this;
+		rs.sendChatMessage = sendChatMessage;
+		rs.getChatMessages = getChatMessages;
+		rs.getChatRoom = getChatRoom;
+		rs.getAllChatRooms = getAllChatRooms;
+		rs.getRevealedChatRooms = getRevealedChatRooms;
+		rs.updateChatRoom = updateChatRoom;
+
+		function sendChatMessage(chat) {
+			
+			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
+		}
+
+		function getChatMessages(chatRoomId,params) {
+			
+			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
+		}
+
+		function getChatRoom(user) {
+			
+			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
+
+		}
+		function getAllChatRooms(params) {
+			params.revealed = false;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
+		}
+		function getRevealedChatRooms(params) {
+			params.revealed = true;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
+		}
+		function updateChatRoom(id){
+			return $http.post(homeService.baseURL+'chatRoom/'+id);
+		}
+
+		
+
+
+	}
+})(window.angular);
+
+(function(angular){
+'use strict';
+angular.module('petal.chat').factory('Socket', ['socketFactory','homeService',SocketFactory]);
+    
+    function SocketFactory(socketFactory,homeService) {
+        return socketFactory({
+            prefix: '',
+            ioSocket: io.connect(homeService.baseURL)
+        });
+    }
+
+})(window.angular);
+(function(angular){
+'use strict';
+
+
+
+angular.module('petal.chat')
+	.factory('SocketUserService', ['socketFactory','userData','homeService',socketFactoryFunction]);
+    function socketFactoryFunction(socketFactory,userData,homeService) {
+        return socketFactory({
+            prefix: '',
+            ioSocket: io.connect(homeService.baseURL+userData.getUser()._id)
+        });
+    }
 })(window.angular);
 (function(angular) {
 	'use strict';
@@ -1220,8 +1241,8 @@ angular.module('petal.chat')
 		.service('homeService',['$http','Upload',HomeService]);
 
 		function HomeService($http,Upload){
-			this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
-			//this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
+			//this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
+			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
 			this.deleteUpload = deleteUpload;
 			this.submitUpload = submitUpload;
 			var that = this;
@@ -1247,7 +1268,7 @@ angular.module('petal.chat')
 
 		var base_url = homeService.baseURL;
 
-		function register(vibrate) {
+		function register() {
 
 			var deferred = $q.defer();
 			
@@ -1255,6 +1276,9 @@ angular.module('petal.chat')
 				android: {
 					senderID: "679461840115",
 					vibrate: "true"
+				},
+				browser:{
+
 				},
 				ios: {
 					alert: "true",
@@ -1773,7 +1797,7 @@ angular.module('petal.home')
 						}, ],
 						cancelText: 'Cancel',
 						cancel: function() {
-							console.log('CANCELLD');
+							
 						},
 						buttonClicked: function(index) {
 							revealService.cancel(scope.cancelReveal).then(function(res) {
@@ -1973,13 +1997,20 @@ angular.module('petal.home')
 			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
 
 		}
-
+		function getFilteredUsers(defer,params){
+			$http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
+					defer.resolve(users);
+				}).catch(function(err) {
+					defer.reject(err);
+				});
+		}
 		function getNearbyUsers(params) {
 			if (params.page == 1) {
 				userLocationService.setUserLocation();
 			}
 			params.nearby = true;
 			var defer = $q.defer();
+			
 			userLocationService.getUserLocation().then(function(position) {
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
@@ -1989,7 +2020,8 @@ angular.module('petal.home')
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				defer.reject(err);
+				window.console.log(err);
+				getFilteredUsers(defer,params);
 			});
 
 			return defer.promise;
@@ -2143,10 +2175,13 @@ angular.module('petal.home')
 		function submitPost() {
 			$ionicLoading.show();
 			postService.submitPost(cpc.post).then(function(response) {
+				$ionicLoading.hide();
 				$state.go('home.post.latest');
 			}).catch(function(err) {
-				console.log("post error");
+				console.log("post controller error");
 				console.log(err);
+			}).finally(function(){
+				$ionicLoading.hide();
 			});
 		}
 
@@ -2284,7 +2319,7 @@ angular.module('petal.home')
 				else{
 					apc.canLoadMoreResults = false;	
 				}
-				$scope.$broadcast('scroll.infiniteScrollComplete');
+				
 			}).catch(function(err) {
 				console.log(err);
 				
@@ -2661,17 +2696,23 @@ angular.module('petal.home')
 
 			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
 		}
-
+		function getFilteredPosts(defer,params){
+			$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
+					console.log("without position");
+					defer.resolve(posts);
+				}).catch(function(err2) {
+					defer.reject(err2);
+				});
+		}
 		function getNearbyPosts(params) {
 			params.nearby = true;
 			var defer = $q.defer();
+			
 			if(params.page==1){
 				userLocationService.setUserLocation();
       			}
-      			userLocationService.setUserLocation();
+      			
 			userLocationService.getUserLocation().then(function(position) {
-				console.log("from position service");
-				console.log(position);
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
 				$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
@@ -2680,11 +2721,9 @@ angular.module('petal.home')
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				defer.reject(err);
+				window.console.log(err);
+				getFilteredPosts(defer,params);
 			});
-
-
-
 
 			return defer.promise;
 
@@ -2702,6 +2741,7 @@ angular.module('petal.home')
 
 		function submitPost(post) {
 			var defer = $q.defer();
+			console.log("entered submit post");
 			userLocationService.getUserLocation().then(function(position) {
 				post.latitude = position.latitude;
 				post.longitude = position.longitude;
@@ -2713,9 +2753,8 @@ angular.module('petal.home')
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				console.log("location may be");
-				console.log(err);
 				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
+				
 					defer.resolve(response);
 				}).catch(function(err2) {
 					defer.reject(err2);
@@ -2852,7 +2891,7 @@ angular.module('petal.home')
 				umpc.user = userData.getUser();
 
 			}).catch(function(err){
-				
+				window.console.log(err);
 			}).finally(function(){
 				$ionicLoading.hide();
 			});
@@ -3053,68 +3092,68 @@ angular.module('petal.home')
 })(window.angular);
 (function(angular) {
 	'use strict';
-	
-	angular.module('petal.user')
-		.service('userLocationService', ['$cordovaGeolocation', 'userService', '$q', '$http', UserLocationService]);
 
-	
-	function UserLocationService($cordovaGeolocation, userService, $q, $http) {
+	angular.module('petal.user')
+		.service('userLocationService', ['$cordovaGeolocation', 'userService', '$q', '$http', 'toastr', UserLocationService]);
+
+
+	function UserLocationService($cordovaGeolocation, userService, $q, $http, toastr) {
 		this.getUserLocation = getUserLocation;
 		this.setUserLocation = setUserLocation;
 
 		function getUserLocation() {
+			
 			var deferred = $q.defer();
-			var options = { timeout: 10000, enableHighAccuracy: false };
+			var options = { timeout: 3000, enableHighAccuracy: false };
 
 			$cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 				var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 				deferred.resolve(positions);
-			}).catch(function(err) {
-				
-				if (navigator.geolocation) {
-					
-					
-					navigator.geolocation.getCurrentPosition(function(position) {
-						
-						var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-						deferred.resolve(positions);
-					}, function() {
-						$http.post('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDCa1LUe1vOczX1hO_iGYgyo8p_jYuGOPU').then(function(data) {
-							window.console.log("from the maps");
-							window.console.log(data);
-							var coords= {latitude: data.location.lat, longitude: data.location.lng};
-							deferred.resolve(coords);
-						}).catch(function() {
-							
-						});
-					});
-				} else {
-					if (err.code == 3) {
-						window.alert("Unable to access your location.Make sure location is turned on.");
-					} else if (err.code == 2 || err.code == 1) {
-						window.alert("Please enable location or gps");
-					}
-					deferred.reject('Not able to acces your location.Make sure location is enabled');
-				}
+			}).catch(function() {
+				$http.post('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyA5bqvCp1wYX7FGKiDyd3w0DzvJZoPwQrQ').then(function(response) {
+					var coords = {
+						latitude: response.data.location.lat,
+						longitude: response.data.location.lng
+					};
+					deferred.resolve(coords);
+				}).catch(function(err) {
+					window.console.log("error from google");
+					window.console.log(err);
+					deferred.reject('Not able to acces your location.Make sure location is enabled.');
+				});
 
 			});
-
-
 			return deferred.promise;
 		}
 
 		function setUserLocation() {
-			var options = { timeout: 10000, enableHighAccuracy: false };
+			var options = { timeout: 3000, enableHighAccuracy: false };
 			$cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 				var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 				userService.updateUser(positions);
-			}).catch(function() {
-				if (navigator.geolocation) {
-					navigator.geolocation.getCurrentPosition(function(position) {
-						var positions = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-						userService.updateUser(positions);
-					});
-				}
+			}).catch(function(err) {
+				$http.post('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyA5bqvCp1wYX7FGKiDyd3w0DzvJZoPwQrQ').then(function(response) {
+					var coords = {
+						latitude: response.data.location.lat,
+						longitude: response.data.location.lng
+					};
+					userService.updateUser(coords);
+					
+				}).catch(function() {
+					if (err.code == 3) {
+							toastr.warning('Not able to acces your location.Make sure location is enabled.', 'Warning', {
+
+								maxOpened: 1,
+							});
+
+						} else if (err.code == 2 || err.code == 1) {
+							toastr.warning('Not able to acces your location.Make sure location is enabled.', 'Warning', {
+
+								maxOpened: 1,
+							});
+						}
+				});
+				
 			});
 		}
 

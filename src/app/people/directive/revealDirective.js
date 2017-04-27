@@ -52,7 +52,7 @@
 						}, ],
 						cancelText: 'Cancel',
 						cancel: function() {
-							console.log('CANCELLD');
+							
 						},
 						buttonClicked: function(index) {
 							revealService.cancel(scope.cancelReveal).then(function(res) {

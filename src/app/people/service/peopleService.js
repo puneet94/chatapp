@@ -41,13 +41,20 @@
 			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
 
 		}
-
+		function getFilteredUsers(defer,params){
+			$http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
+					defer.resolve(users);
+				}).catch(function(err) {
+					defer.reject(err);
+				});
+		}
 		function getNearbyUsers(params) {
 			if (params.page == 1) {
 				userLocationService.setUserLocation();
 			}
 			params.nearby = true;
 			var defer = $q.defer();
+			
 			userLocationService.getUserLocation().then(function(position) {
 				params.latitude = position.latitude;
 				params.longitude = position.longitude;
@@ -57,7 +64,8 @@
 					defer.reject(err);
 				});
 			}).catch(function(err) {
-				defer.reject(err);
+				window.console.log(err);
+				getFilteredUsers(defer,params);
 			});
 
 			return defer.promise;

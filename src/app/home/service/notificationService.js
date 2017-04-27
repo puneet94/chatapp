@@ -9,7 +9,7 @@
 
 		var base_url = homeService.baseURL;
 
-		function register(vibrate) {
+		function register() {
 
 			var deferred = $q.defer();
 			
@@ -17,6 +17,9 @@
 				android: {
 					senderID: "679461840115",
 					vibrate: "true"
+				},
+				browser:{
+
 				},
 				ios: {
 					alert: "true",

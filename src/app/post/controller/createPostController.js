@@ -22,10 +22,13 @@
 		function submitPost() {
 			$ionicLoading.show();
 			postService.submitPost(cpc.post).then(function(response) {
+				$ionicLoading.hide();
 				$state.go('home.post.latest');
 			}).catch(function(err) {
-				console.log("post error");
+				console.log("post controller error");
 				console.log(err);
+			}).finally(function(){
+				$ionicLoading.hide();
 			});
 		}
 

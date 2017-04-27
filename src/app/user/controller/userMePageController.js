@@ -21,7 +21,7 @@
 				umpc.user = userData.getUser();
 
 			}).catch(function(err){
-				
+				window.console.log(err);
 			}).finally(function(){
 				$ionicLoading.hide();
 			});
