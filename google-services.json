@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "792068565007",
+    "project_id": "petal-chat"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792068565007:android:a3c4e829fc4b78c6",
+        "android_client_info": {
+          "package_name": "com.ionicframework.petalchat206862"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792068565007-tfje8llkq4897dpbeh0etq0e4mga13u8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ionicframework.petalchat206862",
+            "certificate_hash": "2644d4faf6a4aff85e8362b01a033eda0e148cb4"
+          }
+        },
+        {
+          "client_id": "792068565007-rdm7nrlfmc29jvlqo5l0tkgu6ci0vboa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBre_TD_M0_8YSKeL7s32UrKzfLas1i3Yc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

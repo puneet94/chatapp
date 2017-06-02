@@ -1,9 +1,9 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('PostParentController',[PostParentController]);
+		.controller('PostParentController',['$rootScope',PostParentController]);
 
-	function PostParentController(){
-		
+	function PostParentController($rootScope){
+		//$rootScope.slideHeader = true;
 	}
 })(window.angular);

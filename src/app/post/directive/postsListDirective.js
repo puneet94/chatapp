@@ -31,10 +31,6 @@
 				function userPage(id){
 					scope.modal.hide();
 					$state.go('home.userPage', { user: id });
-					
-						
-					
-				
 				}
 				function loadPostModal() {
 					return $ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
@@ -61,57 +57,7 @@
 					
 				};
 
-				/*
-				scope.postModal.getSinglePost = getSinglePost;
-
-				scope.postModal.submitPostUpvote = submitPostUpvote;
-				scope.postModal.deletePostUpvote = deletePostUpvote;
-				function activate() {
-					getSinglePost();
-					checkPostUpvote();
-				}
 				
-				function getSinglePost() {
-					postService.getPost(scope.postModal.post.id).then(function(response) {
-						scope.postModal.post = response.data;
-
-					});
-
-				}
-
-				function checkPostUpvote() {
-					upvoteService.getUpvote(scope.postModal.post._id).then(function(res) {
-
-						scope.postModal.postUpvoted = res.data;
-					
-					}).catch(function(err) {
-						console.log("check error");
-						console.log(err);
-					});
-				}
-
-				function submitPostUpvote() {
-					upvoteService.createUpvote(scope.postModal.post._id).then(function(res) {
-						checkPostUpvote();
-						
-					}).catch(function(err) {
-						console.log("submit error");
-						console.log(err);
-					});
-				}
-
-				function deletePostUpvote() {
-					upvoteService.deleteUpvote(scope.postModal.post._id).then(function(res) {
-						checkPostUpvote();
-						
-					}).catch(function(err) {
-						
-						window.alert(err);
-					});
-				}
-				*/
-				
-
 			}
 		};
 	}

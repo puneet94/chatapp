@@ -31,8 +31,20 @@
 				$ionicLoading.hide();
 			});
 		}
-
-		
+		cpc.selectRandomImage = function(img){
+			cpc.post.image = img;
+		};
+		cpc.loadRandomImages = function(imageText){
+			cpc.loadingRandomImage = true;
+			cpc.randomImages = [];
+			homeService.getImages(imageText).then(function(response){
+				cpc.randomImages = response.data;
+				cpc.loadingRandomImage = false;
+			}).catch(function(err){
+				console.log("images err");
+				console.log(err);
+			});
+		};
 		cpc.cancelUpload = function() {
 			if(cpc.post.imageId){
 				homeService.deleteUpload(cpc.post.imageId).then(function(response){
@@ -53,8 +65,6 @@
 			cpc.errFile = errFiles && errFiles[0];
 			if (cpc.file) {
 				homeService.submitUpload(cpc.file).then(function(response) {
-					console.log("uploaded fi");
-					console.log(response);
 					cpc.post.image = response.data.image;
 					cpc.post.imageId = response.data.imageId;
 					cpc.loadingImage = false;

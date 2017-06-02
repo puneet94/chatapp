@@ -1,10 +1,9 @@
 <ion-view cache-view="false">
-<ion-pane    ng-cloak>
-    <ion-header-bar align-title="left" class="bar-positive ">
-  
-                <button class="button button-icon ion-arrow-left-c icon"  ng-click="cbc.leaveChatBox()" >
-                </button>
-                <h4 class="title">
+        <ion-pane ng-cloak>
+                <ion-header-bar align-title="left" class="bar-positive ">
+                        <button class="button button-icon ion-arrow-left-c icon" ng-click="cbc.leaveChatBox()">
+                        </button>
+                        <h4 class="title">
             <a ui-sref="home.userPage({user:cbc.receiverUserID})" >
                 <span ng-if="cbc.chatRoom.revealed">
                     {{ cbc.receiverUser.facebookName || cbc.receiverUser.googleName || cbc.receiverUser.anonName }}
@@ -14,47 +13,50 @@
                 </span>
                 </a>
                 </h4>
-</ion-header-bar>
-        <!--overflow-scroll="false"-->
-        <ion-content class="has-header" class="chatContent">
-                <ion-refresher pulling-text="Pull to refresh..." on-refresh="cbc.loadMoreChats()">
-                </ion-refresher>
-                <div ng-cloak class="chatBoxPage" class="list">
-                        <div ng-repeat="chat in cbc.chatList" class="item item-text-wrap" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
-                               
-                                <div ng-class="chat.user._id==cbc.currentUser ? 'me' : 'you'">
-                                        <img class="chatImage" image-modal="{{chat.message}}" width="130" height="140" ng-src="{{chat.message}}" ng-if="chat.type=='img'"/>
-                                        <p ng-if="chat.type!='img'" class="item-text-wrap">{{chat.message}}</p>
+                       
+                                <button class="button button-icon ion-ios-gear-outline icon"  user-settings user-block="{{!cbc.isBlocked}}" user-unblock={{cbc.isBlocked}} block-id="{{cbc.receiverUserID}}" chat-delete="{{cbc.chatRoom._id}}">
+                                </button>
+                                
+                        
+                </ion-header-bar>
+                <!--overflow-scroll="false"-->
+                <ion-content class="has-header" class="chatContent">
+                        <ion-refresher pulling-text="Pull to refresh..." on-refresh="cbc.loadMoreChats()">
+                        </ion-refresher>
+                        <div ng-cloak class="chatBoxPage" class="list animatedClass">
+                                <div ng-repeat="chat in cbc.chatList" class="item item-text-wrap" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
+                                        <div ng-class="chat.user._id==cbc.currentUser ? 'me' : 'you'">
+                                                <img class="chatImage" image-modal="{{chat.message}}" width="130" height="140" ng-src="{{chat.message}}" ng-if="chat.type=='img'" />
+                                                <p ng-if="chat.type!='img'" class="item-text-wrap">{{chat.message}}</p>
+                                        </div>
+                                </div>
+                                <div style="clear:both;position: relative;" class="msgBox">
+                                        <div style="text-align:center;margin-left:50%;position:absolute;">
+                                                <ion-spinner ng-if="cbc.messageLoading" class="spinner-positive"></ion-spinner>
+                                        </div>
                                 </div>
                         </div>
-                        <div style="clear:both;position: relative;" class="msgBox">
-                                <div style="text-align:center;margin-left:50%;position:absolute;">
-                                        <ion-spinner ng-if="cbc.messageLoading" class="spinner-positive"></ion-spinner>
-                                </div>
+                        <!--<div ngf-thumbnail="cbc.f" ngf-size="{width: 20, height: 20, quality: 0.9}" ></div>-->
+                        <div ng-if="cbc.showTempImage">
+                                <img ngf-src="cbc.tempImageUrl" width="120" height="120">
+                                <button ng-click="cbc.submitUpload()" class="button-assertive ion-checkmark-round button-icon icon ">
+                                </button>
+                                <button ng-click="cbc.cancelUpload()" class="button-icon icon ion-close-round ">
+                                </button>
                         </div>
-                </div>
-                <!--<div ngf-thumbnail="cbc.f" ngf-size="{width: 20, height: 20, quality: 0.9}" ></div>-->
-                <div ng-if="cbc.showTempImage">
-                    <img ngf-src="cbc.tempImageUrl" width="120" height="120">
-                    <button ng-click="cbc.submitUpload()" class="button-assertive ion-checkmark-round button-icon icon ">
-                        
-                    </button>
-                    <button ng-click="cbc.cancelUpload()" class="button-icon icon ion-close-round ">
-                        
-                    </button>
-                </div>
-        </ion-content>
-        <ion-footer-bar keyboard-attach class="bar-stable item-input-inset">
-                <button class=" button-icon icon ion-ios-camera"  type="file" ngf-select="cbc.uploadSingleImage($file, $invalidFiles)" ng-disabled="cbc.showTempImage || cbc.messageLoading" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB" >
-                        
-                </button>
-                <label class="item-input-wrapper">
-                        <input type="text"   is-focused="{{cbc.focusInput}}" placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.showTempImage" ng-focus="cbc.scrollBottom()"/>
-                        <!--never disable this input unless uploading image failing which the keyboard disappears-->
-                </label>
-                <button class="button button-dark"  ng-disabled="cbc.showTempImage || !cbc.myMsg || cbc.messageLoading" ng-click="cbc.clickSubmit()">
-                        Send
-                </button>
-        </ion-footer-bar>
+                </ion-content>
+                <ion-footer-bar keyboard-attach class="bar-stable item-input-inset">
+                        <button class=" button-icon icon ion-ios-camera" ng-if="!cbc.isBlocked" type="file" ngf-select="cbc.uploadSingleImage($file, $invalidFiles)" ng-disabled="cbc.showTempImage || cbc.messageLoading" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB">
+                        </button>
+                        <label class="item-input-wrapper" ng-if="!cbc.isBlocked">
+                                <input type="text" is-focused="{{cbc.focusInput}}" placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.showTempImage" ng-focus="cbc.scrollBottom()" />
+                                <!--never disable this input unless uploading image failing which the keyboard disappears-->
+                        </label>
+                        <button class="button button-dark" ng-if="!cbc.isBlocked" ng-disabled="cbc.showTempImage || !cbc.myMsg || cbc.messageLoading" ng-click="cbc.clickSubmit()">
+                                Send
+                        </button>
+                </ion-footer-bar>
+                <div ng-if="cbc.isBlocked">
+                        <h1>Blocked</h1> </div>
         </ion-pane>
 </ion-view>

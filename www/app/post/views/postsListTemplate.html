@@ -1,4 +1,4 @@
-<div class="list ">
+<div class="list animatedClass">
         <div class="card singlePostContainer material-card2 fade-in" ng-repeat="post in postsList track by post._id">
                 <div class="item item-avatar item-icon-right">
                         <img class="postUserImage " ng-src="{{post.user.picture}}">
@@ -10,14 +10,14 @@
                 </div>
                 <div class="item item-body  item-text-wrap singlePostContent" ng-click="showPostModal(post)">
                         
-                        <div >
+                        <div style="border-top: 1px solid #eee;">
                                 <p >
                                         <span ng-bind="post.content | limitTo:150">
                                         </span>
                                         <span ng-if="post.content.length > 150">...</span>
                                 </p>
                         </div>
-                        <img class="full-image postImage imageGray" ng-src="{{post.image}}" ng-if="post.image">
+                        <img class="full-image postImage imageGray" ng-src="{{post.image}}" ng-if="post.image"/>
                         <div class="row postInfo">
                                 <div class="col ">
                                        <i class="infoViews icon ion-android-favorite-outline"></i>

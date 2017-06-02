@@ -41,8 +41,23 @@
 				url: '/chatBox/:user',
 				templateUrl: 'app/chat/views/chatBox.html',
 				controller: 'ChatBoxController',
-				controllerAs: 'cbc'
+				controllerAs: 'cbc',
+				resolve: {
+					blocked: [ '$stateParams', 'blockService','$q', blocked]
+
+				}
 
 			});
 	}
+
+	function blocked($stateParams,blockService,$q){
+		var defer = $q.defer();
+		blockService.check($stateParams.user).then(function(response){
+			defer.resolve(response.data.blocked);					
+		}).catch(function(){
+			defer.resolve();	
+		});
+		return defer.promise;
+	}
+
 })(window.angular);

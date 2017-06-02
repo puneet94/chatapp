@@ -1,18 +1,18 @@
-<ion-tabs class="tabs-icon-top tabs-positive slide-left-right"  on-swipe-right="hc.goBack()" on-swipe-left="hc.goForward()">
-        <ion-tab title="Home" icon="ion-home" ui-sref="home.post.nearby">
+<ion-tabs class=" tabs-light "  on-swipe-right="hc.goBack()" on-swipe-left="hc.goForward()">
+        <ion-tab class="customTab" title="Home" icon="ion-ios-home-outline" ui-sref="home.post.nearby">
                 <ion-nav-view name="post-tab"></ion-nav-view>
         </ion-tab>
-        <ion-tab title="Profile"  icon="ion-person" ui-sref="home.user.userMePage">
+        <ion-tab class="customTab" title="Profile"  icon="ion-ios-person-outline" ui-sref="home.user.userMePage">
                 <ion-nav-view name="user-tab"></ion-nav-view>
         </ion-tab>
-        <ion-tab title="Submit"  icon="ion-plus" ui-sref="postSubmit">
+        <ion-tab class="customTab" title="Submit"  icon="ion-plus" ui-sref="postSubmit">
                 <!--<ion-nav-view name="postSubmit-tab"></ion-nav-view>-->
         </ion-tab>
 
-        <ion-tab title="People"  icon="ion-ios-people" ui-sref="home.people.nearby">
+        <ion-tab class="customTab" title="People"  icon="ion-ios-people-outline" ui-sref="home.people.nearby">
                 <ion-nav-view name="people-tab"></ion-nav-view>
         </ion-tab>
-        <ion-tab title="Chat"  icon="ion-chatboxes" ui-sref="home.chat.all"  on-select="hc.chatClicked()" badge="hc.badgeValue" badge-style="badge-assertive">
+        <ion-tab class="customTab" title="Chat"  icon="ion-ios-chatbubble-outline" ui-sref="home.chat.all"  on-select="hc.chatClicked()" badge="hc.badgeValue" badge-style="badge-assertive">
                 <ion-nav-view name="chat-tab"></ion-nav-view>
         </ion-tab>
          <ion-tab hidden="true">

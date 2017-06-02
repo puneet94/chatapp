@@ -8,9 +8,14 @@
 			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
 			this.deleteUpload = deleteUpload;
 			this.submitUpload = submitUpload;
+			this.getImages = getImages;
 			var that = this;
 			function deleteUpload(id){
 				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
+			}
+			function getImages(imageText){
+				console.log(imageText);
+				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
 			}
 			function submitUpload(file){
 				return Upload.upload({

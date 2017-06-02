@@ -28,9 +28,9 @@
 	font-family: 'MOR'
 	src: url('../lib/ionic/fonts/Montserrat-Regular.ttf') format('truetype')
 	font-weight: 500
-
+	
 *
-	font-family: 'MOR', sans-serif !important
+	font-family: 'RBB', sans-serif !important
 h1,h2,h3,h4,h5,h6
 	font-family: 'COB', sans-serif !important
 .image-background
@@ -48,21 +48,23 @@ h1,h2,h3,h4,h5,h6
 .material-card2
 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)
 
-.ng-move,
-.ng-enter,
-.ng-leave
-	-webkit-transition: all linear 0.5s
-	transition: all linear 0.5s
+.animatedClass
+	.ng-move,
+	.ng-enter,
+	.ng-leave
+		-webkit-transition: all linear 0.5s
+		transition: all linear 0.5s
 
-.ng-leave.ng-leave-active,
-.ng-move,
-.ng-enter
-	opacity: 0
+	.ng-leave.ng-leave-active,
+	.ng-move,
+	.ng-enter
+		opacity: 0
 
-.ng-leave,
-.ng-move.ng-move-active,
-.ng-enter.ng-enter-active
-	opacity: 1
+	.ng-leave,
+	.ng-move.ng-move-active,
+	.ng-enter.ng-enter-active
+		opacity: 1
+		
 .linear-background
 	.name-seperator
 		position: absolute
@@ -118,6 +120,9 @@ h1,h2,h3,h4,h5,h6
 		height: 10px
 		top: 100px
 
+.tab-item.tab-item-active, .tab-item.active, .tab-item.activated
+	color: #387ef5 !important
+    	font-weight: 800
 @keyframes placeHolderShimmer
 	0%
 		background-position: -468px 0

@@ -3,15 +3,24 @@
 	'use strict';
 
 
-	var app = angular.module('petal', ['ionic', 'satellizer', 'ngFileUpload', 'btford.socket-io',
+	var app = angular.module('petal', ['ionic', 'ngAnimate','satellizer', 'ngFileUpload', 'btford.socket-io',
 		'ngCordova', 'toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
 	]);
-	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider',
-		function($urlRouterProvider, $stateProvider, $ionicConfigProvider) {
-			$ionicConfigProvider.tabs.position("bottom");
-			$urlRouterProvider.otherwise('/home/post/all');
-		}
-	]);
+	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider', 'toastrConfig', configFunction]);
+
+	function configFunction($urlRouterProvider, $stateProvider, $ionicConfigProvider, toastrConfig) {
+		$ionicConfigProvider.tabs.position("bottom");
+		$ionicConfigProvider.scrolling.jsScrolling(false);
+		$ionicConfigProvider.views.transition('none');
+		$urlRouterProvider.otherwise('/home/post/all');
+		angular.extend(toastrConfig, {
+			autoDismiss: true,
+			maxOpened: 1,
+		});
+		
+
+	}
+
 	app.run(['$rootScope', '$state', '$ionicPlatform', '$ionicLoading', 'RequestsService', '$cordovaPushV5', '$ionicHistory', function($rootScope, $state, $ionicPlatform, $ionicLoading, RequestsService, $cordovaPushV5, $ionicHistory) {
 
 		$ionicPlatform.ready(function() {
@@ -22,7 +31,7 @@
 				cordova.plugins.Keyboard.disableScroll(true);
 				//window.pushNotification = window.plugins.pushNotification;
 				//appStatus();
-				notificationFunction();	
+				notificationFunction();
 				backButtonExit();
 			}
 
@@ -148,84 +157,22 @@
 				url: '/chatBox/:user',
 				templateUrl: 'app/chat/views/chatBox.html',
 				controller: 'ChatBoxController',
-				controllerAs: 'cbc'
+				controllerAs: 'cbc',
+				resolve: {
+					blocked: [ '$stateParams', 'blockService','$q', blocked]
+
+				}
 
 			});
 	}
-})(window.angular);
 
-(function(angular) {
-	'use strict';
-	angular.module('petal.home', [])
-		.config(['$stateProvider', '$authProvider', config]);
-
-	function config($stateProvider, $authProvider) {
-		var fbClientId = '1134208830041632';
-		var redirectUrl = "http://localhost:8100";
-		var redirectUrl2 = "https://banana-surprise-31332.herokuapp.com";
-		var authenticateUrl = redirectUrl2 + '/authenticate';
-		$authProvider.facebook({
-			clientId: fbClientId,
-			url: authenticateUrl + '/auth/facebook',
-			redirectUri: "https://banana-surprise-31332.herokuapp.com/"
-		});
-		$authProvider.google({
-			clientId: '742676837265-33jntkd60p87gkrh48nqe6cdd8ntsfl5.apps.googleusercontent.com',
-			url: authenticateUrl + '/auth/google',
-			redirectUri: redirectUrl
-		});
-		$stateProvider.state('authenticate', {
-			url: '/authenticate',
-			controller: 'AuthenticationController',
-			controllerAs: 'ac',
-			templateUrl: 'app/home/views/authenticationPage.html',
-			
-
-		}).state('home', {
-			url: "/home",
-			abstract: true,
-			templateUrl: "app/home/views/tabs.html",
-			controller: 'HomeController',
-			controllerAs: 'hc',
-			resolve: {
-				redirectIfUserNotAuthenticated: ['$q', '$auth', '$state', '$timeout', redirectIfUserNotAuthenticated]
-			}
-		});
-	}
-
-
-
-	function redirectIfUserNotAuthenticated($q, $auth, $state, $timeout) {
+	function blocked($stateParams,blockService,$q){
 		var defer = $q.defer();
-
-		if ($auth.isAuthenticated()) {
-
-			defer.resolve();
-
-		} else {
-			console.log("not audsnf");
-			$timeout(function() {
-				$state.go('authenticate');
-			});
-			//defer.reject();
-		}
-		return defer.promise;
-	}
-	function redirectIfUserAuthenticated($q, $auth) {
-		var defer = $q.defer();
-
-		if ($auth.isAuthenticated()) {
-			defer.reject();
-			/*$timeout(function() {
-				$state.go('authenticate');
-			});*/
-			
-
-		} else {
-			console.log("not audsnf");
-			defer.resolve();
-			//defer.reject();
-		}
+		blockService.check($stateParams.user).then(function(response){
+			defer.resolve(response.data.blocked);					
+		}).catch(function(){
+			defer.resolve();	
+		});
 		return defer.promise;
 	}
 
@@ -291,6 +238,82 @@
 				}				
 			});
 	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.home', [])
+		.config(['$stateProvider', '$authProvider', config]);
+
+	function config($stateProvider, $authProvider) {
+		var fbClientId = '1134208830041632';
+		var redirectUrl = "http://localhost:8100";
+		var redirectUrl2 = "https://banana-surprise-31332.herokuapp.com";
+		var authenticateUrl = redirectUrl2 + '/authenticate';
+		$authProvider.facebook({
+			clientId: fbClientId,
+			url: authenticateUrl + '/auth/facebook',
+			redirectUri: "https://banana-surprise-31332.herokuapp.com/"
+		});
+		$authProvider.google({
+			clientId: '742676837265-33jntkd60p87gkrh48nqe6cdd8ntsfl5.apps.googleusercontent.com',
+			url: authenticateUrl + '/auth/google',
+			redirectUri: redirectUrl
+		});
+		$stateProvider.state('authenticate', {
+			url: '/authenticate',
+			controller: 'AuthenticationController',
+			controllerAs: 'ac',
+			templateUrl: 'app/home/views/authenticationPage.html',
+			
+
+		}).state('home', {
+			url: "/home",
+			abstract: true,
+			templateUrl: "app/home/views/tabs.html",
+			controller: 'HomeController',
+			controllerAs: 'hc',
+			resolve: {
+				redirectIfUserNotAuthenticated: ['$q', '$auth', '$state', '$timeout', redirectIfUserNotAuthenticated]
+			}
+		});
+	}
+
+
+
+	function redirectIfUserNotAuthenticated($q, $auth, $state, $timeout) {
+		var defer = $q.defer();
+
+		if ($auth.isAuthenticated()) {
+
+			defer.resolve();
+
+		} else {
+			$timeout(function() {
+				$state.go('authenticate');
+			});
+			//defer.reject();
+		}
+		return defer.promise;
+	}
+	function redirectIfUserAuthenticated($q, $auth) {
+		var defer = $q.defer();
+
+		if ($auth.isAuthenticated()) {
+			defer.reject();
+			/*$timeout(function() {
+				$state.go('authenticate');
+			});*/
+			
+
+		} else {
+			console.log("not audsnf");
+			defer.resolve();
+			//defer.reject();
+		}
+		return defer.promise;
+	}
+
 })(window.angular);
 
 (function(angular) {
@@ -398,40 +421,7 @@
 				}
 
 			}).
-			state('home.userPage', {
-				url: '/userPage/:user',
-				resolve: {
-					friends: [ '$stateParams', 'revealService','$q', friends]
-				},
-				views: {
-					'extra-tab': {
-						templateUrl: 'app/user/views/userProfilePage.html',
-						controller: 'UserPageController',
-						controllerAs: 'upc'
-					}
-				},
-				
-
-			})
-			/*state('tabs.userProfileSettings', {
-				url: '/userProfileSettings',
-				views: {
-					'user-tab': {
-						templateUrl: 'app/user/views/userProfileSettingsPage.html',
-					}
-				}
-
-			}).
-			state('tabs.userAccountSettings', {
-				url: '/userAccountSettings',
-				views: {
-					'user-tab': {
-						templateUrl: 'app/user/views/userAccountSettingsPage.html',
-					}
-				}
-
-			}).*/
-			.state('home.user.userMePage', {
+			state('home.user.userMePage', {
 				url: '/userMePage',
 				views: {
 					'user-tab': {
@@ -441,6 +431,23 @@
 						
 					}
 				}
+
+			}).
+			state('home.userPage', {
+				url: '/userPage/:user',
+				resolve: {
+					blocked: [ '$stateParams', 'blockService','$q', blocked],
+					friends: [ '$stateParams', 'revealService','$q', friends]
+
+				},
+				views: {
+					'extra-tab': {
+						templateUrl: 'app/user/views/userProfilePage.html',
+						controller: 'UserPageController',
+						controllerAs: 'upc'
+					}
+				},
+				
 
 			})
 			.state('home.userEditPage', {
@@ -457,7 +464,24 @@
 			});
 		}
 	]);
-
+	function blocked($stateParams,blockService,$q){
+		var defer = $q.defer();
+		blockService.check($stateParams.user).then(function(response){
+			
+			if(response.data.blocked===true){
+				window.alert("Blocked profile");
+				window.history.back();
+			}
+			else{
+				defer.resolve();	
+			}
+			
+			
+		}).catch(function(){
+			defer.resolve();	
+		});
+		return defer.promise;
+	}
 	function friends($stateParams,revealService,$q){
 		var defer = $q.defer();
 
@@ -466,7 +490,7 @@
 			
 			defer.resolve(response.data.status);
 			//return ;
-		}).catch(function(err){
+		}).catch(function(){
 			
 		});
 		return defer.promise;
@@ -487,7 +511,10 @@
 		acc.pullRefreshChats = pullRefreshChats;
 		activate();
 		Socket.on('newMessageReceived', messageReceived);
-
+		
+		acc.chatPage = function(userId){
+			$state.go('chatBox', { user: userId});
+		};
 		function messageReceived(message){
 			var newChatRoom = {};
 			newChatRoom.creator2 = message.user;
@@ -558,11 +585,14 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', '$timeout',  'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload','$ionicLoading','$window',ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', '$timeout', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', '$ionicLoading', '$window', 'blocked', ChatBoxController]);
 
-	function ChatBoxController($scope, $timeout, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$ionicLoading,$window) {
+	function ChatBoxController($scope, $timeout, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload, $ionicLoading, $window, blocked) {
 		var cbc = this;
-
+		cbc.isBlocked = blocked;
+		if (cbc.isBlocked === true) {
+			window.alert("blocked profile");
+		}
 		cbc.currentUser = userData.getUser()._id;
 		cbc.receiverUserID = $stateParams.user;
 		cbc.chatList = [];
@@ -586,7 +616,7 @@
 			userService.getUser(cbc.receiverUserID).then(function(response) {
 				cbc.receiverUser = response.data;
 			}).catch(function(err) {
-				
+
 				console.log(err);
 			});
 		}
@@ -595,9 +625,9 @@
 			$timeout(function() {
 				$ionicScrollDelegate.scrollBottom(true);
 			});
-			
+
 		}
-		
+
 		function getChatMessages() {
 			chatService.getChatMessages(cbc.chatRoomId, cbc.params).then(function(res) {
 
@@ -605,7 +635,7 @@
 					cbc.chatList.unshift(chat);
 				});
 			}).catch(function(res) {
-				
+
 				console.log(res);
 			}).finally(function() {
 				scrollBottom();
@@ -616,37 +646,33 @@
 		}
 
 		function activate() {
+			$ionicLoading.show();
 			chatService.getChatRoom(cbc.receiverUserID).then(function(res) {
 				cbc.chatRoom = res.data;
 				cbc.chatRoomId = res.data._id;
 
 				socketJoin();
 				getChatMessages();
+
 			}, function(err) {
 				console.log(err);
 			});
 			getReceiver();
 
 
-		
+
 		}
-		
+
 
 		function socketJoin() {
 			Socket.emit('addToChatRoom', { 'roomId': cbc.chatRoomId });
 			Socket.on('messageReceived', function(message) {
-				
+
 				cbc.chatList.push(message);
 				scrollBottom();
 				cbc.messageLoading = false;
 			});
-			/*Socket.on('messageSaved', function(message) {
-				
-				cbc.chatList.push(message);
-				scrollBottom();
-				console.log(message);
-				cbc.messageLoading = false;
-			});*/
+
 		}
 
 		cbc.clickSubmit = function() {
@@ -654,27 +680,25 @@
 			cbc.messageLoading = true;
 			cbc.focusInput = true;
 
-			if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
+			if (window.cordova && (!window.cordova.plugins.Keyboard.isVisible)) {
 				window.cordova.plugins.Keyboard.show();
 			}
 			scrollBottom();
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
-				cbc.myMsg = '';	
+				cbc.myMsg = '';
 				cbc.chatList.push(res.data.message);
 				scrollBottom();
-				
-				cbc.messageLoading = false;
 				cbc.messageTryCount = 0;
 			}).catch(function(err) {
 				console.log(err);
-				cbc.messageTryCount+=1;
-				
-				if(cbc.messageTryCount<=3){
-					cbc.clickSubmit();	
+				cbc.messageTryCount += 1;
+
+				if (cbc.messageTryCount <= 3) {
+					cbc.clickSubmit();
 				}
-				
-			}).finally(function(){
+
+			}).finally(function() {
 				cbc.messageLoading = false;
 			});
 
@@ -700,7 +724,7 @@
 					cbc.messageLoading = false;
 				}).catch(function(err) {
 					console.log(err);
-					
+
 				});
 
 			});
@@ -718,21 +742,21 @@
 				scrollBottom();
 			}
 		};
-		cbc.leaveChatBox = function(){
+		cbc.leaveChatBox = function() {
 			Socket.emit('removeFromRoom', { 'roomId': cbc.chatRoomId });
-			
-			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
 
-			}).catch(function(err){
+			chatService.updateChatRoom(cbc.chatRoomId).then(function(res) {
+
+			}).catch(function(err) {
 				console.log(err);
-			}).finally(function(){
-				
-				
+			}).finally(function() {
+
+
 			});
-			
-				$window.history.back();
-			
-			
+
+			$window.history.back();
+
+
 		};
 
 	}
@@ -806,8 +830,6 @@
 					acc.chatRoomsList.push(value);
 				});
 				acc.noPosts = !response.data.total;
-
-				console.log(acc.chatRoomsList);
 				acc.initialSearchCompleted = true;
 				if (response.data.total > acc.chatRoomsList.length) {
 					acc.canLoadMoreResults = true;
@@ -848,7 +870,11 @@
 		rs.getAllChatRooms = getAllChatRooms;
 		rs.getRevealedChatRooms = getRevealedChatRooms;
 		rs.updateChatRoom = updateChatRoom;
+		rs.deleteChatRoom = deleteChatRoom;
 
+		function deleteChatRoom(id){
+			return $http.post(homeService.baseURL + 'chatRoom/delete/' + id);
+		}
 		function sendChatMessage(chat) {
 			
 			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
@@ -875,7 +901,7 @@
 
 		}
 		function updateChatRoom(id){
-			return $http.post(homeService.baseURL+'chatRoom/'+id);
+			return $http.post(homeService.baseURL+'chatRoom/update/'+id);
 		}
 
 		
@@ -912,40 +938,925 @@ angular.module('petal.chat')
 })(window.angular);
 (function(angular) {
 	'use strict';
+	angular.module('petal.people')
+		.controller('AllPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', AllPeopleController]);
+
+	function AllPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getAllPeople = getAllPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+		apc.searchCrossSubmit = searchCrossSubmit;
+		apc.peopleSearchTextSubmit = peopleSearchTextSubmit;
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+		function searchCrossSubmit(){
+			apc.peopleSearchText = '';
+			apc.showSearchCross = false;
+			activate();
+		}
+		function peopleSearchTextSubmit(interest){
+			apc.showSearchCross = true;
+			if(interest){
+				apc.peopleSearchText = interest;	
+			}
+			
+			activate();
+		}
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getAllPeople();
+		}
+
+		function getAllPeople() {
+			peopleService.getAllUsers(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			if(apc.peopleSearchText){
+				apc.params.interest = 	apc.peopleSearchText;
+			}
+			getAllPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('NearbyPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', NearbyPeopleController]);
+
+	function NearbyPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getNearbyPeople = getNearbyPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+		apc.releaseRange = releaseRange;
+		apc.distance = 10;
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getNearbyPeople();
+		}
+		function releaseRange(){
+			activate();
+		}
+		function getNearbyPeople() {
+			peopleService.getNearbyUsers(apc.params).then(function(response) {
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.noPeople =!response.data.total;
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}).catch(function(err) {
+				console.log(err);
+			}).finally(function() {
+				apc.initialSearchCompleted = true;
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1,
+				distance: apc.distance
+			};
+			getNearbyPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular){
+	'use strict';
+	angular.module('petal.people')
+		.controller('PeopleParentController',[PeopleParentController]);
+
+	function PeopleParentController(){
+
+	}
+})(window.angular);
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('ReceivedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', ReceivedPeopleController]);
+
+	function ReceivedPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getReceivedPeople = getReceivedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getReceivedPeople();
+		}
+
+		function getReceivedPeople() {
+			peopleService.getReceivedUsers(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.noPeople =!response.data.total;
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 10,
+				page: 1
+			};
+			getReceivedPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('RequestedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RequestedPeopleController]);
+
+	function RequestedPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getRequestedPeople = getRequestedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getRequestedPeople();
+		}
+
+		function getRequestedPeople() {
+			peopleService.getRequestedUsers(apc.params).then(function(response) {
+				console.log(response);
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			getRequestedPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('RevealedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RevealedPeopleController]);
+
+	function RevealedPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getRevealedPeople = getRevealedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getRevealedPeople();
+		}
+
+		function getRevealedPeople() {
+			peopleService.getRevealedUsers(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.noPeople =!response.data.total;
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			getRevealedPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.directive('peopleList', [ 'userData',peopleList]);
+
+
+	function peopleList( userData) {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/people/views/peopleListTemplate.html',
+			replace: true,
+			scope: {
+				listType: '@listType',
+				peopleList: '=peopleList',
+				peopleSearchTextSubmit: '&peopleSearchTextSubmit'
+			},
+			controller: ['$scope', function($scope) {
+				$scope.currentUser = userData.getUser();
+				$scope.setPeopleSearch = function(interest,$event){
+					if($scope.peopleSearchTextSubmit){
+						
+						$scope.peopleSearchTextSubmit({interest:interest});	
+						$event.stopPropagation();
+					}
+					
+				};
+				$scope.removeAfterDecided = function(index){
+					$scope.peopleList.splice(index,1);
+				};
+				
+			}]
+		};
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.directive('cancelReveal', ['$ionicActionSheet', 'revealService', cancelReveal])
+		.directive('decideReveal', ['$ionicActionSheet', 'revealService', decideReveal])
+		.directive('deleteReveal', ['$ionicActionSheet', 'revealService', deleteReveal])
+		.directive('sendReveal', ['$ionicActionSheet', 'revealService', sendReveal])
+		.directive('createBlock', ['$ionicActionSheet', 'blockService', createBlock])
+		.directive('deleteBlock', ['$ionicActionSheet', 'blockService', deleteBlock])
+		.directive('deleteChat', ['$ionicActionSheet', 'chatService','$state', deleteChat])
+		.directive('chatPage', ['$state', chatPage])
+		.directive('userSettings', ['$ionicPopover', userSettings])
+		.directive('userPage', ['$state', userPage]);
+
+	
+	function deleteChat($ionicActionSheet, chatService,$state) {
+		return {
+			restrict: 'A',
+			scope: {
+				deleteChat: '@',
+				afterCallback: '&'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Delete ',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Delete Chat '
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {
+							console.log('CANCELLED');
+						},
+						buttonClicked: function(index) {
+							if (index === 0) {
+								chatService.deleteChatRoom(scope.deleteChat).then(function(res) {
+									if (scope.afterCallback) {
+										scope.afterCallback();
+									}
+									window.alert(res.data);
+									$state.go('home.chat.all');
+								}).catch(function(err) {
+									window.alert(JSON.stringify(err));
+								});
+
+							}
+							return true;
+
+						}
+					});
+					event.stopPropagation();
+				});
+			}
+		};
+
+	}
+
+	function userSettings($ionicPopover) {
+		return {
+			scope: {
+				userBlock: '@',
+				chatDelete: '@',
+				blockId: '@'
+			},
+			link: function(scope, elem) {
+				scope.userBlock = (scope.userBlock==="true");
+				scope.afterCallback = function(){
+					scope.popover.remove();
+					window.history.back();
+				};
+				elem.bind('click', function(event) {
+					$ionicPopover.fromTemplateUrl('app/user/views/settingsTemplate.html', {
+						scope: scope
+					}).then(function(popover) {
+						scope.popover = popover;
+						scope.popover.show(event);
+					});
+					event.stopPropagation();
+				});
+			}
+		};
+	}
+
+	function chatPage($state) {
+		return {
+			scope: {
+				chatPage: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$state.go('chatBox', { user: scope.chatPage });
+					event.stopPropagation();
+				});
+			}
+		};
+	}
+
+	function userPage($state) {
+		return {
+			scope: {
+				userPage: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$state.go('home.userPage', { user: scope.userPage });
+					event.stopPropagation();
+				});
+			}
+		};
+	}
+
+	function cancelReveal($ionicActionSheet, revealService) {
+		return {
+			restrict: 'A',
+			scope: {
+				afterCallback: '&',
+				cancelReveal: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Reveal',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Cancel Reveal Request'
+						}, ],
+						cancelText: 'Cancel',
+						cancel: function() {
+
+						},
+						buttonClicked: function(index) {
+							revealService.cancel(scope.cancelReveal).then(function(res) {
+
+								if (scope.afterCallback) {
+									scope.afterCallback();
+								}
+
+							}).catch(function(err) {
+								window.alert(JSON.stringify(err));
+							});
+							return true;
+						}
+					});
+					event.stopPropagation();
+				});
+			}
+		};
+
+	}
+
+	function decideReveal($ionicActionSheet, revealService) {
+		return {
+			restrict: 'A',
+			scope: {
+				afterCallback: '&',
+				decideReveal: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Reveal',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Accept Reveal Request'
+						}, {
+							text: '<i class="icon ion-share"></i> Deny Reveal Request'
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {
+							console.log('CANCELLED');
+						},
+						buttonClicked: function(index) {
+
+							if (index === 0) {
+								revealService.accept(scope.decideReveal).then(function(res) {
+									if (scope.afterCallback) {
+										scope.afterCallback();
+									}
+								}).catch(function(err) {
+									window.alert(JSON.stringify(err));
+								});
+
+							} else if (index === 1) {
+								revealService.ignore(scope.decideReveal).then(function(res) {
+
+									if (scope.afterCallback) {
+										scope.afterCallback();
+									}
+								}).catch(function(err) {
+									window.alert(JSON.stringify(err));
+								});
+
+							}
+							return true;
+
+						}
+					});
+					event.stopPropagation();
+				});
+
+			}
+		};
+
+	}
+
+	function deleteReveal($ionicActionSheet, revealService) {
+		return {
+			restrict: 'A',
+			scope: {
+				afterCallback: '&',
+				deleteReveal: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Reveal',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Delete Reveal '
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {
+							console.log('CANCELLED');
+						},
+						buttonClicked: function(index) {
+							if (index === 0) {
+								revealService.finish(scope.deleteReveal).then(function(res) {
+									if (scope.afterCallback) {
+										scope.afterCallback();
+									}
+								}).catch(function(err) {
+									window.alert(JSON.stringify(err));
+								});
+
+							}
+							return true;
+
+						}
+					});
+					event.stopPropagation();
+				});
+			}
+		};
+
+	}
+
+	function sendReveal($ionicActionSheet, revealService) {
+		return {
+			restrict: 'A',
+			scope: {
+				afterCallback: '&',
+				sendReveal: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Reveal',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Send Reveal Request'
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {},
+						buttonClicked: function(index) {
+							revealService.initiate(scope.sendReveal).then(function(res) {
+
+								if (scope.afterCallback) {
+									scope.afterCallback();
+								}
+							}).catch(function(err) {
+								window.alert(JSON.stringify(err));
+							});
+							return true;
+						}
+
+					});
+					event.stopPropagation();
+				});
+
+			}
+		};
+
+	}
+
+	function createBlock($ionicActionSheet, blockService) {
+		return {
+			restrict: 'A',
+			scope: {
+				createBlock: '@',
+				afterCallback: '&'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Block User',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Block'
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {},
+						buttonClicked: function(index) {
+							blockService.create(scope.createBlock).then(function(res) {
+
+								window.alert("user blocked");
+								if(scope.afterCallback){
+									scope.afterCallback();
+								}
+							}).catch(function(err) {
+								window.alert(JSON.stringify(err));
+							});
+							return true;
+						}
+
+					});
+					event.stopPropagation();
+				});
+
+			}
+		};
+
+	}
+
+	function deleteBlock($ionicActionSheet, blockService) {
+		return {
+			restrict: 'A',
+			scope: {
+				afterCallback: '&',
+				deleteBlock: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Block',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Unblock User '
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {
+							console.log('CANCELLED');
+						},
+						buttonClicked: function(index) {
+							if (index === 0) {
+								blockService.remove(scope.deleteBlock).then(function(res) {
+									if (scope.afterCallback) {
+										scope.afterCallback();
+									}
+								}).catch(function(err) {
+									window.alert(JSON.stringify(err));
+								});
+
+							}
+							return true;
+
+						}
+					});
+					event.stopPropagation();
+				});
+			}
+		};
+
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	/*
+	 *Service for getting a single store with its id
+	 */
+	angular.module('petal.people')
+		.service('peopleService', ["$http", "homeService", 'userLocationService', '$q', PeopleService]);
+
+	/*
+	 * This servic has a function names getStore which takes id as parameter and returns a promise
+	 */
+	function PeopleService($http, homeService, userLocationService, $q) {
+
+		this.getAllUsers = getAllUsers;
+		this.getRevealedUsers = getRevealedUsers;
+		this.getNearbyUsers = getNearbyUsers;
+		this.getRequestedUsers = getRequestedUsers;
+		this.getReceivedUsers = getReceivedUsers;
+		this.getNearbyUsers = getNearbyUsers;
+
+		function getAllUsers(params) {
+			params.all = true;
+			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+		}
+
+		function getRevealedUsers(params) {
+			params.revealed = true;
+			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+		}
+
+		function getReceivedUsers(params) {
+			params.received = true;
+			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+		}
+
+		function getRequestedUsers(params) {
+			params.requested = true;
+			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
+
+		}
+		function getFilteredUsers(defer,params){
+			$http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
+					defer.resolve(users);
+				}).catch(function(err) {
+					defer.reject(err);
+				});
+		}
+		function getNearbyUsers(params) {
+			if (params.page == 1) {
+				userLocationService.setUserLocation();
+			}
+			params.nearby = true;
+			var defer = $q.defer();
+			
+			userLocationService.getUserLocation().then(function(position) {
+				params.latitude = position.latitude;
+				params.longitude = position.longitude;
+				$http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
+					defer.resolve(users);
+				}).catch(function(err) {
+					defer.reject(err);
+				});
+			}).catch(function(err) {
+				window.console.log(err);
+				getFilteredUsers(defer,params);
+			});
+
+			return defer.promise;
+		}
+
+
+
+
+
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.post').
+	service('upvoteService', ['$http', 'homeService',  UpvoteService]);
+
+
+	function UpvoteService($http, homeService) {
+		
+		this.createUpvote = createUpvote;
+		this.deleteUpvote = deleteUpvote;
+		this.getUpvote = getUpvote;
+
+
+		function getUpvote(postId) {
+			return $http.get(homeService.baseURL + 'upvote/get/'+postId);
+		}
+		
+		function createUpvote(postId) {
+			return $http.post(homeService.baseURL + 'upvote/create/'+postId);
+		}
+
+		function deleteUpvote(postId) {
+			return $http.post(homeService.baseURL + 'upvote/delete/' + postId);
+		}
+
+		
+
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
 
 	angular.module('petal.home')
-		.controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", 'userLocationService', '$ionicLoading', 'RequestsService', '$ionicModal',AuthenticationController]);
+		.controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", 'userLocationService', '$ionicLoading', 'RequestsService', '$ionicModal', AuthenticationController]);
 
-	function AuthenticationController($scope, $auth, $state, userData, userLocationService, $ionicLoading, RequestsService,$ionicModal) {
+	function AuthenticationController($scope, $auth, $state, userData, userLocationService, $ionicLoading, RequestsService, $ionicModal) {
 		var phc = this;
 
 		phc.isAuth = $auth.isAuthenticated();
 		if (phc.isAuth) {
 			$state.go('home.post.all');
 		}
+		if (window.cordova) {
+			phc.webSignIn = true;
+		}
 		phc.authLogout = authLogout;
 		phc.loadPostModal = loadPostModal;
-		
+
 
 		phc.socialAuthenticate = socialAuthenticate;
+		$scope.googleSignIn = function() {
+
+
+
+			$ionicLoading.show({
+				template: 'Logging in...'
+			});
+
+			window.plugins.googleplus.login({
+					webClientId: '792068565007-rdm7nrlfmc29jvlqo5l0tkgu6ci0vboa.apps.googleusercontent.com'
+
+				},
+				function(user_data) {
+					var profile = {};
+					profile.id = user_data.userId;
+					profile.displayName = user_data.displayName;
+					profile.imageUrl = user_data.imageUrl;
+					RequestsService.googleSignIn(profile)
+						.then(function(response) {
+							$auth.setToken(response.data.token);
+							successfulAuthentication(response.data.user);
+						}).catch(function(err) {
+							console.log("error");
+							console.log(err);
+							$ionicLoading.hide();
+						});
+
+				},
+				function(msg) {
+					alert("missed");
+					console.log(msg);
+					$ionicLoading.hide();
+				}
+			);
+		};
+		function successfulAuthentication(user) {
+			userData.setUser(user);
+			userLocationService.setUserLocation();
+			RequestsService.register();
+
+			if (user.device_token) {
+				$state.go('home.post.popular');
+			} else {
+				$state.go('home.userEditPage');
+			}
+		}
 
 		function socialAuthenticate(provider) {
 			$ionicLoading.show();
 			$auth.authenticate(provider).then(function(response) {
-				userData.setUser(response.data.user);
-				userLocationService.setUserLocation();
-				RequestsService.register();
-
-				if (response.data.user.device_token) {
-					$state.go('home.post.popular');
-				} else {
-					$state.go('home.userEditPage');
-				}
-
+				successfulAuthentication(response.data.user);
 			}).catch(function(err) {
-
 				$ionicLoading.hide();
-				
+
 			}).finally(function() {
 				//$ionicLoading.hide();
 			});
@@ -960,7 +1871,7 @@ angular.module('petal.chat')
 				$scope.modal.show();
 			});
 		}
-		
+
 
 		function authLogout() {
 			$auth.logout();
@@ -975,21 +1886,23 @@ angular.module('petal.chat')
 (function(angular) {
 	'use strict';
 	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate',HomeController]);
+		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate','$rootScope',HomeController]);
 
-	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate) {
+	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate,$rootScope) {
 		var hc = this;
 		hc.badgeValue = '';
 		hc.chatClicked = chatClicked;
-
-
+		/*
+			Code for hiding the header on scroll up and down
+		*/
+		$rootScope.slideHeader = false;
+  		$rootScope.slideHeaderPrevious = 0;
 		Socket.on("connect", function() {
 			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
 			Socket.on('newMessageReceived', messageReceived);
 		});
 
 		function messageReceived(message) {
-			
 			var messageString = message.message;
 			if(message.type && message.type=='img'){
 				messageString = 'New image';
@@ -1003,7 +1916,6 @@ angular.module('petal.chat')
 					if ($state.params.user != message.user._id) {
 						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
 							allowHtml: true,
-							maxOpened: 1, 
 							onTap: function() {
 								$state.go('chatBox', { user: message.user._id });
 							}
@@ -1013,7 +1925,6 @@ angular.module('petal.chat')
 					
 					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
 						allowHtml: true,
-						maxOpened: 1, 
 						onTap: function() {
 							$state.go('chatBox', { user: message.user._id });
 						}
@@ -1230,7 +2141,33 @@ angular.module('petal.chat')
 				};
 			}
 		};
-	}).directive('imageModal', ['$ionicModal', imageModal]);
+	}).directive('imageModal', ['$ionicModal', imageModal])
+	.directive('watchScroll',['$rootScope',watchScroll]);
+
+	function watchScroll($rootScope){
+		return {
+			restrict: 'A',
+			link: function(scope,elem){
+
+				var start = 0;
+				var threshold = 150;
+				elem.bind('scroll',function(e){
+					
+					var scrollTop = e.srcElement.scrollTop;
+					if(scrollTop-start > threshold){
+						$rootScope.slideHeader = true;
+					}else{
+						$rootScope.slideHeader = false;
+					}
+					if($rootScope.slideHeaderPrevious > scrollTop - start){
+						$rootScope.slideHeader = false;
+					}
+					$rootScope.slideHeaderPrevious = scrollTop - start;
+					$rootScope.$apply();
+				});
+			}
+		};
+	}
 
 
 })(window.angular);
@@ -1245,9 +2182,14 @@ angular.module('petal.chat')
 			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
 			this.deleteUpload = deleteUpload;
 			this.submitUpload = submitUpload;
+			this.getImages = getImages;
 			var that = this;
 			function deleteUpload(id){
 				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
+			}
+			function getImages(imageText){
+				console.log(imageText);
+				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
 			}
 			function submitUpload(file){
 				return Upload.upload({
@@ -1322,7 +2264,11 @@ angular.module('petal.chat')
 			return deferred.promise;
 
 		}
+		function googleSignIn(profile){
+			return $http.post(base_url+'authenticate/auth/nativeGoogle', { profile: profile });
+		}
 		return {
+			googleSignIn: googleSignIn,
 			register: register
 		};
 	}
@@ -1385,683 +2331,6 @@ angular.module('petal.home')
     };
     return obj1;
   }
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('AllPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', AllPeopleController]);
-
-	function AllPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getAllPeople = getAllPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-		apc.searchCrossSubmit = searchCrossSubmit;
-		apc.peopleSearchTextSubmit = peopleSearchTextSubmit;
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-		function searchCrossSubmit(){
-			apc.peopleSearchText = '';
-			apc.showSearchCross = false;
-			activate();
-		}
-		function peopleSearchTextSubmit(interest){
-			apc.showSearchCross = true;
-			if(interest){
-				apc.peopleSearchText = interest;	
-			}
-			
-			activate();
-		}
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getAllPeople();
-		}
-
-		function getAllPeople() {
-			peopleService.getAllUsers(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1
-			};
-			if(apc.peopleSearchText){
-				apc.params.interest = 	apc.peopleSearchText;
-			}
-			getAllPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('NearbyPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', NearbyPeopleController]);
-
-	function NearbyPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getNearbyPeople = getNearbyPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-		apc.releaseRange = releaseRange;
-		apc.distance = 10;
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getNearbyPeople();
-		}
-		function releaseRange(){
-			activate();
-		}
-		function getNearbyPeople() {
-			peopleService.getNearbyUsers(apc.params).then(function(response) {
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.noPeople =!response.data.total;
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-			}).catch(function(err) {
-				console.log(err);
-			}).finally(function() {
-				apc.initialSearchCompleted = true;
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1,
-				distance: apc.distance
-			};
-			getNearbyPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular){
-	'use strict';
-	angular.module('petal.people')
-		.controller('PeopleParentController',[PeopleParentController]);
-
-	function PeopleParentController(){
-
-	}
-})(window.angular);
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('ReceivedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', ReceivedPeopleController]);
-
-	function ReceivedPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getReceivedPeople = getReceivedPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getReceivedPeople();
-		}
-
-		function getReceivedPeople() {
-			peopleService.getReceivedUsers(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.noPeople =!response.data.total;
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 10,
-				page: 1
-			};
-			getReceivedPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('RequestedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RequestedPeopleController]);
-
-	function RequestedPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getRequestedPeople = getRequestedPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getRequestedPeople();
-		}
-
-		function getRequestedPeople() {
-			peopleService.getRequestedUsers(apc.params).then(function(response) {
-				console.log(response);
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1
-			};
-			getRequestedPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('RevealedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RevealedPeopleController]);
-
-	function RevealedPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getRevealedPeople = getRevealedPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getRevealedPeople();
-		}
-
-		function getRevealedPeople() {
-			peopleService.getRevealedUsers(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.noPeople =!response.data.total;
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1
-			};
-			getRevealedPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.directive('peopleList', [ 'userData',peopleList]);
-
-
-	function peopleList( userData) {
-		return {
-			restrict: 'E',
-			templateUrl: 'app/people/views/peopleListTemplate.html',
-			replace: true,
-			scope: {
-				listType: '@listType',
-				peopleList: '=peopleList',
-				peopleSearchTextSubmit: '&peopleSearchTextSubmit'
-			},
-			controller: ['$scope', function($scope) {
-				$scope.currentUser = userData.getUser();
-				$scope.setPeopleSearch = function(interest,$event){
-					if($scope.peopleSearchTextSubmit){
-						
-						$scope.peopleSearchTextSubmit({interest:interest});	
-						$event.stopPropagation();
-					}
-					
-				};
-				$scope.removeAfterDecided = function(index){
-					$scope.peopleList.splice(index,1);
-				};
-				
-			}]
-		};
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.directive('cancelReveal', ['$ionicActionSheet', 'revealService', cancelReveal])
-		.directive('decideReveal', ['$ionicActionSheet', 'revealService', decideReveal])
-		.directive('deleteReveal', ['$ionicActionSheet', 'revealService', deleteReveal])
-		.directive('sendReveal', ['$ionicActionSheet', 'revealService', sendReveal])
-		.directive('chatPage', ['$state', chatPage])
-		.directive('userPage', ['$state', userPage]);
-
-
-	function chatPage($state) {
-		return {
-			scope: {
-				chatPage: '@'
-			},
-			link: function(scope, elem) {
-				elem.bind('click', function(event) {
-					$state.go('chatBox', { user: scope.chatPage });
-					event.stopPropagation();
-				});
-			}
-		};
-	}
-	function userPage($state) {
-		return {
-			scope: {
-				userPage: '@'
-			},
-			link: function(scope, elem) {
-				elem.bind('click', function(event) {
-					$state.go('home.userPage', { user: scope.userPage });
-					event.stopPropagation();
-				});
-			}
-		};
-	}
-
-	function cancelReveal($ionicActionSheet, revealService) {
-		return {
-			restrict: 'A',
-			scope: {
-				afterCallback: '&',
-				cancelReveal: '@'
-			},
-			link: function(scope, elem) {
-				elem.bind('click', function(event) {
-					$ionicActionSheet.show({
-						titleText: 'Reveal',
-						buttons: [{
-							text: '<i class="icon ion-share"></i> Cancel Reveal Request'
-						}, ],
-						cancelText: 'Cancel',
-						cancel: function() {
-							
-						},
-						buttonClicked: function(index) {
-							revealService.cancel(scope.cancelReveal).then(function(res) {
-								
-								if (scope.afterCallback) {
-									scope.afterCallback();
-								}
-
-							}).catch(function(err) {
-								window.alert(JSON.stringify(err));
-							});
-							return true;
-						}
-					});
-					event.stopPropagation();
-				});
-			}
-		};
-
-	}
-
-	function decideReveal($ionicActionSheet, revealService) {
-		return {
-			restrict: 'A',
-			scope: {
-				afterCallback: '&',
-				decideReveal: '@'
-			},
-			link: function(scope, elem) {
-				elem.bind('click', function(event) {
-					$ionicActionSheet.show({
-						titleText: 'Reveal',
-						buttons: [{
-							text: '<i class="icon ion-share"></i> Accept Reveal Request'
-						}, {
-							text: '<i class="icon ion-share"></i> Deny Reveal Request'
-						}, ],
-
-						cancelText: 'Cancel',
-						cancel: function() {
-							console.log('CANCELLED');
-						},
-						buttonClicked: function(index) {
-							
-							if (index === 0) {
-								revealService.accept(scope.decideReveal).then(function(res) {
-									if (scope.afterCallback) {
-										scope.afterCallback();
-									}
-								}).catch(function(err) {
-									window.alert(JSON.stringify(err));
-								});
-
-							} else if (index === 1) {
-								revealService.ignore(scope.decideReveal).then(function(res) {
-									
-									if (scope.afterCallback) {
-										scope.afterCallback();
-									}
-								}).catch(function(err) {
-									window.alert(JSON.stringify(err));
-								});
-
-							}
-							return true;
-
-						}
-					});
-					event.stopPropagation();
-				});
-
-			}
-		};
-
-	}
-
-	function deleteReveal($ionicActionSheet, revealService) {
-		return {
-			restrict: 'A',
-			scope: {
-				afterCallback: '&',
-				deleteReveal: '@'
-			},
-			link: function(scope, elem) {
-				elem.bind('click', function(event) {
-					$ionicActionSheet.show({
-						titleText: 'Reveal',
-						buttons: [{
-							text: '<i class="icon ion-share"></i> Delete Reveal '
-						}, ],
-
-						cancelText: 'Cancel',
-						cancel: function() {
-							console.log('CANCELLED');
-						},
-						buttonClicked: function(index) {
-							if (index === 0) {
-								revealService.finish(scope.deleteReveal).then(function(res) {
-									if (scope.afterCallback) {
-										scope.afterCallback();
-									}
-								}).catch(function(err) {
-									window.alert(JSON.stringify(err));
-								});
-
-							}
-							return true;
-
-						}
-					});
-					event.stopPropagation();
-				});
-			}
-		};
-
-	}
-
-	function sendReveal($ionicActionSheet, revealService) {
-		return {
-			restrict: 'A',
-			scope: {
-				afterCallback: '&',
-				sendReveal: '@'
-			},
-			link: function(scope, elem) {
-				elem.bind('click', function(event) {
-					$ionicActionSheet.show({
-						titleText: 'Reveal',
-						buttons: [{
-							text: '<i class="icon ion-share"></i> Send Reveal Request'
-						}, ],
-
-						cancelText: 'Cancel',
-						cancel: function() {},
-						buttonClicked: function(index) {
-							revealService.initiate(scope.sendReveal).then(function(res) {
-								
-								if (scope.afterCallback) {
-									scope.afterCallback();
-								}
-							}).catch(function(err) {
-								window.alert(JSON.stringify(err));
-							});
-							return true;
-						}
-
-					});
-					event.stopPropagation();
-				});
-
-			}
-		};
-
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	/*
-	 *Service for getting a single store with its id
-	 */
-	angular.module('petal.people')
-		.service('peopleService', ["$http", "homeService", 'userLocationService', '$q', PeopleService]);
-
-	/*
-	 * This servic has a function names getStore which takes id as parameter and returns a promise
-	 */
-	function PeopleService($http, homeService, userLocationService, $q) {
-
-		this.getAllUsers = getAllUsers;
-		this.getRevealedUsers = getRevealedUsers;
-		this.getNearbyUsers = getNearbyUsers;
-		this.getRequestedUsers = getRequestedUsers;
-		this.getReceivedUsers = getReceivedUsers;
-		this.getNearbyUsers = getNearbyUsers;
-
-		function getAllUsers(params) {
-			params.all = true;
-			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-		}
-
-		function getRevealedUsers(params) {
-			params.revealed = true;
-			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-		}
-
-		function getReceivedUsers(params) {
-			params.received = true;
-			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-		}
-
-		function getRequestedUsers(params) {
-			params.requested = true;
-			return $http.get(homeService.baseURL + "user/getUsers", { params: params });
-
-		}
-		function getFilteredUsers(defer,params){
-			$http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
-					defer.resolve(users);
-				}).catch(function(err) {
-					defer.reject(err);
-				});
-		}
-		function getNearbyUsers(params) {
-			if (params.page == 1) {
-				userLocationService.setUserLocation();
-			}
-			params.nearby = true;
-			var defer = $q.defer();
-			
-			userLocationService.getUserLocation().then(function(position) {
-				params.latitude = position.latitude;
-				params.longitude = position.longitude;
-				$http.get(homeService.baseURL + "user/getUsers", { params: params }).then(function(users) {
-					defer.resolve(users);
-				}).catch(function(err) {
-					defer.reject(err);
-				});
-			}).catch(function(err) {
-				window.console.log(err);
-				getFilteredUsers(defer,params);
-			});
-
-			return defer.promise;
-		}
-
-
-
-
-
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.post').
-	service('upvoteService', ['$http', 'homeService',  UpvoteService]);
-
-
-	function UpvoteService($http, homeService) {
-		
-		this.createUpvote = createUpvote;
-		this.deleteUpvote = deleteUpvote;
-		this.getUpvote = getUpvote;
-
-
-		function getUpvote(postId) {
-			return $http.get(homeService.baseURL + 'upvote/get/'+postId);
-		}
-		
-		function createUpvote(postId) {
-			return $http.post(homeService.baseURL + 'upvote/create/'+postId);
-		}
-
-		function deleteUpvote(postId) {
-			return $http.post(homeService.baseURL + 'upvote/delete/' + postId);
-		}
-
-		
-
-	}
 })(window.angular);
 
 (function(angular) {
@@ -2184,8 +2453,20 @@ angular.module('petal.home')
 				$ionicLoading.hide();
 			});
 		}
-
-		
+		cpc.selectRandomImage = function(img){
+			cpc.post.image = img;
+		};
+		cpc.loadRandomImages = function(imageText){
+			cpc.loadingRandomImage = true;
+			cpc.randomImages = [];
+			homeService.getImages(imageText).then(function(response){
+				cpc.randomImages = response.data;
+				cpc.loadingRandomImage = false;
+			}).catch(function(err){
+				console.log("images err");
+				console.log(err);
+			});
+		};
 		cpc.cancelUpload = function() {
 			if(cpc.post.imageId){
 				homeService.deleteUpload(cpc.post.imageId).then(function(response){
@@ -2206,8 +2487,6 @@ angular.module('petal.home')
 			cpc.errFile = errFiles && errFiles[0];
 			if (cpc.file) {
 				homeService.submitUpload(cpc.file).then(function(response) {
-					console.log("uploaded fi");
-					console.log(response);
 					cpc.post.image = response.data.image;
 					cpc.post.imageId = response.data.imageId;
 					cpc.loadingImage = false;
@@ -2411,10 +2690,10 @@ angular.module('petal.home')
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('PostParentController',[PostParentController]);
+		.controller('PostParentController',['$rootScope',PostParentController]);
 
-	function PostParentController(){
-		
+	function PostParentController($rootScope){
+		//$rootScope.slideHeader = true;
 	}
 })(window.angular);
 (function(angular) {
@@ -2516,10 +2795,6 @@ angular.module('petal.home')
 				function userPage(id){
 					scope.modal.hide();
 					$state.go('home.userPage', { user: id });
-					
-						
-					
-				
 				}
 				function loadPostModal() {
 					return $ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
@@ -2546,57 +2821,7 @@ angular.module('petal.home')
 					
 				};
 
-				/*
-				scope.postModal.getSinglePost = getSinglePost;
-
-				scope.postModal.submitPostUpvote = submitPostUpvote;
-				scope.postModal.deletePostUpvote = deletePostUpvote;
-				function activate() {
-					getSinglePost();
-					checkPostUpvote();
-				}
 				
-				function getSinglePost() {
-					postService.getPost(scope.postModal.post.id).then(function(response) {
-						scope.postModal.post = response.data;
-
-					});
-
-				}
-
-				function checkPostUpvote() {
-					upvoteService.getUpvote(scope.postModal.post._id).then(function(res) {
-
-						scope.postModal.postUpvoted = res.data;
-					
-					}).catch(function(err) {
-						console.log("check error");
-						console.log(err);
-					});
-				}
-
-				function submitPostUpvote() {
-					upvoteService.createUpvote(scope.postModal.post._id).then(function(res) {
-						checkPostUpvote();
-						
-					}).catch(function(err) {
-						console.log("submit error");
-						console.log(err);
-					});
-				}
-
-				function deletePostUpvote() {
-					upvoteService.deleteUpvote(scope.postModal.post._id).then(function(res) {
-						checkPostUpvote();
-						
-					}).catch(function(err) {
-						
-						window.alert(err);
-					});
-				}
-				*/
-				
-
 			}
 		};
 	}
@@ -3023,6 +3248,54 @@ angular.module('petal.home')
 		function UserParentController(){
 			
 		}
+})(window.angular);
+(function(angular){
+	'use strict';
+	angular.module('petal.user')
+		.directive('blockedList',['blockService',blockedList]);
+
+	function blockedList(blockService){
+		return {
+			restrict: 'E',
+			replace: true,
+			templateUrl: 'app/user/views/blockedList.html',
+			link: function(scope){
+				scope.afterCallback = function(index){
+					scope.peopleList.splice(index,1);
+				};
+				blockService.getBlocks().then(function(response){
+					window.console.log(response);
+					scope.peopleList = response.data;
+				});
+			}
+		};
+	}
+})(window.angular);
+(function(angular) {
+	'use strict';
+	angular.module('petal.user').
+	service('blockService', ['$http', 'homeService',BlockService]);
+
+
+	function BlockService($http, homeService) {
+		this.create = create;
+		this.remove = remove;
+		this.getBlocks = getBlocks;
+		this.check = check;
+		
+		function create(id) {
+			return $http.post(homeService.baseURL + 'block/create', { secondUser: id });
+		}
+		function remove(id) {	
+			return $http.post(homeService.baseURL + 'block/delete', { secondUser: id });
+		}
+		function check(id) {
+			return $http.get(homeService.baseURL + 'block/get/'+id);
+		}
+		function getBlocks() {
+			return $http.get(homeService.baseURL + 'block/getBlocks/');
+		}
+	}
 })(window.angular);
 (function(angular) {
 	'use strict';

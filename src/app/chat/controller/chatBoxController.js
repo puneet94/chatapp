@@ -2,11 +2,14 @@
 	'use strict';
 	angular.module('petal.chat')
 
-	.controller('ChatBoxController', ['$scope', '$timeout',  'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload','$ionicLoading','$window',ChatBoxController]);
+	.controller('ChatBoxController', ['$scope', '$timeout', 'Socket', '$stateParams', 'userData', 'homeService', 'chatService', '$ionicScrollDelegate', 'userService', 'Upload', '$ionicLoading', '$window', 'blocked', ChatBoxController]);
 
-	function ChatBoxController($scope, $timeout, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload,$ionicLoading,$window) {
+	function ChatBoxController($scope, $timeout, Socket, $stateParams, userData, homeService, chatService, $ionicScrollDelegate, userService, Upload, $ionicLoading, $window, blocked) {
 		var cbc = this;
-
+		cbc.isBlocked = blocked;
+		if (cbc.isBlocked === true) {
+			window.alert("blocked profile");
+		}
 		cbc.currentUser = userData.getUser()._id;
 		cbc.receiverUserID = $stateParams.user;
 		cbc.chatList = [];
@@ -30,7 +33,7 @@
 			userService.getUser(cbc.receiverUserID).then(function(response) {
 				cbc.receiverUser = response.data;
 			}).catch(function(err) {
-				
+
 				console.log(err);
 			});
 		}
@@ -39,9 +42,9 @@
 			$timeout(function() {
 				$ionicScrollDelegate.scrollBottom(true);
 			});
-			
+
 		}
-		
+
 		function getChatMessages() {
 			chatService.getChatMessages(cbc.chatRoomId, cbc.params).then(function(res) {
 
@@ -49,7 +52,7 @@
 					cbc.chatList.unshift(chat);
 				});
 			}).catch(function(res) {
-				
+
 				console.log(res);
 			}).finally(function() {
 				scrollBottom();
@@ -60,37 +63,33 @@
 		}
 
 		function activate() {
+			$ionicLoading.show();
 			chatService.getChatRoom(cbc.receiverUserID).then(function(res) {
 				cbc.chatRoom = res.data;
 				cbc.chatRoomId = res.data._id;
 
 				socketJoin();
 				getChatMessages();
+
 			}, function(err) {
 				console.log(err);
 			});
 			getReceiver();
 
 
-		
+
 		}
-		
+
 
 		function socketJoin() {
 			Socket.emit('addToChatRoom', { 'roomId': cbc.chatRoomId });
 			Socket.on('messageReceived', function(message) {
-				
+
 				cbc.chatList.push(message);
 				scrollBottom();
 				cbc.messageLoading = false;
 			});
-			/*Socket.on('messageSaved', function(message) {
-				
-				cbc.chatList.push(message);
-				scrollBottom();
-				console.log(message);
-				cbc.messageLoading = false;
-			});*/
+
 		}
 
 		cbc.clickSubmit = function() {
@@ -98,27 +97,25 @@
 			cbc.messageLoading = true;
 			cbc.focusInput = true;
 
-			if(window.cordova && (!window.cordova.plugins.Keyboard.isVisible)){
+			if (window.cordova && (!window.cordova.plugins.Keyboard.isVisible)) {
 				window.cordova.plugins.Keyboard.show();
 			}
 			scrollBottom();
 			var chatObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.chatRoomId };
 			chatService.sendChatMessage(chatObj).then(function(res) {
-				cbc.myMsg = '';	
+				cbc.myMsg = '';
 				cbc.chatList.push(res.data.message);
 				scrollBottom();
-				
-				cbc.messageLoading = false;
 				cbc.messageTryCount = 0;
 			}).catch(function(err) {
 				console.log(err);
-				cbc.messageTryCount+=1;
-				
-				if(cbc.messageTryCount<=3){
-					cbc.clickSubmit();	
+				cbc.messageTryCount += 1;
+
+				if (cbc.messageTryCount <= 3) {
+					cbc.clickSubmit();
 				}
-				
-			}).finally(function(){
+
+			}).finally(function() {
 				cbc.messageLoading = false;
 			});
 
@@ -144,7 +141,7 @@
 					cbc.messageLoading = false;
 				}).catch(function(err) {
 					console.log(err);
-					
+
 				});
 
 			});
@@ -162,21 +159,21 @@
 				scrollBottom();
 			}
 		};
-		cbc.leaveChatBox = function(){
+		cbc.leaveChatBox = function() {
 			Socket.emit('removeFromRoom', { 'roomId': cbc.chatRoomId });
-			
-			chatService.updateChatRoom(cbc.chatRoomId).then(function(res){
 
-			}).catch(function(err){
+			chatService.updateChatRoom(cbc.chatRoomId).then(function(res) {
+
+			}).catch(function(err) {
 				console.log(err);
-			}).finally(function(){
-				
-				
+			}).finally(function() {
+
+
 			});
-			
-				$window.history.back();
-			
-			
+
+			$window.history.back();
+
+
 		};
 
 	}

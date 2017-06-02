@@ -10,7 +10,10 @@
 		acc.pullRefreshChats = pullRefreshChats;
 		activate();
 		Socket.on('newMessageReceived', messageReceived);
-
+		
+		acc.chatPage = function(userId){
+			$state.go('chatBox', { user: userId});
+		};
 		function messageReceived(message){
 			var newChatRoom = {};
 			newChatRoom.creator2 = message.user;

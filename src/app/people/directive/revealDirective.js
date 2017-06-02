@@ -5,9 +5,82 @@
 		.directive('decideReveal', ['$ionicActionSheet', 'revealService', decideReveal])
 		.directive('deleteReveal', ['$ionicActionSheet', 'revealService', deleteReveal])
 		.directive('sendReveal', ['$ionicActionSheet', 'revealService', sendReveal])
+		.directive('createBlock', ['$ionicActionSheet', 'blockService', createBlock])
+		.directive('deleteBlock', ['$ionicActionSheet', 'blockService', deleteBlock])
+		.directive('deleteChat', ['$ionicActionSheet', 'chatService','$state', deleteChat])
 		.directive('chatPage', ['$state', chatPage])
+		.directive('userSettings', ['$ionicPopover', userSettings])
 		.directive('userPage', ['$state', userPage]);
 
+	
+	function deleteChat($ionicActionSheet, chatService,$state) {
+		return {
+			restrict: 'A',
+			scope: {
+				deleteChat: '@',
+				afterCallback: '&'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Delete ',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Delete Chat '
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {
+							console.log('CANCELLED');
+						},
+						buttonClicked: function(index) {
+							if (index === 0) {
+								chatService.deleteChatRoom(scope.deleteChat).then(function(res) {
+									if (scope.afterCallback) {
+										scope.afterCallback();
+									}
+									window.alert(res.data);
+									$state.go('home.chat.all');
+								}).catch(function(err) {
+									window.alert(JSON.stringify(err));
+								});
+
+							}
+							return true;
+
+						}
+					});
+					event.stopPropagation();
+				});
+			}
+		};
+
+	}
+
+	function userSettings($ionicPopover) {
+		return {
+			scope: {
+				userBlock: '@',
+				chatDelete: '@',
+				blockId: '@'
+			},
+			link: function(scope, elem) {
+				scope.userBlock = (scope.userBlock==="true");
+				scope.afterCallback = function(){
+					scope.popover.remove();
+					window.history.back();
+				};
+				elem.bind('click', function(event) {
+					$ionicPopover.fromTemplateUrl('app/user/views/settingsTemplate.html', {
+						scope: scope
+					}).then(function(popover) {
+						scope.popover = popover;
+						scope.popover.show(event);
+					});
+					event.stopPropagation();
+				});
+			}
+		};
+	}
 
 	function chatPage($state) {
 		return {
@@ -22,6 +95,7 @@
 			}
 		};
 	}
+
 	function userPage($state) {
 		return {
 			scope: {
@@ -52,11 +126,11 @@
 						}, ],
 						cancelText: 'Cancel',
 						cancel: function() {
-							
+
 						},
 						buttonClicked: function(index) {
 							revealService.cancel(scope.cancelReveal).then(function(res) {
-								
+
 								if (scope.afterCallback) {
 									scope.afterCallback();
 								}
@@ -96,7 +170,7 @@
 							console.log('CANCELLED');
 						},
 						buttonClicked: function(index) {
-							
+
 							if (index === 0) {
 								revealService.accept(scope.decideReveal).then(function(res) {
 									if (scope.afterCallback) {
@@ -108,7 +182,7 @@
 
 							} else if (index === 1) {
 								revealService.ignore(scope.decideReveal).then(function(res) {
-									
+
 									if (scope.afterCallback) {
 										scope.afterCallback();
 									}
@@ -189,7 +263,7 @@
 						cancel: function() {},
 						buttonClicked: function(index) {
 							revealService.initiate(scope.sendReveal).then(function(res) {
-								
+
 								if (scope.afterCallback) {
 									scope.afterCallback();
 								}
@@ -203,6 +277,86 @@
 					event.stopPropagation();
 				});
 
+			}
+		};
+
+	}
+
+	function createBlock($ionicActionSheet, blockService) {
+		return {
+			restrict: 'A',
+			scope: {
+				createBlock: '@',
+				afterCallback: '&'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Block User',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Block'
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {},
+						buttonClicked: function(index) {
+							blockService.create(scope.createBlock).then(function(res) {
+
+								window.alert("user blocked");
+								if(scope.afterCallback){
+									scope.afterCallback();
+								}
+							}).catch(function(err) {
+								window.alert(JSON.stringify(err));
+							});
+							return true;
+						}
+
+					});
+					event.stopPropagation();
+				});
+
+			}
+		};
+
+	}
+
+	function deleteBlock($ionicActionSheet, blockService) {
+		return {
+			restrict: 'A',
+			scope: {
+				afterCallback: '&',
+				deleteBlock: '@'
+			},
+			link: function(scope, elem) {
+				elem.bind('click', function(event) {
+					$ionicActionSheet.show({
+						titleText: 'Block',
+						buttons: [{
+							text: '<i class="icon ion-share"></i> Unblock User '
+						}, ],
+
+						cancelText: 'Cancel',
+						cancel: function() {
+							console.log('CANCELLED');
+						},
+						buttonClicked: function(index) {
+							if (index === 0) {
+								blockService.remove(scope.deleteBlock).then(function(res) {
+									if (scope.afterCallback) {
+										scope.afterCallback();
+									}
+								}).catch(function(err) {
+									window.alert(JSON.stringify(err));
+								});
+
+							}
+							return true;
+
+						}
+					});
+					event.stopPropagation();
+				});
 			}
 		};
 

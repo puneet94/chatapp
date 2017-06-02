@@ -15,40 +15,7 @@
 				}
 
 			}).
-			state('home.userPage', {
-				url: '/userPage/:user',
-				resolve: {
-					friends: [ '$stateParams', 'revealService','$q', friends]
-				},
-				views: {
-					'extra-tab': {
-						templateUrl: 'app/user/views/userProfilePage.html',
-						controller: 'UserPageController',
-						controllerAs: 'upc'
-					}
-				},
-				
-
-			})
-			/*state('tabs.userProfileSettings', {
-				url: '/userProfileSettings',
-				views: {
-					'user-tab': {
-						templateUrl: 'app/user/views/userProfileSettingsPage.html',
-					}
-				}
-
-			}).
-			state('tabs.userAccountSettings', {
-				url: '/userAccountSettings',
-				views: {
-					'user-tab': {
-						templateUrl: 'app/user/views/userAccountSettingsPage.html',
-					}
-				}
-
-			}).*/
-			.state('home.user.userMePage', {
+			state('home.user.userMePage', {
 				url: '/userMePage',
 				views: {
 					'user-tab': {
@@ -58,6 +25,23 @@
 						
 					}
 				}
+
+			}).
+			state('home.userPage', {
+				url: '/userPage/:user',
+				resolve: {
+					blocked: [ '$stateParams', 'blockService','$q', blocked],
+					friends: [ '$stateParams', 'revealService','$q', friends]
+
+				},
+				views: {
+					'extra-tab': {
+						templateUrl: 'app/user/views/userProfilePage.html',
+						controller: 'UserPageController',
+						controllerAs: 'upc'
+					}
+				},
+				
 
 			})
 			.state('home.userEditPage', {
@@ -74,7 +58,24 @@
 			});
 		}
 	]);
-
+	function blocked($stateParams,blockService,$q){
+		var defer = $q.defer();
+		blockService.check($stateParams.user).then(function(response){
+			
+			if(response.data.blocked===true){
+				window.alert("Blocked profile");
+				window.history.back();
+			}
+			else{
+				defer.resolve();	
+			}
+			
+			
+		}).catch(function(){
+			defer.resolve();	
+		});
+		return defer.promise;
+	}
 	function friends($stateParams,revealService,$q){
 		var defer = $q.defer();
 
@@ -83,7 +84,7 @@
 			
 			defer.resolve(response.data.status);
 			//return ;
-		}).catch(function(err){
+		}).catch(function(){
 			
 		});
 		return defer.promise;

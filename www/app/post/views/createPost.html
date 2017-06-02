@@ -9,11 +9,7 @@
                         <div class="col col-80 ">Enter Post Content</div>
                         <div class="col col-20 text-right">{{300-cpc.post.content.length}}</div>
                         
-                </div>
-                
-                
-                
-                
+                </div> 
                 <form>
                         <div class="row">
                                 <div class="col">
@@ -37,7 +33,14 @@
                                 <div>
                                         <button ng-if="!cpc.loadingImage && !cpc.post.image" class="button button-energized" ngf-select="cpc.submitUpload($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB">Upload Picture</button>
                                         <button class="button button-assertive" ng-if="cpc.post.image" ng-click="cpc.cancelUpload()">Cancel</button>
+                                        <button class="button button-assertive" ng-click="cpc.loadRandomImages(cpc.post.content)">
+                                                Load Random Images 
+                                        </button>
                                 </div>
+                        </div>
+                        <div class="randomImagesList" > 
+                                <ion-spinner ng-if="cpc.loadingRandomImage" class="spinner-energized"></ion-spinner>
+                                <img class="randomImage" ng-click="cpc.selectRandomImage(img)"  ng-repeat="img in cpc.randomImages" ng-src="{{img}}" />
                         </div>
                 </form>
         </ion-content>

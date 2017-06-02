@@ -10,6 +10,7 @@
 	.postModalBody
 		font-size: 18px
 		text-transform: capitalize
+		line-height: 25px
 	.postModalInfo
 		.infoValue
 			font-size: 14px
@@ -40,12 +41,12 @@
 
 
 .imageGray
-	-webkit-filter: grayscale(80%)
-	-moz-filter: grayscale(80%)
-	-ms-filter: grayscale(80%)
-	-o-filter: grayscale(80%)
-	filter: grayscale(80%)
-	filter: gray
+
+	-webkit-filter: contrast(120%)
+	-moz-filter: contrast(120%)
+	-ms-filter: contrast(120%)
+	-o-filter: contrast(120%)
+	filter: contrast(120%)
 a
 	text-decoration: none
 .buttonSearch
@@ -63,6 +64,9 @@ a
 	
 	padding-left: 0px
 	padding-bottom: 0px
+	border-bottom: 1px solid #ddd
+	margin: 0
+
 	.postUserName
 		a
 			font-size: 17px
@@ -100,12 +104,15 @@ a
 .singlePostContent
 	padding-top: 2px
 	padding-bottom: 2px
+	border-top: none
 	.postImage
-		padding-top: 10px
+		margin-top: 10px
+		border: 1px solid #eee
+		border-radius: 5px
 	span
 		font-size: 16px
 		text-transform: capitalize
-		color: rgba(0,0,0,0.85)
+		color: rgba(0,0,0,0.75)
 
 .noPostsHeader
 	color: #9E9E9E

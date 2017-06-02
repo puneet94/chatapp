@@ -51,8 +51,6 @@
 					acc.chatRoomsList.push(value);
 				});
 				acc.noPosts = !response.data.total;
-
-				console.log(acc.chatRoomsList);
 				acc.initialSearchCompleted = true;
 				if (response.data.total > acc.chatRoomsList.length) {
 					acc.canLoadMoreResults = true;

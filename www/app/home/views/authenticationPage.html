@@ -2,37 +2,54 @@
         <div class="text-center image-background">
                 <div class="authenticationContent">
                         <h1 class="text-center padding">
-        Petal Chat
-      </h1>
+        			Petal Chat
+      		</h1>
                         <h5 class="text-center padding">
-        Bringing people closer
-      </h5>
-                        <div class=" margin " >
-                            <div class="facebookAuthenticateButton" ng-click="ac.socialAuthenticate('facebook')">
-                                <span class="icon-container">
+        			Bringing people closer
+      		</h5>
+                        <!--<div class="margin">
+                                <div class="facebookAuthenticateButton" ng-click="ac.socialAuthenticate('facebook')">
+                                        <span class="icon-container">
                                     <i class="icon ion-social-facebook" aria-hidden="true"></i>
                                 </span>
-                                <span class="text-container">
+                                        <span class="text-container">
                                     Log in with Facebook
                                   </span>
                                 </div>
                                 <div class="subdued profileInfoText">
-                          **Your profile information won't be shared. 
+                                        **Your profile information won't be shared.
+                                </div>
+                        </div>-->
+                        <div class="padding">
+                        	<button class=" button icon-left icon ion-social-facebook button-positive" ng-click="ac.socialAuthenticate('facebook')">
+                        		Login with Facebook
+                        	</button>
                         </div>
+                        <div class="padding" ng-if="ac.webSignIn">
+                            <button class="button icon-left ion-social-googleplus button-assertive" ng-click="googleSignIn()">
+                                Login with Google
+                            </button>
                         </div>
-                        
+                        <div class="padding" ng-if="!ac.webSignIn">
+                            <button class="button icon-left ion-social-googleplus button-assertive" ng-click="ac.socialAuthenticate('google')">
+                                Login with Google+
+                            </button>
+                        </div>
+                        <div class="subdued profileInfoText">
+                                        **Your profile information won't be shared.
+                                </div>
                         <div class="subdued privacyPolicy" ng-click="ac.loadPostModal()">
-                          Privacy policy
+                                Privacy policy
                         </div>
-                        <div class="googleAuthenticateButton" ng-click="ac.socialAuthenticate('google')">
+                        <!--<div class="googleAuthenticateButton" ng-click="ac.socialAuthenticate('google')">
                                 <span class="icon-container">
       <i class="fa fa-facebook" aria-hidden="true"></i>
     </span>
                                 <span class="text-container" style="color:white;">
-      <!--Log in with Google-->
+      Log in with Google
     </span>
-                                </button>
-                        </div>
+                                
+                        </div>-->
                 </div>
         </div>
 </ion-view>

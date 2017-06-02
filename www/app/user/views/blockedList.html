@@ -1,0 +1,15 @@
+<div class="list peopleList">
+	<h3 ng-if="peopleList.length">Blocked users</h3>
+        <div class="item item-avatar item-icon-right peopleListContainer"  ng-repeat="people in peopleList" >
+                <img class="personAvatar" ng-src="{{people.user2.picture}}">
+               <h2 class="peopleName">
+                        <span >{{people.user2.anonName}}</span>
+                        <span class="peopleGender">({{people.user2.gender[0]||'O'}})</span>
+               </h2>
+                
+                <p>{{people.user2.status}}</p>
+                
+                <i  class="icon ion-person-add"  after-callback="afterCallback($index)" delete-block="{{people.user2._id}}">
+                </i>
+        </div>
+</div>

@@ -32,6 +32,9 @@
 				if (response.data.total > apc.peopleList.length) {
 					apc.canLoadMoreResults = true;
 				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
 			}).catch(function(err) {
 				console.log(err);
 

@@ -1,21 +1,23 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate',HomeController]);
+		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate','$rootScope',HomeController]);
 
-	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate) {
+	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate,$rootScope) {
 		var hc = this;
 		hc.badgeValue = '';
 		hc.chatClicked = chatClicked;
-
-
+		/*
+			Code for hiding the header on scroll up and down
+		*/
+		$rootScope.slideHeader = false;
+  		$rootScope.slideHeaderPrevious = 0;
 		Socket.on("connect", function() {
 			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
 			Socket.on('newMessageReceived', messageReceived);
 		});
 
 		function messageReceived(message) {
-			
 			var messageString = message.message;
 			if(message.type && message.type=='img'){
 				messageString = 'New image';
@@ -29,7 +31,6 @@
 					if ($state.params.user != message.user._id) {
 						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
 							allowHtml: true,
-							maxOpened: 1, 
 							onTap: function() {
 								$state.go('chatBox', { user: message.user._id });
 							}
@@ -39,7 +40,6 @@
 					
 					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
 						allowHtml: true,
-						maxOpened: 1, 
 						onTap: function() {
 							$state.go('chatBox', { user: message.user._id });
 						}

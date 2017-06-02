@@ -7,6 +7,7 @@ var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
+var sourcemaps = require('gulp-sourcemaps');
 
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
@@ -52,14 +53,16 @@ gulp.task('sass', function(done) {
 
 gulp.task('scripts', function(done) {
   gulp.src(paths.scripts)
+    .pipe(sourcemaps.init())
     .pipe(jshint())
     .pipe(jshint.reporter('default'))
-
+    
     .pipe(concat('main.js'))
 
     .pipe(gulp.dest('./www/js/'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify())
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest('./www/js/'))
     .on('end', done);
 

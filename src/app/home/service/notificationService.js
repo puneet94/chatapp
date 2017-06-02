@@ -63,7 +63,11 @@
 			return deferred.promise;
 
 		}
+		function googleSignIn(profile){
+			return $http.post(base_url+'authenticate/auth/nativeGoogle', { profile: profile });
+		}
 		return {
+			googleSignIn: googleSignIn,
 			register: register
 		};
 	}

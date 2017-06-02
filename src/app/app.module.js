@@ -3,15 +3,24 @@
 	'use strict';
 
 
-	var app = angular.module('petal', ['ionic', 'satellizer', 'ngFileUpload', 'btford.socket-io',
+	var app = angular.module('petal', ['ionic', 'ngAnimate','satellizer', 'ngFileUpload', 'btford.socket-io',
 		'ngCordova', 'toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
 	]);
-	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider',
-		function($urlRouterProvider, $stateProvider, $ionicConfigProvider) {
-			$ionicConfigProvider.tabs.position("bottom");
-			$urlRouterProvider.otherwise('/home/post/all');
-		}
-	]);
+	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider', 'toastrConfig', configFunction]);
+
+	function configFunction($urlRouterProvider, $stateProvider, $ionicConfigProvider, toastrConfig) {
+		$ionicConfigProvider.tabs.position("bottom");
+		$ionicConfigProvider.scrolling.jsScrolling(false);
+		$ionicConfigProvider.views.transition('none');
+		$urlRouterProvider.otherwise('/home/post/all');
+		angular.extend(toastrConfig, {
+			autoDismiss: true,
+			maxOpened: 1,
+		});
+		
+
+	}
+
 	app.run(['$rootScope', '$state', '$ionicPlatform', '$ionicLoading', 'RequestsService', '$cordovaPushV5', '$ionicHistory', function($rootScope, $state, $ionicPlatform, $ionicLoading, RequestsService, $cordovaPushV5, $ionicHistory) {
 
 		$ionicPlatform.ready(function() {
@@ -22,7 +31,7 @@
 				cordova.plugins.Keyboard.disableScroll(true);
 				//window.pushNotification = window.plugins.pushNotification;
 				//appStatus();
-				notificationFunction();	
+				notificationFunction();
 				backButtonExit();
 			}
 

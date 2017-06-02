@@ -11,7 +11,11 @@
 		rs.getAllChatRooms = getAllChatRooms;
 		rs.getRevealedChatRooms = getRevealedChatRooms;
 		rs.updateChatRoom = updateChatRoom;
+		rs.deleteChatRoom = deleteChatRoom;
 
+		function deleteChatRoom(id){
+			return $http.post(homeService.baseURL + 'chatRoom/delete/' + id);
+		}
 		function sendChatMessage(chat) {
 			
 			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
@@ -38,7 +42,7 @@
 
 		}
 		function updateChatRoom(id){
-			return $http.post(homeService.baseURL+'chatRoom/'+id);
+			return $http.post(homeService.baseURL+'chatRoom/update/'+id);
 		}
 
 		

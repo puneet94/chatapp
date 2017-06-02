@@ -1,5 +1,5 @@
 <ion-view>
-<ion-content class="has-header" keep-scroll>
+<ion-content class="has-header" watch-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="npc.pullRefreshPosts()">
         </ion-refresher>
         <div class="item range">
@@ -29,7 +29,7 @@
                 </div>
         </div>
         <posts-list posts-list="npc.postsList"></posts-list>
-        <ion-infinite-scroll on-infinite="npc.loadMorePosts()" distance="100%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
+        <ion-infinite-scroll on-infinite="npc.loadMorePosts()" distance="70%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>
 </ion-view>

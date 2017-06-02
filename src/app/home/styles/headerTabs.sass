@@ -2,6 +2,7 @@
 	padding: 0
 	margin: 0
 	height: 50px
+	
 .rowCustom
 	padding: 0
 	margin: 0
@@ -11,13 +12,33 @@
 	.customTabHeading
 		color: #eee
 		text-transform: uppercase
+		font-size: 12px
 
 .columnCustomActive
 	border-bottom: 5px solid white
 	color: white
 	font-weight: 800
+	transition: border-bottom .5s ease
 	.customTabHeading
 		color: white
 		font-weight: 800
 
 
+@keyframes hide
+	from
+		transform: translate3d(0, 0, 0)
+	to
+		transform: translate3d(0, -100%, 0)
+		
+
+@keyframes show
+	from
+		transform: translate3d(0, -100%, 0)
+	to
+		transform: translate3d(0, 0, 0)
+.headerCustom.ng-hide-remove
+	animation: 0.5s show
+
+
+.headerCustom.ng-hide-add
+	animation: 0.5s hide

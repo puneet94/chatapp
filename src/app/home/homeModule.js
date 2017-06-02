@@ -47,7 +47,6 @@
 			defer.resolve();
 
 		} else {
-			console.log("not audsnf");
 			$timeout(function() {
 				$state.go('authenticate');
 			});

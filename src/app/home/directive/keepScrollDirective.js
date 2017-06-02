@@ -101,7 +101,33 @@
 				};
 			}
 		};
-	}).directive('imageModal', ['$ionicModal', imageModal]);
+	}).directive('imageModal', ['$ionicModal', imageModal])
+	.directive('watchScroll',['$rootScope',watchScroll]);
+
+	function watchScroll($rootScope){
+		return {
+			restrict: 'A',
+			link: function(scope,elem){
+
+				var start = 0;
+				var threshold = 150;
+				elem.bind('scroll',function(e){
+					
+					var scrollTop = e.srcElement.scrollTop;
+					if(scrollTop-start > threshold){
+						$rootScope.slideHeader = true;
+					}else{
+						$rootScope.slideHeader = false;
+					}
+					if($rootScope.slideHeaderPrevious > scrollTop - start){
+						$rootScope.slideHeader = false;
+					}
+					$rootScope.slideHeaderPrevious = scrollTop - start;
+					$rootScope.$apply();
+				});
+			}
+		};
+	}
 
 
 })(window.angular);

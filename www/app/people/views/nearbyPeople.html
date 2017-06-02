@@ -1,4 +1,4 @@
-<ion-view><ion-content class="has-header" keep-scroll>
+<ion-view><ion-content class="has-header" watch-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="npc.pullRefreshPeople()">
         </ion-refresher>
         <div class="item range">
@@ -12,7 +12,7 @@
                 <h1 class="noPostsHeader">No users nearby</h1>
         </div>
         <people-list people-list="npc.peopleList"></people-list>
-        <ion-infinite-scroll on-infinite="npc.loadMorePeople()" distance="100%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
+        <ion-infinite-scroll on-infinite="npc.loadMorePeople()" distance="70%" immediate-check="false" ng-if="npc.canLoadMoreResults && npc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>
 <!----></ion-view>>

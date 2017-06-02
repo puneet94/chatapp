@@ -1,9 +1,11 @@
-<ion-view>
+<ion-view cache-view="false">
         <ion-header-bar align-title="center" class="bar-positive">
                 <div class="buttons">
                         <button class="button  icon  ion-arrow-left-c  button-icon" ng-click="upc.goBack()"></button>
                 </div>
-                <h1 class="title">{{upc.user.anonName+' '}}<small>({{upc.user.gender[0]||'O'}})</small></h1>
+                <h1 class="title">{{upc.user.anonName+' '}}<small class="userGender">({{upc.user.gender[0]||'O'}})</small></h1>
+                <button class="button button-icon ion-ios-gear-outline icon" user-settings user-block="{{!upc.isBlocked}}" block-id="{{upc.user._id}}">
+                </button>
         </ion-header-bar>
         <ion-content class="has-header">
                 <div class="userHeaderSection">
@@ -15,8 +17,8 @@
                                 </div>
                                 <div class="col">
                                         <div class="padding  text-center">
-                                                <button class="button button-outline button-balanced icon-left icon ion-ios-chatbubble-outline" ui-sref="chatBox({user:upc.user._id})">
-                                                        Message
+                                                <button class="button  button-outline button-balanced icon-left icon ion-ios-chatbubble-outline" ui-sref="chatBox({user:upc.user._id})">
+                                                        Chat
                                                 </button>
                                         </div>
                                         <div class="text-center">

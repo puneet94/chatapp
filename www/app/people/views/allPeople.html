@@ -1,4 +1,4 @@
-<ion-view><ion-content class="has-header" keep-scroll>
+<ion-view><ion-content class="has-header" watch-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="apc.pullRefreshPeople()">
         </ion-refresher>
         <div class="row ">
@@ -28,7 +28,13 @@
                 </div>
         </div>
         <people-list people-list="apc.peopleList" list-type="all" people-search-text-submit="apc.peopleSearchTextSubmit(interest)"></people-list>
-        <ion-infinite-scroll on-infinite="apc.loadMorePeople()" distance="100%" immediate-check="false" ng-if="apc.canLoadMoreResults && apc.initialSearchCompleted">
+
+
+
+
+        <ion-infinite-scroll 
+        on-infinite="apc.loadMorePeople()" distance="40%" immediate-check="false" 
+        ng-if="apc.canLoadMoreResults && apc.initialSearchCompleted">
         </ion-infinite-scroll>
 </ion-content>
 </ion-view>

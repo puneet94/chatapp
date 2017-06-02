@@ -34,6 +34,9 @@
 				if (response.data.total > apc.peopleList.length) {
 					apc.canLoadMoreResults = true;
 				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 			}).catch(function(err) {
 				console.log(err);
