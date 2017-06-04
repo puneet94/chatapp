@@ -11,8 +11,8 @@
 	function configFunction($urlRouterProvider, $stateProvider, $ionicConfigProvider, toastrConfig) {
 		$ionicConfigProvider.tabs.position("bottom");
 		$ionicConfigProvider.scrolling.jsScrolling(false);
-		$ionicConfigProvider.views.transition('none');
-		$urlRouterProvider.otherwise('/home/post/all');
+		//$ionicConfigProvider.views.transition('none');
+		$urlRouterProvider.otherwise('/home/post/nearby');
 		angular.extend(toastrConfig, {
 			autoDismiss: true,
 			maxOpened: 1,
@@ -43,15 +43,9 @@
 			window.onerror = function(errorMsg, url, lineNumber) {
 				return false;
 			};
-			$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
-				if (fromState.name != 'chatBox') {
-					//$ionicLoading.show();
-
-				}
-			});
-
+			
 			$rootScope.$on("$stateChangeError", function() {
-				$state.go('home.post.all');
+				$state.go('home.post.nearby');
 				$ionicLoading.hide();
 			});
 		});
@@ -76,18 +70,6 @@
 				e.preventDefault();
 				return false;
 			}, 101);
-		}
-
-		function appStatus() {
-			$ionicPlatform.on('pause', function() {
-				RequestsService.register();
-			});
-			// The resume event fires when the native platform
-			//  pulls the application out from the background.
-			$ionicPlatform.on('resume', function() {
-				RequestsService.register();
-
-			});
 		}
 
 		function notificationFunction() {
@@ -180,68 +162,6 @@
 
 (function(angular) {
 	'use strict';
-	angular.module('petal.people', [])
-		.config(['$stateProvider', config]);
-
-
-	function config($stateProvider) {
-		$stateProvider
-			.state('home.people',{
-				url: '/people',
-				abstract: true,
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/peopleParent.html',
-						controller: 'PeopleParentController',
-						controllerAs: 'ppc'
-					}
-				}
-				
-			}).state('home.people.all',{
-				url: '/all',
-				
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/allPeople.html',
-						controller: 'AllPeopleController',
-						controllerAs: 'apc'
-					}
-				}				
-			}).state('home.people.revealed',{
-				url: '/revealed',
-				
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/revealedPeople.html',
-						controller: 'RevealedPeopleController',
-						controllerAs: 'rpc'
-					}
-				}				
-			}).state('home.people.received',{
-				url: '/received',
-				
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/receivedPeople.html',
-						controller: 'ReceivedPeopleController',
-						controllerAs: 'rpc'
-					}
-				}				
-			}).state('home.people.nearby',{
-				url: '/nearby',
-				views: {
-					'people-tab': {
-						templateUrl: 'app/people/views/nearbyPeople.html',
-						controller: 'NearbyPeopleController',
-						controllerAs: 'npc'
-					}
-				}				
-			});
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
 	angular.module('petal.home', [])
 		.config(['$stateProvider', '$authProvider', config]);
 
@@ -314,6 +234,68 @@
 		return defer.promise;
 	}
 
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people', [])
+		.config(['$stateProvider', config]);
+
+
+	function config($stateProvider) {
+		$stateProvider
+			.state('home.people',{
+				url: '/people',
+				abstract: true,
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/peopleParent.html',
+						controller: 'PeopleParentController',
+						controllerAs: 'ppc'
+					}
+				}
+				
+			}).state('home.people.all',{
+				url: '/all',
+				
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/allPeople.html',
+						controller: 'AllPeopleController',
+						controllerAs: 'apc'
+					}
+				}				
+			}).state('home.people.revealed',{
+				url: '/revealed',
+				
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/revealedPeople.html',
+						controller: 'RevealedPeopleController',
+						controllerAs: 'rpc'
+					}
+				}				
+			}).state('home.people.received',{
+				url: '/received',
+				
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/receivedPeople.html',
+						controller: 'ReceivedPeopleController',
+						controllerAs: 'rpc'
+					}
+				}				
+			}).state('home.people.nearby',{
+				url: '/nearby',
+				views: {
+					'people-tab': {
+						templateUrl: 'app/people/views/nearbyPeople.html',
+						controller: 'NearbyPeopleController',
+						controllerAs: 'npc'
+					}
+				}				
+			});
+	}
 })(window.angular);
 
 (function(angular) {
@@ -936,6 +918,557 @@ angular.module('petal.chat')
         });
     }
 })(window.angular);
+(function(angular) {
+	'use strict';
+
+	angular.module('petal.home')
+		.controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", 'userLocationService', '$ionicLoading', 'RequestsService', '$ionicModal', AuthenticationController]);
+
+	function AuthenticationController($scope, $auth, $state, userData, userLocationService, $ionicLoading, RequestsService, $ionicModal) {
+		var phc = this;
+
+		phc.isAuth = $auth.isAuthenticated();
+		if (phc.isAuth) {
+			$state.go('home.post.all');
+		}
+		if (window.cordova) {
+			phc.webSignIn = true;
+		}
+		phc.authLogout = authLogout;
+		phc.loadPostModal = loadPostModal;
+
+
+		phc.socialAuthenticate = socialAuthenticate;
+		$scope.googleSignIn = function() {
+
+
+
+			$ionicLoading.show({
+				template: 'Logging in...'
+			});
+
+			window.plugins.googleplus.login({
+					webClientId: '792068565007-rdm7nrlfmc29jvlqo5l0tkgu6ci0vboa.apps.googleusercontent.com'
+
+				},
+				function(user_data) {
+					var profile = {};
+					profile.id = user_data.userId;
+					profile.displayName = user_data.displayName;
+					profile.imageUrl = user_data.imageUrl;
+					RequestsService.googleSignIn(profile)
+						.then(function(response) {
+							$auth.setToken(response.data.token);
+							successfulAuthentication(response.data.user);
+						}).catch(function(err) {
+							console.log("error");
+							console.log(err);
+							$ionicLoading.hide();
+						});
+
+				},
+				function(msg) {
+					alert("missed");
+					console.log(msg);
+					$ionicLoading.hide();
+				}
+			);
+		};
+		function successfulAuthentication(user) {
+			userData.setUser(user);
+			userLocationService.setUserLocation();
+			RequestsService.register();
+
+			if (user.device_token) {
+				$state.go('home.post.popular');
+			} else {
+				$state.go('home.userEditPage');
+			}
+		}
+
+		function socialAuthenticate(provider) {
+			$ionicLoading.show();
+			$auth.authenticate(provider).then(function(response) {
+				successfulAuthentication(response.data.user);
+			}).catch(function(err) {
+				$ionicLoading.hide();
+
+			}).finally(function() {
+				//$ionicLoading.hide();
+			});
+		}
+
+
+		function loadPostModal() {
+			$ionicModal.fromTemplateUrl('app/home/views/policy.html', {
+				scope: $scope
+			}).then(function(modal) {
+				$scope.modal = modal;
+				$scope.modal.show();
+			});
+		}
+
+
+		function authLogout() {
+			$auth.logout();
+			userData.removeUser();
+			$state.go('authenticate');
+		}
+	}
+
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.home')
+		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate','$rootScope',HomeController]);
+
+	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate,$rootScope) {
+		var hc = this;
+		hc.badgeValue = '';
+		hc.chatClicked = chatClicked;
+		/*
+			Code for hiding the header on scroll up and down
+		*/
+		$rootScope.slideHeader = false;
+  		$rootScope.slideHeaderPrevious = 0;
+		Socket.on("connect", function() {
+			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
+			Socket.on('newMessageReceived', messageReceived);
+		});
+
+		function messageReceived(message) {
+			var messageString = message.message;
+			if(message.type && message.type=='img'){
+				messageString = 'New image';
+			}
+			var userName = message.user.anonName||message.user.facebookName ||message.user.googleName ;
+			if (message.user._id == userData.getUser()._id) {
+
+			} else {
+				if ($state.current.name == 'chatBox') {
+
+					if ($state.params.user != message.user._id) {
+						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
+							allowHtml: true,
+							onTap: function() {
+								$state.go('chatBox', { user: message.user._id });
+							}
+						});
+					}
+				} else {
+					
+					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
+						allowHtml: true,
+						onTap: function() {
+							$state.go('chatBox', { user: message.user._id });
+						}
+					});
+					hc.badgeValue = 1;
+
+				}
+
+
+			}
+		}
+		hc.goForward = function() {
+			
+			var selected = $ionicTabsDelegate.selectedIndex();
+			if (selected != -1) {
+				if(selected===1){
+					$ionicTabsDelegate.select(selected + 2);	
+				}
+				else{
+					$ionicTabsDelegate.select(selected + 1);	
+				}
+				
+			}
+		};
+
+		hc.goBack = function() {
+
+			var selected = $ionicTabsDelegate.selectedIndex();
+			if (selected !== -1 && selected !== 0) {
+				if(selected===3){
+					$ionicTabsDelegate.select(selected - 2);
+				}
+				else{
+					$ionicTabsDelegate.select(selected - 1);
+				}
+			}
+		};
+
+		function chatClicked() {
+			hc.badgeValue = '';
+			//$state.go('home.chat.all');
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.home')
+		.directive('distanceView', ['postService', '$timeout', function(postService, $timeout) {
+			return {
+				restrict: 'E',
+				templateUrl: 'app/home/views/distanceViewTemplate.html',
+				scope: {
+					positionCords: '='
+				},
+				replace: true,
+				link: function(scope) {
+					$timeout(getDistance, 1000);
+
+					function getDistance() {
+						if (scope.positionCords) {
+							scope.distanceObj = {
+								latitude: scope.positionCords[1],
+								longitude: scope.positionCords[0],
+
+							};
+							postService.getDistance(scope.distanceObj).then(function(res) {
+								scope.distanceObj.distance = res + ' mi';
+							}).catch(function(err) {
+								scope.distanceObj.distance = '';
+							});
+						} else {
+							scope.distanceObj = {};
+							scope.distanceObj.distance = '';
+						}
+					}
+
+
+				}
+			};
+		}]);
+		/*.directive('expandingTextarea', [function() {
+			return {
+				restrict: 'A',
+				controller: function($scope, $element, $attrs, $timeout) {
+					$element.css('min-height', '0');
+					$element.css('resize', 'none');
+					$element.css('overflow-y', 'hidden');
+					setHeight(0);
+					$timeout(setHeightToScrollHeight);
+
+					function setHeight(height) {
+						$element.css('height', height + 'px');
+						$element.css('max-height', height + 'px');
+					}
+
+					function setHeightToScrollHeight() {
+						setHeight(0);
+						var scrollHeight = angular.element($element)[0]
+							.scrollHeight;
+						if (scrollHeight !== undefined) {
+							setHeight(scrollHeight);
+						}
+					}
+
+					$scope.$watch(function() {
+						return angular.element($element)[0].value;
+					}, setHeightToScrollHeight);
+				}
+			};
+		}])*/
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	var imageModal = function($ionicModal) {
+		return {
+			restrict: 'A',
+			scope: {
+
+				imageModal: '@'
+			},
+			link: function($scope, elem) {
+
+				function showImageModal(image) {
+					loadModal().then(function() {
+						$scope.currentImage = image;
+						$scope.modal.show();
+					});
+
+				}
+
+				function loadModal() {
+					return $ionicModal.fromTemplateUrl('app/chat/views/chatImageModal.html', {
+						scope: $scope
+					}).then(function(modal) {
+						$scope.modal = modal;
+					});
+				}
+				elem.bind('click', function(event) {
+					showImageModal($scope.imageModal);
+					event.stopPropagation();
+				});
+			}
+		};
+
+	};
+	angular.module('petal.home').directive('keepScroll', [
+		'$state', '$timeout', 'ScrollPositions', '$ionicScrollDelegate',
+		function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
+			return {
+				restrict: 'A',
+				link: function(scope) {
+					scope.$on('$stateChangeStart', function() {
+						ScrollPositions[$state.current.name] = $ionicScrollDelegate.getScrollPosition();
+
+					});
+					$timeout(function() {
+						var offset;
+						offset = ScrollPositions[$state.current.name];
+						if (offset) {
+							$ionicScrollDelegate.scrollTo(offset.left, offset.top);
+						}
+					});
+				}
+			};
+		}
+	]).factory('ScrollPositions', [
+		function() {
+			return {};
+		}
+	]).directive('isFocused', ['$timeout', function($timeout) {
+		return {
+			scope: { trigger: '@isFocused' },
+			link: function(scope, element) {
+
+				scope.$watch('trigger', function(value) {
+
+					if (value === 'true') {
+						$timeout(function() {
+							element[0].focus();
+
+							element.on('blur', function() {
+								//alert("hello");
+								element[0].focus();
+							});
+						});
+					}
+
+				});
+			}
+		};
+	}]).directive('lazyImg', function() {
+		return {
+			/*     <lazy-img src-large="http://youbaku.com/uploads/places_images/large/{{img}}" src-small="http://youbaku.com/athumb.php?file={{img}}&small" />
+			 */
+			replace: true,
+			template: '<div class="lazy-img"><div class="sm"><img src="{{imgSmall}}" class="small"/></div><div style="padding-bottom: 75%;"></div><img src="{{imgLarge}}" class="large"/></div>',
+			scope: {
+				imgLarge: '@srcLarge',
+				imgSmall: '@srcSmall'
+			},
+
+			link: function(scope, elem) {
+				var imgSmall = new Image();
+				var imgLarge = new Image();
+				imgSmall.src = scope.imgSmall;
+				imgSmall.onload = function() {
+					elem.children('.sm').find('img').css('opacity', '1');
+					imgLarge.src = scope.imgLarge;
+					imgLarge.onload = function() {
+						elem.find('img').css('opacity', '1');
+					};
+				};
+			}
+		};
+	}).directive('imageModal', ['$ionicModal', imageModal])
+	.directive('watchScroll',['$rootScope',watchScroll]);
+
+	function watchScroll($rootScope){
+		return {
+			restrict: 'A',
+			link: function(scope,elem){
+
+				var start = 0;
+				var threshold = 150;
+				elem.bind('scroll',function(e){
+					
+					var scrollTop = e.srcElement.scrollTop;
+					if(scrollTop-start > threshold){
+						$rootScope.slideHeader = true;
+					}else{
+						$rootScope.slideHeader = false;
+					}
+					if($rootScope.slideHeaderPrevious > scrollTop - start){
+						$rootScope.slideHeader = false;
+					}
+					$rootScope.slideHeaderPrevious = scrollTop - start;
+					$rootScope.$apply();
+				});
+			}
+		};
+	}
+
+
+})(window.angular);
+
+(function(angular){
+	'use strict';
+	angular.module('petal.home')
+		.service('homeService',['$http','Upload',HomeService]);
+
+		function HomeService($http,Upload){
+			//this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
+			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
+			this.deleteUpload = deleteUpload;
+			this.submitUpload = submitUpload;
+			this.getImages = getImages;
+			var that = this;
+			function deleteUpload(id){
+				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
+			}
+			function getImages(imageText){
+				console.log(imageText);
+				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
+			}
+			function submitUpload(file){
+				return Upload.upload({
+					url: that.baseURL + 'upload/singleUploadId',
+					data: { file: file }
+				});
+			}
+		}
+})(window.angular);
+(function(angular) {
+	'use strict';
+	
+		angular.module('petal.home')
+			.service('RequestsService', ['homeService', '$http', '$q', '$ionicLoading', '$cordovaPushV5', '$auth', RequestsService]);
+	
+
+	function RequestsService(homeService, $http, $q, $ionicLoading, $cordovaPushV5, $auth) {
+
+		var base_url = homeService.baseURL;
+
+		function register() {
+
+			var deferred = $q.defer();
+			
+			var options = {
+				android: {
+					senderID: "679461840115",
+					vibrate: "true"
+				},
+				browser:{
+
+				},
+				ios: {
+					alert: "true",
+					badge: "true",
+					sound: "true"
+				},
+				windows: {}
+			};
+			/*if(vibrate){
+				//options.android.vibrate = true;
+				//options.android.forceShow =true;
+			}*/
+			
+			$cordovaPushV5.initialize(options).then(function() {
+				// start listening for new notifications
+				$cordovaPushV5.onNotification(function(){
+					console.log("insideeee notification");
+					console.log(arguments);
+				});
+				// start listening for errors
+				$cordovaPushV5.onError();
+
+				// register to get registrationId
+				if ($auth.isAuthenticated()) {
+					$cordovaPushV5.register().then(function(registrationId) {
+						$http.post(base_url + 'notification/register', { 'device_token': registrationId })
+							.then(function(response) {
+								deferred.resolve(response);
+							})
+							.catch(function(data) {
+								deferred.reject(data);
+							}).finally(function() {
+								$ionicLoading.hide();
+							});
+					});
+				}
+
+			});
+
+
+			return deferred.promise;
+
+		}
+		function googleSignIn(profile){
+			return $http.post(base_url+'authenticate/auth/nativeGoogle', { profile: profile });
+		}
+		return {
+			googleSignIn: googleSignIn,
+			register: register
+		};
+	}
+
+})(window.angular);
+
+(function(angular){
+'use strict';
+
+/**
+ * @ngdoc service
+ * @name authModApp.userData
+ * @description
+ * # userData
+ * Factory in the authModApp.
+ */
+angular.module('petal.home')
+  .factory('userData',['$window','$state','$auth','$http','homeService',userData]);
+
+  function userData($window,$state,$auth,$http,homeService) {
+    var storage = $window.localStorage;
+    var cachedUser={};
+    var obj1 =  {
+      setUser: function (user) {
+        
+        if(user){
+          storage.setItem('user',JSON.stringify(user));
+        }
+        else{
+
+          var userId = $auth.getPayload().sub;
+          if(userId){
+            return $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
+              
+              /*if(obj1.isUserExists()){
+                  storage.removeItem('user');
+              }*/
+            
+              storage.setItem('user',JSON.stringify(res.data));
+            });
+          }
+        }
+        
+
+      },
+      getUser: function(){
+
+        return JSON.parse(storage.getItem('user'));
+      },
+      removeUser: function(){
+        cachedUser = null;
+        storage.removeItem('user');
+      },
+      isUserExists: function(){
+        if(obj1.getUser()){
+          return true;
+        }
+        return false;
+      }
+    };
+    return obj1;
+  }
+})(window.angular);
+
 (function(angular) {
 	'use strict';
 	angular.module('petal.people')
@@ -1784,557 +2317,6 @@ angular.module('petal.chat')
 
 (function(angular) {
 	'use strict';
-
-	angular.module('petal.home')
-		.controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", 'userLocationService', '$ionicLoading', 'RequestsService', '$ionicModal', AuthenticationController]);
-
-	function AuthenticationController($scope, $auth, $state, userData, userLocationService, $ionicLoading, RequestsService, $ionicModal) {
-		var phc = this;
-
-		phc.isAuth = $auth.isAuthenticated();
-		if (phc.isAuth) {
-			$state.go('home.post.all');
-		}
-		if (window.cordova) {
-			phc.webSignIn = true;
-		}
-		phc.authLogout = authLogout;
-		phc.loadPostModal = loadPostModal;
-
-
-		phc.socialAuthenticate = socialAuthenticate;
-		$scope.googleSignIn = function() {
-
-
-
-			$ionicLoading.show({
-				template: 'Logging in...'
-			});
-
-			window.plugins.googleplus.login({
-					webClientId: '792068565007-rdm7nrlfmc29jvlqo5l0tkgu6ci0vboa.apps.googleusercontent.com'
-
-				},
-				function(user_data) {
-					var profile = {};
-					profile.id = user_data.userId;
-					profile.displayName = user_data.displayName;
-					profile.imageUrl = user_data.imageUrl;
-					RequestsService.googleSignIn(profile)
-						.then(function(response) {
-							$auth.setToken(response.data.token);
-							successfulAuthentication(response.data.user);
-						}).catch(function(err) {
-							console.log("error");
-							console.log(err);
-							$ionicLoading.hide();
-						});
-
-				},
-				function(msg) {
-					alert("missed");
-					console.log(msg);
-					$ionicLoading.hide();
-				}
-			);
-		};
-		function successfulAuthentication(user) {
-			userData.setUser(user);
-			userLocationService.setUserLocation();
-			RequestsService.register();
-
-			if (user.device_token) {
-				$state.go('home.post.popular');
-			} else {
-				$state.go('home.userEditPage');
-			}
-		}
-
-		function socialAuthenticate(provider) {
-			$ionicLoading.show();
-			$auth.authenticate(provider).then(function(response) {
-				successfulAuthentication(response.data.user);
-			}).catch(function(err) {
-				$ionicLoading.hide();
-
-			}).finally(function() {
-				//$ionicLoading.hide();
-			});
-		}
-
-
-		function loadPostModal() {
-			$ionicModal.fromTemplateUrl('app/home/views/policy.html', {
-				scope: $scope
-			}).then(function(modal) {
-				$scope.modal = modal;
-				$scope.modal.show();
-			});
-		}
-
-
-		function authLogout() {
-			$auth.logout();
-			userData.removeUser();
-			$state.go('authenticate');
-		}
-	}
-
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate','$rootScope',HomeController]);
-
-	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate,$rootScope) {
-		var hc = this;
-		hc.badgeValue = '';
-		hc.chatClicked = chatClicked;
-		/*
-			Code for hiding the header on scroll up and down
-		*/
-		$rootScope.slideHeader = false;
-  		$rootScope.slideHeaderPrevious = 0;
-		Socket.on("connect", function() {
-			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
-			Socket.on('newMessageReceived', messageReceived);
-		});
-
-		function messageReceived(message) {
-			var messageString = message.message;
-			if(message.type && message.type=='img'){
-				messageString = 'New image';
-			}
-			var userName = message.user.anonName||message.user.facebookName ||message.user.googleName ;
-			if (message.user._id == userData.getUser()._id) {
-
-			} else {
-				if ($state.current.name == 'chatBox') {
-
-					if ($state.params.user != message.user._id) {
-						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
-							allowHtml: true,
-							onTap: function() {
-								$state.go('chatBox', { user: message.user._id });
-							}
-						});
-					}
-				} else {
-					
-					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
-						allowHtml: true,
-						onTap: function() {
-							$state.go('chatBox', { user: message.user._id });
-						}
-					});
-					hc.badgeValue = 1;
-
-				}
-
-
-			}
-		}
-		hc.goForward = function() {
-			
-			var selected = $ionicTabsDelegate.selectedIndex();
-			if (selected != -1) {
-				if(selected===1){
-					$ionicTabsDelegate.select(selected + 2);	
-				}
-				else{
-					$ionicTabsDelegate.select(selected + 1);	
-				}
-				
-			}
-		};
-
-		hc.goBack = function() {
-
-			var selected = $ionicTabsDelegate.selectedIndex();
-			if (selected !== -1 && selected !== 0) {
-				if(selected===3){
-					$ionicTabsDelegate.select(selected - 2);
-				}
-				else{
-					$ionicTabsDelegate.select(selected - 1);
-				}
-			}
-		};
-
-		function chatClicked() {
-			hc.badgeValue = '';
-			//$state.go('home.chat.all');
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.home')
-		.directive('distanceView', ['postService', '$timeout', function(postService, $timeout) {
-			return {
-				restrict: 'E',
-				templateUrl: 'app/home/views/distanceViewTemplate.html',
-				scope: {
-					positionCords: '='
-				},
-				replace: true,
-				link: function(scope) {
-					$timeout(getDistance, 1000);
-
-					function getDistance() {
-						if (scope.positionCords) {
-							scope.distanceObj = {
-								latitude: scope.positionCords[1],
-								longitude: scope.positionCords[0],
-
-							};
-							postService.getDistance(scope.distanceObj).then(function(res) {
-								scope.distanceObj.distance = res + ' mi';
-							}).catch(function(err) {
-								scope.distanceObj.distance = '';
-							});
-						} else {
-							scope.distanceObj = {};
-							scope.distanceObj.distance = '';
-						}
-					}
-
-
-				}
-			};
-		}]);
-		/*.directive('expandingTextarea', [function() {
-			return {
-				restrict: 'A',
-				controller: function($scope, $element, $attrs, $timeout) {
-					$element.css('min-height', '0');
-					$element.css('resize', 'none');
-					$element.css('overflow-y', 'hidden');
-					setHeight(0);
-					$timeout(setHeightToScrollHeight);
-
-					function setHeight(height) {
-						$element.css('height', height + 'px');
-						$element.css('max-height', height + 'px');
-					}
-
-					function setHeightToScrollHeight() {
-						setHeight(0);
-						var scrollHeight = angular.element($element)[0]
-							.scrollHeight;
-						if (scrollHeight !== undefined) {
-							setHeight(scrollHeight);
-						}
-					}
-
-					$scope.$watch(function() {
-						return angular.element($element)[0].value;
-					}, setHeightToScrollHeight);
-				}
-			};
-		}])*/
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	var imageModal = function($ionicModal) {
-		return {
-			restrict: 'A',
-			scope: {
-
-				imageModal: '@'
-			},
-			link: function($scope, elem) {
-
-				function showImageModal(image) {
-					loadModal().then(function() {
-						$scope.currentImage = image;
-						$scope.modal.show();
-					});
-
-				}
-
-				function loadModal() {
-					return $ionicModal.fromTemplateUrl('app/chat/views/chatImageModal.html', {
-						scope: $scope
-					}).then(function(modal) {
-						$scope.modal = modal;
-					});
-				}
-				elem.bind('click', function(event) {
-					showImageModal($scope.imageModal);
-					event.stopPropagation();
-				});
-			}
-		};
-
-	};
-	angular.module('petal.home').directive('keepScroll', [
-		'$state', '$timeout', 'ScrollPositions', '$ionicScrollDelegate',
-		function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
-			return {
-				restrict: 'A',
-				link: function(scope) {
-					scope.$on('$stateChangeStart', function() {
-						ScrollPositions[$state.current.name] = $ionicScrollDelegate.getScrollPosition();
-
-					});
-					$timeout(function() {
-						var offset;
-						offset = ScrollPositions[$state.current.name];
-						if (offset) {
-							$ionicScrollDelegate.scrollTo(offset.left, offset.top);
-						}
-					});
-				}
-			};
-		}
-	]).factory('ScrollPositions', [
-		function() {
-			return {};
-		}
-	]).directive('isFocused', ['$timeout', function($timeout) {
-		return {
-			scope: { trigger: '@isFocused' },
-			link: function(scope, element) {
-
-				scope.$watch('trigger', function(value) {
-
-					if (value === 'true') {
-						$timeout(function() {
-							element[0].focus();
-
-							element.on('blur', function() {
-								//alert("hello");
-								element[0].focus();
-							});
-						});
-					}
-
-				});
-			}
-		};
-	}]).directive('lazyImg', function() {
-		return {
-			/*     <lazy-img src-large="http://youbaku.com/uploads/places_images/large/{{img}}" src-small="http://youbaku.com/athumb.php?file={{img}}&small" />
-			 */
-			replace: true,
-			template: '<div class="lazy-img"><div class="sm"><img src="{{imgSmall}}" class="small"/></div><div style="padding-bottom: 75%;"></div><img src="{{imgLarge}}" class="large"/></div>',
-			scope: {
-				imgLarge: '@srcLarge',
-				imgSmall: '@srcSmall'
-			},
-
-			link: function(scope, elem) {
-				var imgSmall = new Image();
-				var imgLarge = new Image();
-				imgSmall.src = scope.imgSmall;
-				imgSmall.onload = function() {
-					elem.children('.sm').find('img').css('opacity', '1');
-					imgLarge.src = scope.imgLarge;
-					imgLarge.onload = function() {
-						elem.find('img').css('opacity', '1');
-					};
-				};
-			}
-		};
-	}).directive('imageModal', ['$ionicModal', imageModal])
-	.directive('watchScroll',['$rootScope',watchScroll]);
-
-	function watchScroll($rootScope){
-		return {
-			restrict: 'A',
-			link: function(scope,elem){
-
-				var start = 0;
-				var threshold = 150;
-				elem.bind('scroll',function(e){
-					
-					var scrollTop = e.srcElement.scrollTop;
-					if(scrollTop-start > threshold){
-						$rootScope.slideHeader = true;
-					}else{
-						$rootScope.slideHeader = false;
-					}
-					if($rootScope.slideHeaderPrevious > scrollTop - start){
-						$rootScope.slideHeader = false;
-					}
-					$rootScope.slideHeaderPrevious = scrollTop - start;
-					$rootScope.$apply();
-				});
-			}
-		};
-	}
-
-
-})(window.angular);
-
-(function(angular){
-	'use strict';
-	angular.module('petal.home')
-		.service('homeService',['$http','Upload',HomeService]);
-
-		function HomeService($http,Upload){
-			//this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
-			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
-			this.deleteUpload = deleteUpload;
-			this.submitUpload = submitUpload;
-			this.getImages = getImages;
-			var that = this;
-			function deleteUpload(id){
-				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
-			}
-			function getImages(imageText){
-				console.log(imageText);
-				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
-			}
-			function submitUpload(file){
-				return Upload.upload({
-					url: that.baseURL + 'upload/singleUploadId',
-					data: { file: file }
-				});
-			}
-		}
-})(window.angular);
-(function(angular) {
-	'use strict';
-	
-		angular.module('petal.home')
-			.service('RequestsService', ['homeService', '$http', '$q', '$ionicLoading', '$cordovaPushV5', '$auth', RequestsService]);
-	
-
-	function RequestsService(homeService, $http, $q, $ionicLoading, $cordovaPushV5, $auth) {
-
-		var base_url = homeService.baseURL;
-
-		function register() {
-
-			var deferred = $q.defer();
-			
-			var options = {
-				android: {
-					senderID: "679461840115",
-					vibrate: "true"
-				},
-				browser:{
-
-				},
-				ios: {
-					alert: "true",
-					badge: "true",
-					sound: "true"
-				},
-				windows: {}
-			};
-			/*if(vibrate){
-				//options.android.vibrate = true;
-				//options.android.forceShow =true;
-			}*/
-			
-			$cordovaPushV5.initialize(options).then(function() {
-				// start listening for new notifications
-				$cordovaPushV5.onNotification(function(){
-					console.log("insideeee notification");
-					console.log(arguments);
-				});
-				// start listening for errors
-				$cordovaPushV5.onError();
-
-				// register to get registrationId
-				if ($auth.isAuthenticated()) {
-					$cordovaPushV5.register().then(function(registrationId) {
-						$http.post(base_url + 'notification/register', { 'device_token': registrationId })
-							.then(function(response) {
-								deferred.resolve(response);
-							})
-							.catch(function(data) {
-								deferred.reject(data);
-							}).finally(function() {
-								$ionicLoading.hide();
-							});
-					});
-				}
-
-			});
-
-
-			return deferred.promise;
-
-		}
-		function googleSignIn(profile){
-			return $http.post(base_url+'authenticate/auth/nativeGoogle', { profile: profile });
-		}
-		return {
-			googleSignIn: googleSignIn,
-			register: register
-		};
-	}
-
-})(window.angular);
-
-(function(angular){
-'use strict';
-
-/**
- * @ngdoc service
- * @name authModApp.userData
- * @description
- * # userData
- * Factory in the authModApp.
- */
-angular.module('petal.home')
-  .factory('userData',['$window','$state','$auth','$http','homeService',userData]);
-
-  function userData($window,$state,$auth,$http,homeService) {
-    var storage = $window.localStorage;
-    var cachedUser={};
-    var obj1 =  {
-      setUser: function (user) {
-        
-        if(user){
-          storage.setItem('user',JSON.stringify(user));
-        }
-        else{
-
-          var userId = $auth.getPayload().sub;
-          if(userId){
-            return $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
-              
-              /*if(obj1.isUserExists()){
-                  storage.removeItem('user');
-              }*/
-            
-              storage.setItem('user',JSON.stringify(res.data));
-            });
-          }
-        }
-        
-
-      },
-      getUser: function(){
-
-        return JSON.parse(storage.getItem('user'));
-      },
-      removeUser: function(){
-        cachedUser = null;
-        storage.removeItem('user');
-      },
-      isUserExists: function(){
-        if(obj1.getUser()){
-          return true;
-        }
-        return false;
-      }
-    };
-    return obj1;
-  }
-})(window.angular);
-
-(function(angular) {
-	'use strict';
 	angular.module('petal.post')
 		.controller('AllPostController', ['$scope', '$state', 'postService','$ionicLoading', AllPostController]);
 
@@ -2764,6 +2746,84 @@ angular.module('petal.home')
 
 (function(angular) {
 	'use strict';
+	var postModule = angular.module('petal.post');
+	postModule.directive('postSearchModal', ['$ionicModal', 'postService',postSearchModal]);
+
+	function postSearchModal($ionicModal, postService) {
+		return {
+			restrict: 'A',
+			scope: {
+				postSearchModal: '@'
+			},
+			link: function(scope, elem) {
+				
+				scope.postSearchData = {};
+				scope.postSearchData.postSearchModal = scope.postSearchModal;
+				scope.postSearchData.postsList = [];
+				scope.modalsList = [];
+				scope.clickPostSearch = clickPostSearch;
+				scope.showPostModal = function() {
+					loadPostModal().then(function() {
+						scope.modal.show();
+						
+					});
+					scope.$on('modal.hidden', function() {
+
+						scope.modal.remove();
+					});
+				};
+				scope.getPosts = function(params) {
+					
+					postService.getAllPosts(params).then(function(response) {
+						
+						angular.forEach(response.data.docs, function(value) {
+							scope.postSearchData.postsList.push(value);
+						});
+						scope.postSearchData.noPosts = !response.data.total;
+						scope.postSearchData.initialSearchCompleted = true;
+						if (response.data.total > scope.postSearchData.postsList.length) {
+							scope.postSearchData.canLoadMoreResults = true;
+						} else {
+							scope.postSearchData.canLoadMoreResults = false;
+						}
+					});
+				};
+				function clickPostSearch(){
+					scope.postSearchData.postsList = [];
+					var params = {
+						interest: scope.postSearchData.postSearchModal ,
+						page: 1,
+						limit: 50
+					};
+					scope.getPosts(params);
+				}
+				function loadPostModal() {
+					return $ionicModal.fromTemplateUrl('app/post/views/postSearchModal.html', {
+						scope: scope
+					}).then(function(modal) {
+						scope.modal = modal;
+						
+					});
+				}
+				elem.bind('click', function(event) {
+					var params = {
+						interest: scope.postSearchData.postSearchModal ,
+						page: 1,
+						limit: 50
+					};
+					scope.showPostModal();
+					event.stopPropagation();
+					scope.getPosts(params);
+				});
+			}
+		};
+
+	}
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
 	angular.module('petal.post')
 		.directive('postsList', ['$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
 
@@ -2918,7 +2978,7 @@ angular.module('petal.home')
 		this.getDistance = getDistance;
 
 		function getAllPosts(params) {
-
+			
 			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
 		}
 		function getFilteredPosts(defer,params){

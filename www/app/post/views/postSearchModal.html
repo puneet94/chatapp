@@ -1,0 +1,27 @@
+<ion-modal-view cache-view="false">
+        <ion-header-bar class="bar bar-header bar-positive item-input-inset">
+                <button class="button button-icon ion-arrow-left-c icon " ng-click="modal.hide()"></button>
+                <label class="item-input-wrapper">
+                        <i class="icon ion-ios-search placeholder-icon"></i>
+                        <input type="search" placeholder="Search" ng-model="postSearchData.postSearchModal">
+                </label>
+                <button class="button button-clear" ng-disabled="!postSearchModal" ng-click="clickPostSearch()">
+                        Search
+                </button>
+        </ion-header-bar>
+        <ion-content class="has-header">
+                <!--<ion-refresher pulling-text="Pull to refresh..." on-refresh="apc.pullRefreshPosts()">
+                </ion-refresher>-->
+                
+                <div ng-if="postSearchData.noPosts">
+                        <h1 class="noPostsHeader">No posts available</h1>
+                </div>
+                
+                <posts-list posts-list="postSearchData.postsList" >
+                        <h1>Loading.............</h1>
+                </posts-list>
+                <!--
+                <ion-infinite-scroll on-infinite="apc.loadMorePosts()" distance="40%" immediate-check="false" ng-if="apc.canLoadMoreResults && apc.initialSearchCompleted">
+                </ion-infinite-scroll>-->
+        </ion-content>
+</ion-modal-view>

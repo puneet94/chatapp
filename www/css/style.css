@@ -51,17 +51,6 @@
 .me img {
   float: right; }
 
-.peopleList .peopleListContainer .personAvatar {
-  border-radius: 5px;
-  max-width: 45px;
-  max-height: 50px; }
-
-.peopleList .peopleListContainer .peopleName {
-  font-weight: 600; }
-  .peopleList .peopleListContainer .peopleName .peopleGender {
-    font-size: 12px;
-    font-weight: 400; }
-
 .logoIcon {
   background-image: url("/img/logo.png");
   height: 100px;
@@ -355,6 +344,17 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   border: 15px solid white; }
+
+.peopleList .peopleListContainer .personAvatar {
+  border-radius: 5px;
+  max-width: 45px;
+  max-height: 50px; }
+
+.peopleList .peopleListContainer .peopleName {
+  font-weight: 600; }
+  .peopleList .peopleListContainer .peopleName .peopleGender {
+    font-size: 12px;
+    font-weight: 400; }
 
 .randomImagesList {
   height: 100px;

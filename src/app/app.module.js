@@ -11,8 +11,8 @@
 	function configFunction($urlRouterProvider, $stateProvider, $ionicConfigProvider, toastrConfig) {
 		$ionicConfigProvider.tabs.position("bottom");
 		$ionicConfigProvider.scrolling.jsScrolling(false);
-		$ionicConfigProvider.views.transition('none');
-		$urlRouterProvider.otherwise('/home/post/all');
+		//$ionicConfigProvider.views.transition('none');
+		$urlRouterProvider.otherwise('/home/post/nearby');
 		angular.extend(toastrConfig, {
 			autoDismiss: true,
 			maxOpened: 1,
@@ -43,15 +43,9 @@
 			window.onerror = function(errorMsg, url, lineNumber) {
 				return false;
 			};
-			$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
-				if (fromState.name != 'chatBox') {
-					//$ionicLoading.show();
-
-				}
-			});
-
+			
 			$rootScope.$on("$stateChangeError", function() {
-				$state.go('home.post.all');
+				$state.go('home.post.nearby');
 				$ionicLoading.hide();
 			});
 		});
@@ -76,18 +70,6 @@
 				e.preventDefault();
 				return false;
 			}, 101);
-		}
-
-		function appStatus() {
-			$ionicPlatform.on('pause', function() {
-				RequestsService.register();
-			});
-			// The resume event fires when the native platform
-			//  pulls the application out from the background.
-			$ionicPlatform.on('resume', function() {
-				RequestsService.register();
-
-			});
 		}
 
 		function notificationFunction() {

@@ -15,7 +15,7 @@
 		this.getDistance = getDistance;
 
 		function getAllPosts(params) {
-
+			
 			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
 		}
 		function getFilteredPosts(defer,params){
