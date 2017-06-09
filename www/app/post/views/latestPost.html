@@ -5,8 +5,18 @@
         <div ng-if="lpc.noPosts">
                 <h1 class="noPostsHeader">No posts available</h1>
         </div>
-        <div ng-if="!lpc.initialSearchCompleted">
-               <div  ng-repeat="placeholderItem in [1,2,3,4]" class="card linear-background">
+        <ionic-custom-spinner ng-if="!lpc.initialSearchCompleted" >                
+                
+        </ionic-custom-spinner>
+        <posts-list posts-list="lpc.postsList"></posts-list>
+        <ion-infinite-scroll on-infinite="lpc.loadMorePosts()" distance="70%" immediate-check="false" ng-if="lpc.canLoadMoreResults && lpc.initialSearchCompleted">
+        </ion-infinite-scroll>
+</ion-content>
+</ion-view>
+
+
+<!--
+               <div  ng-repeat="placeholderItem in [1,2,3,4]" class="linear-background">
                         <div class="pic-right">
                         </div>
                         
@@ -19,13 +29,7 @@
                         <div class="content-seperator">
                                 
                         </div>
-                </div>
-        </div>
-        <posts-list posts-list="lpc.postsList"></posts-list>
-        <ion-infinite-scroll on-infinite="lpc.loadMorePosts()" distance="70%" immediate-check="false" ng-if="lpc.canLoadMoreResults && lpc.initialSearchCompleted">
-        </ion-infinite-scroll>
-</ion-content>
-</ion-view>
+                </div>-->
 
 
 

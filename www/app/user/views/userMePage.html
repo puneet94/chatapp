@@ -3,7 +3,7 @@
                 <h1 class="title">{{umpc.user.googleName||umpc.user.facebookName}}</h1>
                 <div class="buttons">
                         <!--<button class="button-icon icon ion-compose" ng-click="editForm.modal.show()"></button>-->
-                        <button class="button button-icon icon ion-compose" ui-sref="home.userEditPage"></button>
+                        <button class="button button-icon icon icon-right ion-compose" ui-sref="home.userEditPage">Edit</button>
                 </div>
         </ion-header-bar>
         <ion-content class="has-header">
@@ -28,9 +28,9 @@
                         <button class="button" ng-click="umpc.activateTab(2)" ng-class="{'button-balanced':umpc.activeTab == 2}">
                                 Social Profile
                         </button>
-                        <button class="button" ng-click="umpc.activateTab(3)" ng-class="{'button-balanced':umpc.activeTab == 3}">
+                        <!--<button class="button" ng-click="umpc.activateTab(3)" ng-class="{'button-balanced':umpc.activeTab == 3}">
                                 Requested
-                        </button>
+                        </button>-->
                 </div>
                 <div class="userTabsContent">
                         <div ng-if="umpc.isTabActive(1)">
@@ -44,19 +44,32 @@
                                         <div class="item item-thumbnail-left">
                                                 <img ng-src="{{umpc.user.googlePicture || umpc.user.facebookPicture}}">
                                                 <h2 ng-if="umpc.user.google">
-                                                	<a ng-href="https://plus.google.com/{{umpc.user.google}}">{{umpc.user.googleName }}</a>
-	                       </h2>
+                                                        <a ng-href="https://plus.google.com/{{umpc.user.google}}">{{umpc.user.googleName }}</a>
+                               </h2>
                                                 <h2 ng-if="umpc.user.facebook" ng-click="umpc.openFacebook(umpc.user.facebook)">{{umpc.user.facebookName}}
-				</h2>
+                               </h2>
                                         </div>
                                 </div>
-                                <div>
-                                	
+                                <div class="button-bar">
+                                        <button class="button" ng-click="umpc.subActivateTab(1)" ng-class="{'button-royal':umpc.subActiveTab == 1}">
+                                                Received
+                                        </button>
+                                        <button class="button" ng-click="umpc.subActivateTab(2)" ng-class="{'button-royal':umpc.subActiveTab == 2}">
+                                                Requested
+                                        </button>
+                                        <button class="button" ng-click="umpc.subActivateTab(3)" ng-class="{'button-royal':umpc.subActiveTab == 3}">
+                                                Blocked
+                                        </button>
+                                </div>
+                                <div ng-if="umpc.isSubTabActive(1)">
+                                        <received-people-list> </received-people-list>
+                                </div>
+                                <div ng-if="umpc.isSubTabActive(2)">
+                                        <requested-people-list> </requested-people-list>
+                                </div>
+                                <div ng-if="umpc.isSubTabActive(3)">
                                         <blocked-list></blocked-list>
                                 </div>
-                        </div>
-                        <div ng-if="umpc.isTabActive(3)">
-                                <people-list people-list="umpc.peopleList" list-type="requested"></people-list>
                         </div>
                 </div>
         </ion-content>

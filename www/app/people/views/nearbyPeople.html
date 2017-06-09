@@ -8,7 +8,10 @@
                 
                 {{npc.distance+" mi"}}
         </div>
-        <div ng-if="apc.noPeople">
+        <ionic-custom-spinner ng-if="!npc.initialSearchCompleted" >                
+                
+        </ionic-custom-spinner>
+        <div ng-if="npc.noPeople">
                 <h1 class="noPostsHeader">No users nearby</h1>
         </div>
         <people-list people-list="npc.peopleList"></people-list>

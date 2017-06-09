@@ -11,10 +11,14 @@
 		upc.activateTab = activateTab;
 		upc.isTabActive = isTabActive;
 		upc.openFacebook = openFacebook;
+		upc.openGoogle = openGoogle;
 		activate();
 		
 		function openFacebook(id){
 			$window.open('https://www.facebook.com/'+id, '_system');
+		}
+		function openGoogle(id){
+			$window.open('https://plus.google.com/'+id, '_system');
 		}
 		function activate() {
 			getUser();

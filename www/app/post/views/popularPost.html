@@ -4,22 +4,10 @@
 <ion-content class="has-header" watch-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="ppc.pullRefreshPosts()">
         </ion-refresher>
-        <div ng-if="!ppc.initialSearchCompleted">
-               <div  ng-repeat="placeholderItem in [1,2,3,4]" class="card linear-background">
-                        <div class="pic-right">
-                        </div>
-                        
-                        <div class="name-right"></div>
-                        <div class="name-bottom"></div>
-                        <div class="name-seperator">
-                        </div>
-                        <div class="header-seperator">
-                        </div>
-                        <div class="content-seperator">
-                                
-                        </div>
-                </div>
-        </div>
+        <ionic-custom-spinner ng-if="!ppc.initialSearchCompleted" >                
+                
+        </ionic-custom-spinner>
+        
         <posts-list posts-list="ppc.postsList"></posts-list>
         <ion-infinite-scroll on-infinite="ppc.loadMorePosts()" distance="70%" immediate-check="false" ng-if="ppc.canLoadMoreResults && ppc.initialSearchCompleted">
         </ion-infinite-scroll>

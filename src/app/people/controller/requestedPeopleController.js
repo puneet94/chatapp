@@ -24,7 +24,7 @@
 
 		function getRequestedPeople() {
 			peopleService.getRequestedUsers(apc.params).then(function(response) {
-				console.log(response);
+				
 				angular.forEach(response.data.docs, function(value) {
 					apc.peopleList.push(value);
 				});

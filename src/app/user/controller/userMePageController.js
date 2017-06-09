@@ -8,9 +8,17 @@
 		var umpc = this;
 		umpc.logout = logout;
 		umpc.activate = activate;
+		
 		umpc.activeTab = 1;
 		umpc.activateTab = activateTab;
 		umpc.isTabActive = isTabActive;
+
+		umpc.subActiveTab = 1;
+		umpc.subActivateTab = subActivateTab;
+		umpc.isSubTabActive = isSubTabActive;
+
+
+
 		umpc.openFacebook = openFacebook;
 		activate();
 		function openFacebook(id){
@@ -43,7 +51,12 @@
 		function isTabActive(tabIndex){
 			return tabIndex === umpc.activeTab;
 		}
-		
+		function subActivateTab(subTabIndex){
+			umpc.subActiveTab = subTabIndex;
+		}
+		function isSubTabActive(subTabIndex){
+			return subTabIndex === umpc.subActiveTab;
+		}
 
 		function logout() {
 			$auth.logout();
@@ -59,6 +72,18 @@
 
 		function getRequestedList() {
 			peopleService.getRequestedUsers({ page: 1, limit: 25 }).then(function(response) {
+				umpc.peopleList = response.data.docs;
+				umpc.total = response.data.total;
+			});
+		}
+		function getReceivedList() {
+			peopleService.getReceivedUsers({ page: 1, limit: 25 }).then(function(response) {
+				umpc.peopleList = response.data.docs;
+				umpc.total = response.data.total;
+			});
+		}
+		function getRevealedList() {
+			peopleService.getRevealedUsers({ page: 1, limit: 25 }).then(function(response) {
 				umpc.peopleList = response.data.docs;
 				umpc.total = response.data.total;
 			});

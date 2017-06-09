@@ -52,7 +52,7 @@
                                 <input type="text" is-focused="{{cbc.focusInput}}" placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.showTempImage" ng-focus="cbc.scrollBottom()" />
                                 <!--never disable this input unless uploading image failing which the keyboard disappears-->
                         </label>
-                        <button class="button button-dark" ng-if="!cbc.isBlocked" ng-disabled="cbc.showTempImage || !cbc.myMsg || cbc.messageLoading" ng-click="cbc.clickSubmit()">
+                        <button class="button button-dark" ng-if="!cbc.isBlocked" ng-disabled="cbc.showTempImage || !cbc.myMsg || cbc.messageLoading" ng-click="cbc.clickSubmit($event)">
                                 Send
                         </button>
                 </ion-footer-bar>

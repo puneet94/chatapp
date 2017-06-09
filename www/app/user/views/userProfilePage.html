@@ -79,11 +79,11 @@
                                         </div>
                                         <div class="item item-thumbnail-left">
                                                 <img ng-src="{{upc.user.googlePicture || upc.user.facebookPicture}}">
-                                                <h2 ng-if="upc.user.google">
-                                                <a ng-href="https://plus.google.com/{{upc.user.google}}">{{upc.user.googleName }}</a>
-                                        </h2>
+                                                
                                                 <h2 ng-if="upc.user.facebook" ng-click="upc.openFacebook(upc.user.facebook)">{{upc.user.facebookName}}
-                                        </h2>
+                                                </h2>
+                                                <h2 ng-if="upc.user.google" ng-click="upc.openGoogle(upc.user.google)">{{upc.user.googleName}}
+                                                                                                                                                                </h2>
                                         </div>
                                 </div>
                         </div>

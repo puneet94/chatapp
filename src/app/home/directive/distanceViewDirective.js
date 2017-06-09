@@ -33,7 +33,14 @@
 
 				}
 			};
-		}]);
+		}])
+		.directive('ionicCustomSpinner',[ionicCustomSpinner]);
+
+		function ionicCustomSpinner(){
+			return {
+				templateUrl: 'app/home/views/ionicCustomSpinner.html'
+			};
+		}
 		/*.directive('expandingTextarea', [function() {
 			return {
 				restrict: 'A',

@@ -2,9 +2,9 @@
         <ion-content class="has-header">
                 <ion-refresher pulling-text="Pull to refresh..." on-refresh="rpc.pullRefreshChats()">
                 </ion-refresher>
-                <div class="list">
-                        <a class="item item-avatar" ng-repeat="chatRoom in rpc.chatRoomsList" ui-sref="chatBox({user:chatRoom.creator2._id})">
-                                <img ng-src="{{chatRoom.creator2.googlePicture||chatRoom.creator2.facebookPicture||chatRoom.creator2.picture}}" />
+                <div class="list chatList">
+                        <a class="chatItem item item-avatar" collection-repeat="chatRoom in rpc.chatRoomsList" ui-sref="chatBox({user:chatRoom.creator2._id})">
+                                <img class="chatAvatar" ng-src="{{chatRoom.creator2.googlePicture||chatRoom.creator2.facebookPicture||chatRoom.creator2.picture}}" />
                                 <h2>{{chatRoom.creator2.facebookName||chatRoom.creator2.googleName }}
                                 </h2>
                                 <p ng-if="chatRoom.lastMessage.type=='img'">

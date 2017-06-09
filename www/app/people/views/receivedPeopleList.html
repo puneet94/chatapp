@@ -1,0 +1,17 @@
+<div>
+	
+
+        
+        <people-list people-list="rpc.peopleList" list-type="received"></people-list>
+        <div ng-if="rpc.noPeople">
+                <h1 class="noPostsHeader">No received requests</h1>
+        </div>
+        <div  ng-if="rpc.canLoadMoreResults && rpc.initialSearchCompleted">
+        	<center>
+        		<button ng-click="rpc.loadMorePeople()" >
+        			Load More
+        		</button>
+        	</center>
+        </div>
+        
+</div>

@@ -11,7 +11,7 @@
 	function configFunction($urlRouterProvider, $stateProvider, $ionicConfigProvider, toastrConfig) {
 		$ionicConfigProvider.tabs.position("bottom");
 		$ionicConfigProvider.scrolling.jsScrolling(false);
-		//$ionicConfigProvider.views.transition('none');
+		$ionicConfigProvider.views.transition('platform');
 		$urlRouterProvider.otherwise('/home/post/nearby');
 		angular.extend(toastrConfig, {
 			autoDismiss: true,
