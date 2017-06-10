@@ -4,7 +4,7 @@
 
 
 	var app = angular.module('petal', ['ionic', 'ngAnimate','satellizer', 'ngFileUpload', 'btford.socket-io',
-		'ngCordova', 'toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people',
+		'ngCordova', 'toastr', 'petal.home', 'petal.post', 'petal.chat', 'petal.user', 'petal.people','petal.message'
 	]);
 	app.config(['$urlRouterProvider', '$stateProvider', '$ionicConfigProvider', 'toastrConfig', configFunction]);
 

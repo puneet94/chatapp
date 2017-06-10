@@ -37,6 +37,16 @@
 						controllerAs: 'rpc'
 					}
 				}
+			}).state('home.chat.messageroom', {
+				url: '/messageRoom',
+
+				views: {
+					'chat-tab': {
+						templateUrl: 'app/chat/views/messageRoomList.html',
+						controller: 'MessageRoomListController',
+						controllerAs: 'mrlc'
+					}
+				}
 			}).state('chatBox', {
 				url: '/chatBox/:user',
 				templateUrl: 'app/chat/views/chatBox.html',

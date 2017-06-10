@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ionicframework.petalchat206862" version="0.1.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Petal</name>
+<widget id="com.ionicframework.petalchat206862" version="0.1.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Anonsment</name>
     <description>
        Anonymous chat app
     </description>
-    <author email="oflinecorp.gmail.com" href="http://petalchat.com/">
-      Petal Chat
+    <author email="oflinecorp.gmail.com" href="http://anonsment.com/">
+      Anonsment
     </author>
     <content src="index.html" />
     <access origin="*" />
