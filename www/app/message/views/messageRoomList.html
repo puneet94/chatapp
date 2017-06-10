@@ -1,1 +1,32 @@
-messageRoomList.html
+<ion-view cache-view="false">
+	<ion-content class="has-header">
+		<ion-refresher pulling-text="Pull to refresh..." on-refresh="mrlc.pullRefreshMessages()">
+			
+		</ion-refresher>
+		<ionic-custom-spinner ng-if="!mrlc.initialSearchCompleted">
+			
+		</ionic-custom-spinner>
+		<ion-list class="list messageList">
+			<ion-item class="messageItem item-avatar" collection-repeat="messageRoom in mrlc.messageRoomsList" on-tap="mrlc.messagePage(messageRoom)">
+				<h2>
+					<span >
+						{{messageRoom.interest}}
+						{{ messageRoom.post.content |   limitTo:150}}
+					</span>
+					<span ng-if="messageRoom.post.content.length > 150">...</span>
+				</h2>
+				<p ng-if="messageRoom.lastMessage.type=='img'">
+					<img style="height:50px;width:50%" ng-src="{{messageRoom.lastMessage.message}}">
+				</p>
+				<p ng-if="messageRoom.lastMessage.type!=='img'">{{messageRoom.lastMessage.message}}
+				</p>
+				<span ng-if="messageRoom.newMessage" class="badge badge-assertive">{{1 }}
+				</span>
+			</ion-item>
+		</ion-list>
+		<ion-infinite-scroll on-infinite="mrlc.loadMoreMessages()" distance="100%" immediate-check="false" ng-if="mrlc.canLoadMoreResults && mrlc.initialSearchCompleted">
+			
+		</ion-infinite-scroll>
+	</ion-content>
+</ion-view>
+

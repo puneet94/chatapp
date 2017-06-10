@@ -50,7 +50,7 @@
 		}
 
 		function getAllMessageRooms() {
-			messageRoomService.getMessageRooms(acc.params).then(function(response) {
+			messageRoomService.getMessageRooms().then(function(response) {
 				angular.forEach(response.data.docs, function(value) {
 					acc.messageRoomsList.push(value);
 				});

@@ -42,7 +42,7 @@
 
 				views: {
 					'chat-tab': {
-						templateUrl: 'app/chat/views/messageRoomList.html',
+						templateUrl: 'app/message/views/messageRoomList.html',
 						controller: 'MessageRoomListController',
 						controllerAs: 'mrlc'
 					}

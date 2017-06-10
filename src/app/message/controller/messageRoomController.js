@@ -2,28 +2,28 @@
 	'use strict';
 	angular.module('petal.message')
 
-	.controller('MessageRoomController', ['$scope', '$timeout', 'Socket', '$stateParams', 'userData', 'homeService', 'messageService', '$ionicScrollDelegate', 'userService', 'Upload', '$ionicLoading', '$window', 'blocked', MessageRoomController]);
+	.controller('MessageRoomController', ['$scope', '$timeout', 'Socket', '$stateParams', 'userData', 'homeService', 'messageRoomService', '$ionicScrollDelegate', 'userService', 'Upload', '$ionicLoading', '$window', 'blocked', MessageRoomController]);
 
-	function MessageRoomController($scope, $timeout, Socket, $stateParams, userData, homeService, messageService, $ionicScrollDelegate, userService, Upload, $ionicLoading, $window, blocked) {
+	function MessageRoomController($scope, $timeout, Socket, $stateParams, userData, homeService, messageRoomService, $ionicScrollDelegate, userService, Upload, $ionicLoading, $window, blocked) {
 		var cbc = this;
 		cbc.isBlocked = blocked;
 		cbc.currentUser = userData.getUser()._id;
-		cbc.receiverUserID = $stateParams.user;
+		
 		cbc.messageList = [];
 		cbc.messageRoomId = '';
-		cbc.loadMoreChats = loadMoreChats;
+		cbc.loadMoreMessages = loadMoreMessages;
 		cbc.scrollBottom = scrollBottom;
 		cbc.messageLoading = false;
-		cbc.messageTryCount = 0;
+		
 		cbc.params = {
 			page: 1,
 			limit: 5
 		};
 		activate();
 
-		function loadMoreChats() {
+		function loadMoreMessages() {
 			cbc.params.page += 1;
-			getChatMessages();
+			getMessages();
 		}
 
 		function getReceiver() {
@@ -42,8 +42,8 @@
 
 		}
 
-		function getChatMessages() {
-			messageService.getChatMessages(cbc.messageRoomId, cbc.params).then(function(res) {
+		function getMessages() {
+			messageRoomService.getMessages(cbc.messageRoomId, cbc.params).then(function(res) {
 
 				angular.forEach(res.data.docs, function(message) {
 					cbc.messageList.unshift(message);
@@ -61,12 +61,12 @@
 
 		function activate() {
 			$ionicLoading.show();
-			messageService.getChatRoom(cbc.receiverUserID).then(function(res) {
+			messageRoomService.getMessageRoom(cbc.receiverUserID).then(function(res) {
 				cbc.messageRoom = res.data;
 				cbc.messageRoomId = res.data._id;
 
 				socketJoin();
-				getChatMessages();
+				getMessages();
 
 			}, function(err) {
 				console.log(err);
@@ -102,7 +102,7 @@
 			}
 			scrollBottom();
 			var messageObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.messageRoomId };
-			messageService.sendChatMessage(messageObj).then(function(res) {
+			messageRoomService.sendMessage(messageObj).then(function(res) {
 				cbc.myMsg = '';
 				cbc.messageList.push(res.data.message);
 				scrollBottom();
@@ -136,7 +136,7 @@
 				cbc.uploadedImage = response.data;
 				cbc.cancelUpload();
 				var messageObj = { 'message': cbc.uploadedImage, receiver: $stateParams.user, 'roomId': cbc.messageRoomId, type: 'img' };
-				messageService.sendChatMessage(messageObj).then(function(res) {
+				messageRoomService.sendMessage(messageObj).then(function(res) {
 					scrollBottom();
 					cbc.messageList.push(res.data.message);
 					cbc.messageLoading = false;
@@ -161,16 +161,7 @@
 			}
 		};
 		cbc.leaveMessageRoom = function() {
-			Socket.emit('removeFromRoom', { 'roomId': cbc.messageRoomId });
-
-			messageService.updateChatRoom(cbc.messageRoomId).then(function(res) {
-
-			}).catch(function(err) {
-				//console.log(err);
-			}).finally(function() {
-
-
-			});
+			Socket.emit('removeFromMessageRoom', { 'roomId': cbc.messageRoomId });
 
 			$window.history.back();
 

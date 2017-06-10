@@ -20,14 +20,14 @@
 			return $http.get(homeService.baseURL + 'message/getMessages/' + messageRoomId,{params:params});
 		}
 
-		function getMessageRoom(user) {
+		function getMessageRoom(params) {
 			
-			return $http.get(homeService.baseURL + 'messageRoom/get/' + user);
+			return $http.get(homeService.baseURL + 'messageRoom/getRoom/',{params:params} );
 
 		}
-		function getMessageRooms(user) {
+		function getMessageRooms() {
 			
-			return $http.get(homeService.baseURL + 'messageRoom/get/' + user);
+			return $http.get(homeService.baseURL + 'messageRoom/getRooms/' );
 
 		}
 		
