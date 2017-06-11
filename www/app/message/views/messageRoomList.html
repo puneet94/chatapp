@@ -7,7 +7,8 @@
 			
 		</ionic-custom-spinner>
 		<ion-list class="list messageList">
-			<ion-item class="messageItem item-avatar" collection-repeat="messageRoom in mrlc.messageRoomsList" on-tap="mrlc.messagePage(messageRoom)">
+			<ion-item class="messageItem item-avatar" collection-repeat="messageRoom in mrlc.messageRoomsList" on-tap="mrlc.messageRoomPage(messageRoom)">
+				<img class="messageAvatar" ng-src="{{messageRoom.lastMessage.user.picture}}" />
 				<h2>
 					<span >
 						{{messageRoom.interest}}

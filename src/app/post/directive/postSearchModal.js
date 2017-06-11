@@ -1,9 +1,9 @@
 (function(angular) {
 	'use strict';
 	var postModule = angular.module('petal.post');
-	postModule.directive('postSearchModal', ['$ionicModal', 'postService',postSearchModal]);
+	postModule.directive('postSearchModal', ['$rootScope','$ionicModal', 'postService',postSearchModal]);
 
-	function postSearchModal($ionicModal, postService) {
+	function postSearchModal($rootScope,$ionicModal, postService) {
 		return {
 			restrict: 'A',
 			scope: {
@@ -26,6 +26,12 @@
 						scope.modal.remove();
 					});
 				};
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
 				scope.getPosts = function(params) {
 					
 					postService.getAllPosts(params).then(function(response) {

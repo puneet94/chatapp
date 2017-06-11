@@ -360,6 +360,14 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   border: 15px solid white; }
 
+.messageListBox .singleMessageListItem {
+  border: none; }
+  .messageListBox .singleMessageListItem .messageUserImage {
+    border: 1px solid #eee;
+    border-radius: 3px;
+    max-width: 45px;
+    max-height: 45px; }
+
 .peopleList .peopleListContainer .personAvatar {
   border-radius: 5px;
   max-width: 45px;

@@ -261,7 +261,7 @@
 				controller: 'MessageRoomController',
 				controllerAs: 'mrc',
 				resolve: {
-					messageRoom: [ '$stateParams', '$q', messageRoom]
+					messageRoom: [ '$stateParams', '$q', 'messageRoomService',messageRoom]
 
 				}
 
@@ -287,6 +287,8 @@
 			params.interest = $stateParams.interest;
 		}
 		messageRoomService.getMessageRoom(params).then(function(response){
+			console.log("resolve response");
+			console.log(response);
 			defer.resolve(response.data.foundMessageRoom);					
 		}).catch(function(e){
 			console.log("Resolve mesage Room");
@@ -1544,15 +1546,16 @@ angular.module('petal.home')
 	'use strict';
 	angular.module('petal.message')
 
-	.controller('MessageRoomController', ['$scope', '$timeout', 'Socket', '$stateParams', 'userData', 'homeService', 'messageRoomService', '$ionicScrollDelegate', 'userService', 'Upload', '$ionicLoading', '$window', 'blocked', MessageRoomController]);
+	.controller('MessageRoomController', ['$scope', '$timeout', 'Socket', '$stateParams', 'userData', 'homeService', 'messageRoomService', '$ionicScrollDelegate', 'userService', 'Upload', '$ionicLoading', '$window','messageRoom', MessageRoomController]);
 
-	function MessageRoomController($scope, $timeout, Socket, $stateParams, userData, homeService, messageRoomService, $ionicScrollDelegate, userService, Upload, $ionicLoading, $window, blocked) {
+	function MessageRoomController($scope, $timeout, Socket, $stateParams, userData, homeService, messageRoomService, $ionicScrollDelegate, userService, Upload, $ionicLoading, $window,messageRoom) {
 		var cbc = this;
-		cbc.isBlocked = blocked;
+		
 		cbc.currentUser = userData.getUser()._id;
 		
 		cbc.messageList = [];
-		cbc.messageRoomId = '';
+		cbc.messageRoom = messageRoom;
+		
 		cbc.loadMoreMessages = loadMoreMessages;
 		cbc.scrollBottom = scrollBottom;
 		cbc.messageLoading = false;
@@ -1568,15 +1571,7 @@ angular.module('petal.home')
 			getMessages();
 		}
 
-		function getReceiver() {
-			userService.getUser(cbc.receiverUserID).then(function(response) {
-				cbc.receiverUser = response.data;
-			}).catch(function(err) {
-
-				console.log(err);
-			});
-		}
-
+		
 		function scrollBottom() {
 			$timeout(function() {
 				$ionicScrollDelegate.scrollBottom(true);
@@ -1585,11 +1580,13 @@ angular.module('petal.home')
 		}
 
 		function getMessages() {
-			messageRoomService.getMessages(cbc.messageRoomId, cbc.params).then(function(res) {
-
+			messageRoomService.getMessages(messageRoom._id,cbc.params).then(function(res) {
+				console.log("get messages");
+				console.log(res);
 				angular.forEach(res.data.docs, function(message) {
 					cbc.messageList.unshift(message);
 				});
+				console.log(cbc.messageList);
 			}).catch(function(res) {
 
 				console.log(res);
@@ -1603,27 +1600,17 @@ angular.module('petal.home')
 
 		function activate() {
 			$ionicLoading.show();
-			messageRoomService.getMessageRoom(cbc.receiverUserID).then(function(res) {
-				cbc.messageRoom = res.data;
-				cbc.messageRoomId = res.data._id;
-
-				socketJoin();
-				getMessages();
-
-			}, function(err) {
-				console.log(err);
-			});
-			getReceiver();
-
-
+			getMessages();
+			socketJoin();
 
 		}
 
 
 		function socketJoin() {
-			Socket.emit('addToMessagetRoom', { 'roomId': cbc.messageRoomId });
+			Socket.emit('addToMessagetRoom', { 'roomId': messageRoom._id });
 			Socket.on('roomMessageReceived', function(message) {
-
+				console.log("received message");
+				console.log(message);
 				cbc.messageList.push(message);
 				scrollBottom();
 				cbc.messageLoading = false;
@@ -1635,28 +1622,23 @@ angular.module('petal.home')
 
 			cbc.messageLoading = true;
 			cbc.focusInput = true;
-
+			
 			if (window.cordova ) {
 				
 				window.cordova.plugins.Keyboard.show();
 				//window.cordova.fireWindowEvent('native.keyboardshow', {'keyboardHeight': +262});
             				window.cordova.plugins.Keyboard.isVisible = true;
 			}
-			scrollBottom();
-			var messageObj = { 'message': cbc.myMsg, receiver: $stateParams.user, 'roomId': cbc.messageRoomId };
+			//scrollBottom();
+			var messageObj = { 'message': cbc.myMsg, 'roomId': cbc.messageRoom._id };
+
 			messageRoomService.sendMessage(messageObj).then(function(res) {
+				console.log(res);
 				cbc.myMsg = '';
-				cbc.messageList.push(res.data.message);
+				//cbc.messageList.push(res.data.savedMessage);
 				scrollBottom();
-				cbc.messageTryCount = 0;
 			}).catch(function(err) {
-				//console.log(err);
-				cbc.messageTryCount += 1;
-
-				if (cbc.messageTryCount <= 3) {
-					cbc.clickSubmit();
-				}
-
+				console.log(err);
 			}).finally(function() {
 				cbc.messageLoading = false;
 			});
@@ -1677,7 +1659,7 @@ angular.module('petal.home')
 				cbc.file.result = response.data;
 				cbc.uploadedImage = response.data;
 				cbc.cancelUpload();
-				var messageObj = { 'message': cbc.uploadedImage, receiver: $stateParams.user, 'roomId': cbc.messageRoomId, type: 'img' };
+				var messageObj = { 'message': cbc.uploadedImage,  'roomId': cbc.messageRoom._id, type: 'img' };
 				messageRoomService.sendMessage(messageObj).then(function(res) {
 					scrollBottom();
 					cbc.messageList.push(res.data.message);
@@ -1703,7 +1685,7 @@ angular.module('petal.home')
 			}
 		};
 		cbc.leaveMessageRoom = function() {
-			Socket.emit('removeFromMessageRoom', { 'roomId': cbc.messageRoomId });
+			Socket.emit('removeFromMessageRoom', { 'roomId': cbc.messageRoom._id });
 
 			$window.history.back();
 
@@ -1733,10 +1715,12 @@ angular.module('petal.home')
 		Socket.on('newRoomMessageReceived', messageReceived);
 		
 		acc.messageRoomPage = function(messageRoom){
+			console.log(messageRoom);
 			if(messageRoom.interest){
 				$state.go('messageRoomInterest', { interest: messageRoom.interest});	
 			}else{
-				$state.go('messageRoomPost', { postId: messageRoom.post});	
+				console.log("yo");
+				$state.go('messageRoomPost', { postId: messageRoom.post._id});	
 			}
 			
 		};
@@ -1772,6 +1756,7 @@ angular.module('petal.home')
 
 		function getAllMessageRooms() {
 			messageRoomService.getMessageRooms().then(function(response) {
+				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					acc.messageRoomsList.push(value);
 				});
@@ -3253,9 +3238,9 @@ angular.module('petal.home')
 (function(angular) {
 	'use strict';
 	var postModule = angular.module('petal.post');
-	postModule.directive('postSearchModal', ['$ionicModal', 'postService',postSearchModal]);
+	postModule.directive('postSearchModal', ['$rootScope','$ionicModal', 'postService',postSearchModal]);
 
-	function postSearchModal($ionicModal, postService) {
+	function postSearchModal($rootScope,$ionicModal, postService) {
 		return {
 			restrict: 'A',
 			scope: {
@@ -3278,6 +3263,12 @@ angular.module('petal.home')
 						scope.modal.remove();
 					});
 				};
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
 				scope.getPosts = function(params) {
 					
 					postService.getAllPosts(params).then(function(response) {
@@ -3331,10 +3322,10 @@ angular.module('petal.home')
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
-		.directive('postsList', ['$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
+		.directive('postsList', ['$rootScope','$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
 
 
-	function postsList( $state, userData, postService, upvoteService,$ionicModal) {
+	function postsList( $rootScope,$state, userData, postService, upvoteService,$ionicModal) {
 		return {
 			restrict: 'E',
 			templateUrl: 'app/post/views/postsListTemplate.html',
@@ -3371,8 +3362,16 @@ angular.module('petal.home')
 				}
 				scope.postModal = {};
 				scope.postModal.userPage = userPage;
-				
+				scope.$on('$destroy', function() {
 
+					
+  				});
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
 				scope.showPostModal = function(post) {
 					scope.postModal.post = post;
 					scope.postModal.post.views+=1;

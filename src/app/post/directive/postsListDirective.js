@@ -1,10 +1,10 @@
 (function(angular) {
 	'use strict';
 	angular.module('petal.post')
-		.directive('postsList', ['$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
+		.directive('postsList', ['$rootScope','$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
 
 
-	function postsList( $state, userData, postService, upvoteService,$ionicModal) {
+	function postsList( $rootScope,$state, userData, postService, upvoteService,$ionicModal) {
 		return {
 			restrict: 'E',
 			templateUrl: 'app/post/views/postsListTemplate.html',
@@ -41,8 +41,16 @@
 				}
 				scope.postModal = {};
 				scope.postModal.userPage = userPage;
-				
+				scope.$on('$destroy', function() {
 
+					
+  				});
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
 				scope.showPostModal = function(post) {
 					scope.postModal.post = post;
 					scope.postModal.post.views+=1;

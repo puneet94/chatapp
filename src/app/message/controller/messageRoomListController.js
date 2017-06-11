@@ -12,10 +12,12 @@
 		Socket.on('newRoomMessageReceived', messageReceived);
 		
 		acc.messageRoomPage = function(messageRoom){
+			console.log(messageRoom);
 			if(messageRoom.interest){
 				$state.go('messageRoomInterest', { interest: messageRoom.interest});	
 			}else{
-				$state.go('messageRoomPost', { postId: messageRoom.post});	
+				console.log("yo");
+				$state.go('messageRoomPost', { postId: messageRoom.post._id});	
 			}
 			
 		};
@@ -51,6 +53,7 @@
 
 		function getAllMessageRooms() {
 			messageRoomService.getMessageRooms().then(function(response) {
+				console.log(response);
 				angular.forEach(response.data.docs, function(value) {
 					acc.messageRoomsList.push(value);
 				});

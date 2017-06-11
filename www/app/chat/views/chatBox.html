@@ -49,7 +49,7 @@
                         <button class=" button-icon icon ion-ios-camera" ng-if="!cbc.isBlocked" type="file" ngf-select="cbc.uploadSingleImage($file, $invalidFiles)" ng-disabled="cbc.showTempImage || cbc.messageLoading" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB">
                         </button>
                         <label class="item-input-wrapper" ng-if="!cbc.isBlocked">
-                                <input type="text" is-focused="{{cbc.focusInput}}" placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.showTempImage" ng-focus="cbc.scrollBottom()" />
+                                <input type="text" is-focused="{{cbc.focusInput}}" placeholder="Type your message" id="chatInput" ng-model="cbc.myMsg" ng-disabled="cbc.showTempImage" ng-focus="cbc.scrollBottom()"    />
                                 <!--never disable this input unless uploading image failing which the keyboard disappears-->
                         </label>
                         <button class="button button-dark" ng-if="!cbc.isBlocked" ng-disabled="cbc.showTempImage || !cbc.myMsg || cbc.messageLoading" ng-click="cbc.clickSubmit($event)">

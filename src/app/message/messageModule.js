@@ -13,7 +13,7 @@
 				controller: 'MessageRoomController',
 				controllerAs: 'mrc',
 				resolve: {
-					messageRoom: [ '$stateParams', '$q', messageRoom]
+					messageRoom: [ '$stateParams', '$q', 'messageRoomService',messageRoom]
 
 				}
 
@@ -39,6 +39,8 @@
 			params.interest = $stateParams.interest;
 		}
 		messageRoomService.getMessageRoom(params).then(function(response){
+			console.log("resolve response");
+			console.log(response);
 			defer.resolve(response.data.foundMessageRoom);					
 		}).catch(function(e){
 			console.log("Resolve mesage Room");

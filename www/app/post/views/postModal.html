@@ -14,8 +14,8 @@
                         <div class="item item-body">
                                 <div class="postModalInterests">
                                 <span class="subdued" ng-repeat="interest in postModal.post.interests track by $index">
-                !{{interest}}
-                </span>
+                                        !{{interest}}
+                                </span>
                                 </div>
                                 <p class="postModalBody">
                                         <span ng-bind="postModal.post.content ">
@@ -45,5 +45,8 @@
                                 </div>
                         </div>
                 </div>
+                <a ui-sref="messageRoomPost({postId:postModal.post._id})"  ui-sref-opts="{reload: true, notify: true}">
+                        Join chat room
+                </a>
         </ion-content>
 </ion-modal-view>
