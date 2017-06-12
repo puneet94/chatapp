@@ -5,8 +5,8 @@
   overflow-y: scroll !important; }
 
 .chatImage {
-  border: 1px solid #eee;
-  border-radius: 10px; }
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 4px; }
 
 .leftChat {
   clear: both;
@@ -155,7 +155,11 @@
 .headerCustom {
   padding: 0;
   margin: 0;
-  height: 50px; }
+  height: 50px;
+  background: linear-gradient(to bottom, #2989d8 0%, #1e5799 100%) !important; }
+
+.gradHeader {
+  background: linear-gradient(to bottom, #2989d8 0%, #1e5799 100%) !important; }
 
 .rowCustom {
   padding: 0;
@@ -360,6 +364,30 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   border: 15px solid white; }
 
+.messageList .messageItem .messageAvatar {
+  border-radius: 3px;
+  max-width: 42px;
+  max-height: 42px;
+  border: 1px solid rgba(0, 0, 0, 0.07); }
+
+.messageListBox .singleMessageListItem {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  padding-bottom: 5px; }
+  .messageListBox .singleMessageListItem .messageUser {
+    font-size: 13px;
+    font-weight: 800; }
+  .messageListBox .singleMessageListItem .messageUserImage {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 3px;
+    max-width: 42px;
+    max-height: 42px; }
+  .messageListBox .singleMessageListItem .messageContent {
+    font-size: 16px; }
+  .messageListBox .singleMessageListItem .messageTime {
+    font-size: 10px;
+    color: rgba(0, 0, 0, 0.5);
+    padding-top: 5px; }
+
 .peopleList .peopleListContainer .personAvatar {
   border-radius: 5px;
   max-width: 45px;
@@ -370,17 +398,6 @@ h1, h2, h3, h4, h5, h6 {
   .peopleList .peopleListContainer .peopleName .peopleGender {
     font-size: 12px;
     font-weight: 400; }
-
-.messageListBox .singleMessageListItem {
-  border: none; }
-  .messageListBox .singleMessageListItem .messageUser {
-    font-size: 13px;
-    font-weight: 800; }
-  .messageListBox .singleMessageListItem .messageUserImage {
-    border: 1px solid #eee;
-    border-radius: 3px;
-    max-width: 45px;
-    max-height: 45px; }
 
 .randomImagesList {
   height: 100px;

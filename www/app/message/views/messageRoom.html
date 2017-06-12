@@ -1,6 +1,6 @@
 <ion-view cache-view="false">
         <ion-pane ng-cloak>
-                <ion-header-bar align-title="left" class="bar-positive ">
+                <ion-header-bar align-title="left" class="bar-positive gradHeader">
                         <button class="button button-icon ion-arrow-left-c icon" ng-click="mrc.leaveMessageRoom()">
                         </button>
                         <h4 class="title">
@@ -20,13 +20,18 @@
                 </ion-header-bar>
                 <!--overflow-scroll="false"-->
                 <ion-content class="has-header" class="messageContent">
-                        <ion-refresher pulling-text="Pull to refresh..." on-refresh="mrc.loadMoreChats()">
+                        <ion-refresher pulling-text="Pull to refresh..." on-refresh="mrc.loadMoreMessages()">
                         </ion-refresher>
                         <div ng-cloak  class="list animatedClass  messageListBox">
                                 <div ng-repeat="message in mrc.messageList" class="item item-avatar item-text-wrap singleMessageListItem">
+
                                         <img class="messageUserImage" ng-src="{{message.user.picture}}">    
+                                         
                                          <h2 class="messageUser">
-                                                            {{message.user.anonName}}
+                                                    <a ui-sref="home.userPage({user:message.user._id})">
+                                                    {{message.user.anonName}}
+                                                    </a>
+                                                            
                                                         </h2>
                                         <p class="messageContent" ng-if="message.type!='img'">
                                             {{message.message}}
@@ -35,7 +40,12 @@
                                             <img class="chatImage" image-modal="{{message.message}}" width="130" height="140" ng-src="{{message.message}}"  />
                                             
                                         </p>
-                                                        
+
+                                        <span class="messageTime">
+                                                        {{mrc.formatMessageDate(message.time)}}
+                                        
+                                        </span>       
+                                        
                                         
                                 </div>
                                 <div style="clear:both;position: relative;" class="msgBox">
@@ -45,7 +55,13 @@
                                 </div>
                                 
                         </div>
-                        
+                        <div ng-if="mrc.showTempImage">
+                                <img ngf-src="mrc.tempImageUrl" width="120" height="120">
+                                <button ng-click="mrc.submitUpload()" class="button-assertive ion-checkmark-round button-icon icon ">
+                                </button>
+                                <button ng-click="mrc.cancelUpload()" class="button-icon icon ion-close-round ">
+                                </button>
+                        </div>
                         
 
 

@@ -15,7 +15,9 @@
 		cbc.loadMoreMessages = loadMoreMessages;
 		cbc.scrollBottom = scrollBottom;
 		cbc.messageLoading = false;
-		
+		cbc.formatMessageDate = function(messageDate){
+			return window.moment(messageDate).format(" MMM Do, h:mm a");
+		};
 		cbc.params = {
 			page: 1,
 			limit: 5
@@ -118,7 +120,7 @@
 				var messageObj = { 'message': cbc.uploadedImage,  'roomId': cbc.messageRoom._id, type: 'img' };
 				messageRoomService.sendMessage(messageObj).then(function(res) {
 					scrollBottom();
-					cbc.messageList.push(res.data.message);
+					//cbc.messageList.push(res.data.message);
 					cbc.messageLoading = false;
 				}).catch(function(err) {
 					console.log(err);
