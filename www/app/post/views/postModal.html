@@ -1,20 +1,23 @@
 <ion-modal-view cache-view="false">
         <ion-header-bar class="bar bar-header bar-positive">
                 <button class="button button-icon ion-arrow-left-c icon " ng-click="modal.hide()"></button>
+                <button class="button" ng-click="postModal.deletePost()" ng-if="postModal.post.user._id==postModal.currentUser._id">
+                        Delete
+                </button>
         </ion-header-bar>
         <ion-content class="has-header">
                 <div class="item postModalContent">
-                        <div class="item item-avatar item-icon-right">
+                        <div class="item item-avatar item-icon-right postAvatarContent" >
                                 <img ng-src="{{postModal.post.user.picture}}">
                                 <h2 ng-click="modal.hide()"><a ui-sref="home.userPage({user:postModal.post.user._id})">{{postModal.post.user.anonName}}</a></h2>
                                 <p>{{postModal.post.user.status}}</p>
                                 <distance-view position-cords="postModal.post.loc"> </distance-view>
                         </div>
                        
-                        <div class="item item-body">
+                        <div class="item item-body postModalBodyContainer">
                                 <div class="postModalInterests">
                                 <span class="subdued" ng-repeat="interest in postModal.post.interests track by $index">
-                                        !{{interest}}
+                                        #{{interest}}
                                 </span>
                                 </div>
                                 <p class="postModalBody">
@@ -23,6 +26,9 @@
                                 </p>
                                 <div>
                                         <img class="full-image postImage imageGray" ng-src="{{postModal.post.image}}" ng-if="postModal.post.image">
+                                         <!--<a  ui-sref="messageRoomPost({postId:postModal.post._id})" class="chatRoomJoinButton">
+                                                 GROUP CHAT
+                                        </a>-->       
                                 </div>
                                 
                                 
@@ -45,13 +51,28 @@
                                 </div>
                         </div>
                 </div>
-                <a ui-sref="messageRoomPost({postId:postModal.post._id})"  ">
-                        Join chat room
-                </a>
-                <div ng-repeat="interest in postModal.post.interests track by $index">
-                        {{interest}}-<a ui-sref="messageRoomInterest({interest:interest})"  >
-                        Join chat room
-                </a>
+                
+                <div>
+                        <h4 ng-if="postModal.post.interests.length">Group Chats</h4>
+                        <ion-list>
+                                <ion-item ng-repeat="interest in postModal.post.interests track by $index">
+                                        <div class="row">
+                                                <div class="col col-80">
+                                                        <h3>#{{interest}}</h3>                
+                                                </div>
+                                                <div class="col">
+                                                        <a  ui-sref="messageRoomInterest({interest:interest})" class="chatRoomJoinButton">
+                                                JOIN
+                                        </a>                                        
+                                                </div>
+                                        </div>
+                                        
+                                        
+                                </ion-item>
+                        </ion-list>
+                
                 </div>
+        
+                
         </ion-content>
 </ion-modal-view>

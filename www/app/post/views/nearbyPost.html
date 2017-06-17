@@ -1,7 +1,9 @@
 <ion-view>
 <ion-content class="has-header" watch-scroll>
+        
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="npc.pullRefreshPosts()">
         </ion-refresher>
+
         <div class="item range">
                 <i class="icon ion-ios-navigate-outline"></i>
 
@@ -9,6 +11,8 @@
                 
                 {{npc.distance+" mi"}}
         </div>
+        <br><br>
+        
         <div ng-if="npc.noPosts">
                 <h1 class="noPostsHeader">No posts available</h1>
         </div>

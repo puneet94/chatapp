@@ -4,8 +4,8 @@
 		.service('homeService',['$http','Upload',HomeService]);
 
 		function HomeService($http,Upload){
-			this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
-			//this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
+			//this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
+			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
 			this.deleteUpload = deleteUpload;
 			this.submitUpload = submitUpload;
 			this.getImages = getImages;

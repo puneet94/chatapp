@@ -14,8 +14,9 @@
 		function getUser() {
 			umpc.user = userData.getUser();
 			$scope.editForm.user = umpc.user;
+			$scope.editForm.user.gender = umpc.user.gender || 'Other';
 			if (umpc.user.interests.length) {
-				$scope.editForm.user.interests = '!' + umpc.user.interests.join('!');
+				$scope.editForm.user.interests = '#' + umpc.user.interests.join('#');
 			}
 		}
 

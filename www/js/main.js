@@ -1387,8 +1387,8 @@ angular.module('petal.chat')
 		.service('homeService',['$http','Upload',HomeService]);
 
 		function HomeService($http,Upload){
-			this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
-			//this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
+			//this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
+			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
 			this.deleteUpload = deleteUpload;
 			this.submitUpload = submitUpload;
 			this.getImages = getImages;
@@ -1588,7 +1588,7 @@ angular.module('petal.home')
 				angular.forEach(res.data.docs, function(message) {
 					cbc.messageList.unshift(message);
 				});
-				console.log(cbc.messageList);
+				scrollBottom();
 			}).catch(function(res) {
 
 				console.log(res);
@@ -1635,7 +1635,7 @@ angular.module('petal.home')
 			var messageObj = { 'message': cbc.myMsg, 'roomId': cbc.messageRoom._id };
 
 			messageRoomService.sendMessage(messageObj).then(function(res) {
-				console.log(res);
+				
 				cbc.myMsg = '';
 				//cbc.messageList.push(res.data.savedMessage);
 				scrollBottom();
@@ -1827,6 +1827,342 @@ angular.module('petal.home')
 		
 
 
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('AllPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', AllPeopleController]);
+
+	function AllPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getAllPeople = getAllPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+		apc.searchCrossSubmit = searchCrossSubmit;
+		apc.peopleSearchTextSubmit = peopleSearchTextSubmit;
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+		function searchCrossSubmit(){
+			apc.peopleSearchText = '';
+			apc.showSearchCross = false;
+			activate();
+		}
+		function peopleSearchTextSubmit(interest){
+			apc.showSearchCross = true;
+			if(interest){
+				apc.peopleSearchText = interest;	
+			}
+			
+			activate();
+		}
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getAllPeople();
+		}
+
+		function getAllPeople() {
+			peopleService.getAllUsers(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			if(apc.peopleSearchText){
+				apc.params.interest = 	apc.peopleSearchText;
+			}
+			getAllPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('NearbyPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', NearbyPeopleController]);
+
+	function NearbyPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getNearbyPeople = getNearbyPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+		apc.releaseRange = releaseRange;
+		apc.distance = 10;
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getNearbyPeople();
+		}
+		function releaseRange(){
+			activate();
+		}
+		function getNearbyPeople() {
+			peopleService.getNearbyUsers(apc.params).then(function(response) {
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.noPeople =!response.data.total;
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}).catch(function(err) {
+				console.log(err);
+			}).finally(function() {
+				apc.initialSearchCompleted = true;
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1,
+				distance: apc.distance
+			};
+			getNearbyPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular){
+	'use strict';
+	angular.module('petal.people')
+		.controller('PeopleParentController',[PeopleParentController]);
+
+	function PeopleParentController(){
+
+	}
+})(window.angular);
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('ReceivedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', ReceivedPeopleController]);
+
+	function ReceivedPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getReceivedPeople = getReceivedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getReceivedPeople();
+		}
+
+		function getReceivedPeople() {
+			peopleService.getReceivedUsers(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.noPeople =!response.data.total;
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 10,
+				page: 1
+			};
+			getReceivedPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('RequestedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RequestedPeopleController]);
+
+	function RequestedPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getRequestedPeople = getRequestedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getRequestedPeople();
+		}
+
+		function getRequestedPeople() {
+			peopleService.getRequestedUsers(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			getRequestedPeople();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.people')
+		.controller('RevealedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RevealedPeopleController]);
+
+	function RevealedPeopleController($scope, $state, peopleService,$ionicLoading) {
+		var apc = this;
+		apc.getRevealedPeople = getRevealedPeople;
+		apc.pullRefreshPeople = pullRefreshPeople;
+		apc.loadMorePeople = loadMorePeople;
+
+
+		activate();
+
+		function pullRefreshPeople() {
+			activate();
+
+		}
+
+		function loadMorePeople() {
+			apc.params.page += 1;
+			getRevealedPeople();
+		}
+
+		function getRevealedPeople() {
+			peopleService.getRevealedUsers(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.peopleList.push(value);
+				});
+				apc.noPeople =!response.data.total;
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.peopleList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.peopleList = [];
+			apc.params = {
+				limit: 25,
+				page: 1
+			};
+			getRevealedPeople();
+		}
 	}
 })(window.angular);
 
@@ -2359,342 +2695,6 @@ angular.module('petal.home')
 			}
 		};
 
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('AllPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', AllPeopleController]);
-
-	function AllPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getAllPeople = getAllPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-		apc.searchCrossSubmit = searchCrossSubmit;
-		apc.peopleSearchTextSubmit = peopleSearchTextSubmit;
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-		function searchCrossSubmit(){
-			apc.peopleSearchText = '';
-			apc.showSearchCross = false;
-			activate();
-		}
-		function peopleSearchTextSubmit(interest){
-			apc.showSearchCross = true;
-			if(interest){
-				apc.peopleSearchText = interest;	
-			}
-			
-			activate();
-		}
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getAllPeople();
-		}
-
-		function getAllPeople() {
-			peopleService.getAllUsers(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1
-			};
-			if(apc.peopleSearchText){
-				apc.params.interest = 	apc.peopleSearchText;
-			}
-			getAllPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('NearbyPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', NearbyPeopleController]);
-
-	function NearbyPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getNearbyPeople = getNearbyPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-		apc.releaseRange = releaseRange;
-		apc.distance = 10;
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getNearbyPeople();
-		}
-		function releaseRange(){
-			activate();
-		}
-		function getNearbyPeople() {
-			peopleService.getNearbyUsers(apc.params).then(function(response) {
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.noPeople =!response.data.total;
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-			}).catch(function(err) {
-				console.log(err);
-			}).finally(function() {
-				apc.initialSearchCompleted = true;
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1,
-				distance: apc.distance
-			};
-			getNearbyPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular){
-	'use strict';
-	angular.module('petal.people')
-		.controller('PeopleParentController',[PeopleParentController]);
-
-	function PeopleParentController(){
-
-	}
-})(window.angular);
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('ReceivedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', ReceivedPeopleController]);
-
-	function ReceivedPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getReceivedPeople = getReceivedPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getReceivedPeople();
-		}
-
-		function getReceivedPeople() {
-			peopleService.getReceivedUsers(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.noPeople =!response.data.total;
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 10,
-				page: 1
-			};
-			getReceivedPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('RequestedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RequestedPeopleController]);
-
-	function RequestedPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getRequestedPeople = getRequestedPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getRequestedPeople();
-		}
-
-		function getRequestedPeople() {
-			peopleService.getRequestedUsers(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1
-			};
-			getRequestedPeople();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.people')
-		.controller('RevealedPeopleController', ['$scope', '$state', 'peopleService','$ionicLoading', RevealedPeopleController]);
-
-	function RevealedPeopleController($scope, $state, peopleService,$ionicLoading) {
-		var apc = this;
-		apc.getRevealedPeople = getRevealedPeople;
-		apc.pullRefreshPeople = pullRefreshPeople;
-		apc.loadMorePeople = loadMorePeople;
-
-
-		activate();
-
-		function pullRefreshPeople() {
-			activate();
-
-		}
-
-		function loadMorePeople() {
-			apc.params.page += 1;
-			getRevealedPeople();
-		}
-
-		function getRevealedPeople() {
-			peopleService.getRevealedUsers(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.peopleList.push(value);
-				});
-				apc.noPeople =!response.data.total;
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.peopleList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.peopleList = [];
-			apc.params = {
-				limit: 25,
-				page: 1
-			};
-			getRevealedPeople();
-		}
 	}
 })(window.angular);
 
@@ -3344,12 +3344,7 @@ angular.module('petal.home')
 				};
 				scope.currentUser = userData.getUser();
 
-				scope.setPostSearch = function(interest){
-					if(scope.postSearchTextSubmit){
-						scope.postSearchTextSubmit({interest:interest});	
-					}
-					
-				};
+				
 				scope.userPage = userPage;
 				function userPage(id){
 					scope.modal.hide();
@@ -3364,8 +3359,34 @@ angular.module('petal.home')
 				}
 				scope.postModal = {};
 				scope.postModal.userPage = userPage;
-				scope.$on('$destroy', function() {
+				scope.postModal.currentUser = scope.currentUser;
+				scope.postModal.deletePost = function(){
+					if(scope.postModal.post.user._id!==scope.currentUser._id){
+						return;
+					}
+					else{
+						
+						postService.deletePost(scope.postModal.post._id).then(function(){
+							var postsLength = scope.postsList.length;
+							for (var i = 0; i < postsLength; i++) {
+								console.log("hit"+i);
+								if(scope.postsList[i]._id==scope.postModal.post._id){
+									console.log("hit delete"+i);
+									scope.postsList.splice(i,1);
+									scope.modal.remove();	
+									break;
+								}
 
+							}
+							
+							
+						});
+					}
+				};
+				scope.$on('$destroy', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
 					
   				});
 				$rootScope.$on('$stateChangeStart', function() {
@@ -3611,8 +3632,9 @@ angular.module('petal.home')
 		function getUser() {
 			umpc.user = userData.getUser();
 			$scope.editForm.user = umpc.user;
+			$scope.editForm.user.gender = umpc.user.gender || 'Other';
 			if (umpc.user.interests.length) {
-				$scope.editForm.user.interests = '!' + umpc.user.interests.join('!');
+				$scope.editForm.user.interests = '#' + umpc.user.interests.join('#');
 			}
 		}
 

@@ -1,62 +1,3 @@
-.chatRoomRed {
-  background-color: red; }
-
-.overflow-scroll {
-  overflow-y: scroll !important; }
-
-.chatImage {
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 4px; }
-
-.leftChat {
-  clear: both;
-  float: left;
-  border-color: white;
-  max-width: 100%;
-  padding: 5px 16px; }
-
-.rightChat {
-  clear: both;
-  float: right;
-  border-color: white;
-  max-width: 100%;
-  padding: 5px 16px; }
-
-.you p {
-  float: left;
-  margin-right: 5px;
-  background-color: #eee;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  width: 100%;
-  background-color: rgba(0, 0, 255, 0.15);
-  color: black;
-  font-size: 17px; }
-
-.you img {
-  float: left; }
-
-.me p {
-  float: right;
-  color: white;
-  border: 1px solid #007AFF;
-  margin-left: 5px;
-  background-color: #387ef5;
-  padding: 10px;
-  width: 100%;
-  border-radius: 5px;
-  font-size: 17px; }
-
-.me img {
-  float: right; }
-
-.chatList .chatItem .chatAvatar {
-  border-radius: 3px;
-  max-width: 45px;
-  max-height: 45px;
-  border: 1px solid #eee; }
-
 .logoIcon {
   background-image: url("/img/logo.png");
   height: 100px;
@@ -364,6 +305,76 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   border: 15px solid white; }
 
+.chatRoomRed {
+  background-color: red; }
+
+.overflow-scroll {
+  overflow-y: scroll !important; }
+
+.chatImage {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 4px; }
+
+.leftChat {
+  clear: both;
+  float: left;
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
+
+.rightChat {
+  clear: both;
+  float: right;
+  border-color: white;
+  max-width: 100%;
+  padding: 5px 16px; }
+
+.you p {
+  float: left;
+  margin-right: 5px;
+  background-color: #eee;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  width: 100%;
+  background-color: rgba(0, 0, 255, 0.15);
+  color: black;
+  font-size: 17px; }
+
+.you img {
+  float: left; }
+
+.me p {
+  float: right;
+  color: white;
+  border: 1px solid #007AFF;
+  margin-left: 5px;
+  background-color: #387ef5;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  font-size: 17px; }
+
+.me img {
+  float: right; }
+
+.chatList .chatItem .chatAvatar {
+  border-radius: 3px;
+  max-width: 45px;
+  max-height: 45px;
+  border: 1px solid #eee; }
+
+.peopleList .peopleListContainer .personAvatar {
+  border-radius: 5px;
+  max-width: 45px;
+  max-height: 50px; }
+
+.peopleList .peopleListContainer .peopleName {
+  font-weight: 600; }
+  .peopleList .peopleListContainer .peopleName .peopleGender {
+    font-size: 12px;
+    font-weight: 400; }
+
 .messageList .messageItem .messageAvatar {
   border-radius: 3px;
   max-width: 42px;
@@ -388,17 +399,6 @@ h1, h2, h3, h4, h5, h6 {
     color: rgba(0, 0, 0, 0.5);
     padding-top: 5px; }
 
-.peopleList .peopleListContainer .personAvatar {
-  border-radius: 5px;
-  max-width: 45px;
-  max-height: 50px; }
-
-.peopleList .peopleListContainer .peopleName {
-  font-weight: 600; }
-  .peopleList .peopleListContainer .peopleName .peopleGender {
-    font-size: 12px;
-    font-weight: 400; }
-
 .randomImagesList {
   height: 100px;
   overflow-x: scroll;
@@ -412,31 +412,47 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 5px;
     filter: contrast(120%); }
 
-.postModalContent .postModalInterests {
-  border-bottom: 1px solid #ddd;
-  margin: -16px;
-  padding: 10px;
-  padding-left: 16px;
-  margin-bottom: 10px;
-  font-size: 13px; }
+.chatRoomJoinButton {
+  padding: 7px 15px;
+  border: 2px solid #387ef5;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.4px; }
 
-.postModalContent .postModalBody {
-  font-size: 18px;
-  text-transform: capitalize;
-  line-height: 25px; }
-
-.postModalContent .postModalInfo .infoValue {
-  font-size: 14px;
-  padding-left: 2px; }
-
-.postModalContent .postModalInfo .icon {
-  font-size: 20px; }
-
-.postModalContent .postUpvote {
-  color: red; }
-
-.postModalContent .postUpvoted {
-  color: red; }
+.postModalContent {
+  border: none;
+  padding: 0; }
+  .postModalContent .postAvatarContent {
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0; }
+    .postModalContent .postAvatarContent img {
+      border-radius: 5px; }
+  .postModalContent .postModalBodyContainer {
+    border: none;
+    padding-top: 5px; }
+  .postModalContent .postModalInterests {
+    border-bottom: 1px solid #ddd;
+    margin: -16px;
+    padding: 10px;
+    padding-left: 16px;
+    margin-bottom: 10px;
+    font-size: 13px; }
+  .postModalContent .postModalBody {
+    font-size: 18px;
+    line-height: 25px;
+    color: black;
+    margin-top: 0; }
+  .postModalContent .postModalInfo .infoValue {
+    font-size: 14px;
+    padding-left: 2px; }
+  .postModalContent .postModalInfo .icon {
+    font-size: 20px; }
+  .postModalContent .postUpvote {
+    color: red; }
+  .postModalContent .postUpvoted {
+    color: red; }
 
 .heartBeatAnimation {
   animation: heartbeat 3s infinite; }
@@ -519,8 +535,7 @@ a {
     border-radius: 5px; }
   .singlePostContent span {
     font-size: 16px;
-    text-transform: capitalize;
-    color: rgba(0, 0, 0, 0.75); }
+    color: black; }
 
 .noPostsHeader {
   color: #9E9E9E;

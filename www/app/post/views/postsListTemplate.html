@@ -4,7 +4,7 @@
                         <img class="postUserImage " ng-src="{{post.user.picture}}">
                         <h2 class="postUserName"><a ui-sref="home.userPage({user:post.user._id})">{{post.user.anonName}}</a></h2>
                         <p class="tagContent">
-                                <span class="subdued postTag" post-search-modal="{{interest}}"  ng-repeat="interest in post.interests track by $index">!{{interest}}</span>
+                                <span class="subdued postTag" post-search-modal="{{interest}}"  ng-repeat="interest in post.interests track by $index">#{{interest}}</span>
                         </p>
                         <distance-view position-cords="post.loc"> </distance-view>
                 </div>

@@ -21,12 +21,7 @@
 				};
 				scope.currentUser = userData.getUser();
 
-				scope.setPostSearch = function(interest){
-					if(scope.postSearchTextSubmit){
-						scope.postSearchTextSubmit({interest:interest});	
-					}
-					
-				};
+				
 				scope.userPage = userPage;
 				function userPage(id){
 					scope.modal.hide();
@@ -41,8 +36,34 @@
 				}
 				scope.postModal = {};
 				scope.postModal.userPage = userPage;
-				scope.$on('$destroy', function() {
+				scope.postModal.currentUser = scope.currentUser;
+				scope.postModal.deletePost = function(){
+					if(scope.postModal.post.user._id!==scope.currentUser._id){
+						return;
+					}
+					else{
+						
+						postService.deletePost(scope.postModal.post._id).then(function(){
+							var postsLength = scope.postsList.length;
+							for (var i = 0; i < postsLength; i++) {
+								console.log("hit"+i);
+								if(scope.postsList[i]._id==scope.postModal.post._id){
+									console.log("hit delete"+i);
+									scope.postsList.splice(i,1);
+									scope.modal.remove();	
+									break;
+								}
 
+							}
+							
+							
+						});
+					}
+				};
+				scope.$on('$destroy', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
 					
   				});
 				$rootScope.$on('$stateChangeStart', function() {

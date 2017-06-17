@@ -44,7 +44,7 @@
 				angular.forEach(res.data.docs, function(message) {
 					cbc.messageList.unshift(message);
 				});
-				console.log(cbc.messageList);
+				scrollBottom();
 			}).catch(function(res) {
 
 				console.log(res);
@@ -91,7 +91,7 @@
 			var messageObj = { 'message': cbc.myMsg, 'roomId': cbc.messageRoom._id };
 
 			messageRoomService.sendMessage(messageObj).then(function(res) {
-				console.log(res);
+				
 				cbc.myMsg = '';
 				//cbc.messageList.push(res.data.savedMessage);
 				scrollBottom();
