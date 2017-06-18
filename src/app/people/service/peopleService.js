@@ -6,9 +6,7 @@
 	angular.module('petal.people')
 		.service('peopleService', ["$http", "homeService", 'userLocationService', '$q', PeopleService]);
 
-	/*
-	 * This servic has a function names getStore which takes id as parameter and returns a promise
-	 */
+	
 	function PeopleService($http, homeService, userLocationService, $q) {
 
 		this.getAllUsers = getAllUsers;

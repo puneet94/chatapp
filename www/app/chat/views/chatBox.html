@@ -27,7 +27,7 @@
                                 <div ng-repeat="chat in cbc.chatList" class="item item-text-wrap" ng-class="chat.user._id==cbc.currentUser ? 'rightChat':'leftChat' ">
                                         <div ng-class="chat.user._id==cbc.currentUser ? 'me' : 'you'">
                                                 <img class="chatImage" image-modal="{{chat.message}}" width="130" height="140" ng-src="{{chat.message}}" ng-if="chat.type=='img'" />
-                                                <p ng-if="chat.type!='img'" class="item-text-wrap">{{chat.message}}</p>
+                                                <p ng-if="chat.type!='img'" class="item-text-wrap" class="selectable">{{chat.message}}</p>
                                         </div>
                                 </div>
                                 <div style="clear:both;position: relative;" class="msgBox">

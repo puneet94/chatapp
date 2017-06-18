@@ -14,7 +14,6 @@
 				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
 			}
 			function getImages(imageText){
-				console.log(imageText);
 				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
 			}
 			function submitUpload(file){

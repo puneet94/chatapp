@@ -9,6 +9,7 @@
 		rs.getMessages = getMessages;
 		rs.getMessageRoom = getMessageRoom;
 		rs.getMessageRooms = getMessageRooms;
+		rs.leaveMessageRoom = leaveMessageRoom;
 		
 		function sendMessage(message) {
 			
@@ -23,6 +24,11 @@
 		function getMessageRoom(params) {
 			
 			return $http.get(homeService.baseURL + 'messageRoom/getRoom/',{params:params} );
+
+		}
+		function leaveMessageRoom(messageRoomId) {
+			
+			return $http.post(homeService.baseURL + 'messageRoom/leaveRoom/',{messageRoomId:messageRoomId} );
 
 		}
 		function getMessageRooms() {

@@ -13,7 +13,7 @@
                             </span>
                 
                         </h4>
-                                <button class="button button-icon ion-ios-gear-outline icon"  user-settings chat-delete="{{mrc.chatRoom._id}}">
+                                <button class="button button-icon ion-ios-gear-outline icon" message-room-settings="true"  message-room-id="{{mrc.messageRoom._id}}">
                                 </button>
                                 
                         
@@ -33,7 +33,7 @@
                                                     </a>
                                                             
                                                         </h2>
-                                        <p class="messageContent" ng-if="message.type!='img'">
+                                        <p class="messageContent" ng-if="message.type!='img'" class="selectable">
                                             {{message.message}}
                                         </p>
                                         <p ng-if="message.type=='img'">

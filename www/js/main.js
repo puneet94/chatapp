@@ -362,94 +362,6 @@
 
 (function(angular) {
 	'use strict';
-	angular.module('petal.post', [])
-		.config(['$stateProvider', config]);
-
-
-	function config($stateProvider) {
-
-		$stateProvider
-			.state('home.post', {
-				url: '/post',
-				abstract: true,
-				views: {
-					'post-tab': {
-						templateUrl: 'app/post/views/postParent.html',
-						controller: 'PostParentController',
-						controllerAs: 'ppc'
-					}
-				}
-
-			}).state('home.post.all', {
-				url: '/all',
-
-				views: {
-					'post-tab': {
-						templateUrl: 'app/post/views/allPost.html',
-						controller: 'AllPostController',
-						controllerAs: 'apc'
-					}
-				}
-			}).state('home.post.latest', {
-				url: '/latest',
-
-				views: {
-					'post-tab': {
-						templateUrl: 'app/post/views/latestPost.html',
-						controller: 'LatestPostController',
-						controllerAs: 'lpc'
-					}
-				}
-			}).state('home.post.popular', {
-				url: '/popular',
-
-				views: {
-					'post-tab': {
-						templateUrl: 'app/post/views/popularPost.html',
-						controller: 'PopularPostController',
-						controllerAs: 'ppc'
-					}
-				}
-			}).state('home.post.nearby', {
-				url: '/nearby',
-
-				views: {
-					'post-tab': {
-						templateUrl: 'app/post/views/nearbyPost.html',
-						controller: 'NearbyPostController',
-						controllerAs: 'npc'
-					}
-				}
-			}).state('postSubmit', {
-				url: '/submit',
-				templateUrl: 'app/post/views/createPost.html',
-				controller: 'CreatePostController',
-				controllerAs: 'cpc'
-				/*views: {
-					'postSubmit-tab': {
-						
-					}
-				}*/
-			}).state('singlePost', {
-				url: '/post/:id',
-				templateUrl: 'app/post/views/singlePost.html',
-						controller: 'SinglePostController',
-						controllerAs: 'spc'
-				/*views: {
-					'singlePost-tab': {
-						
-					}
-				}*/
-
-
-			});
-	}
-
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
 	angular.module('petal.user', []).config(['$stateProvider',
 		function($stateProvider) {
 			$stateProvider.
@@ -541,6 +453,94 @@
 	}
 
 	
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.post', [])
+		.config(['$stateProvider', config]);
+
+
+	function config($stateProvider) {
+
+		$stateProvider
+			.state('home.post', {
+				url: '/post',
+				abstract: true,
+				views: {
+					'post-tab': {
+						templateUrl: 'app/post/views/postParent.html',
+						controller: 'PostParentController',
+						controllerAs: 'ppc'
+					}
+				}
+
+			}).state('home.post.all', {
+				url: '/all',
+
+				views: {
+					'post-tab': {
+						templateUrl: 'app/post/views/allPost.html',
+						controller: 'AllPostController',
+						controllerAs: 'apc'
+					}
+				}
+			}).state('home.post.latest', {
+				url: '/latest',
+
+				views: {
+					'post-tab': {
+						templateUrl: 'app/post/views/latestPost.html',
+						controller: 'LatestPostController',
+						controllerAs: 'lpc'
+					}
+				}
+			}).state('home.post.popular', {
+				url: '/popular',
+
+				views: {
+					'post-tab': {
+						templateUrl: 'app/post/views/popularPost.html',
+						controller: 'PopularPostController',
+						controllerAs: 'ppc'
+					}
+				}
+			}).state('home.post.nearby', {
+				url: '/nearby',
+
+				views: {
+					'post-tab': {
+						templateUrl: 'app/post/views/nearbyPost.html',
+						controller: 'NearbyPostController',
+						controllerAs: 'npc'
+					}
+				}
+			}).state('postSubmit', {
+				url: '/submit',
+				templateUrl: 'app/post/views/createPost.html',
+				controller: 'CreatePostController',
+				controllerAs: 'cpc'
+				/*views: {
+					'postSubmit-tab': {
+						
+					}
+				}*/
+			}).state('singlePost', {
+				url: '/post/:id',
+				templateUrl: 'app/post/views/singlePost.html',
+						controller: 'SinglePostController',
+						controllerAs: 'spc'
+				/*views: {
+					'singlePost-tab': {
+						
+					}
+				}*/
+
+
+			});
+	}
+
+
 })(window.angular);
 
 (function(angular) {
@@ -1397,7 +1397,6 @@ angular.module('petal.chat')
 				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
 			}
 			function getImages(imageText){
-				console.log(imageText);
 				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
 			}
 			function submitUpload(file){
@@ -1794,6 +1793,51 @@ angular.module('petal.home')
 (function(angular) {
 	'use strict';
 	angular.module('petal.message')
+		.directive('messageRoomSettings', ['messageRoomService', '$ionicPopover','$window',messageRoomSettings]);
+
+	function messageRoomSettings(messageRoomService,$ionicPopover,$window) {
+		return {
+			restrict: 'A',
+			scope: {
+				messageRoomId: '@messageRoomId'
+			},
+			link: function(scope,elem) {
+				scope.openMessageSettings = openMessageSettings;
+				elem.bind('click',function($event){
+					scope.openMessageSettings($event);
+				});
+				function openMessageSettings($event) {
+
+					$ionicPopover.fromTemplateUrl('app/message/views/messageRoomSettings.html', {
+						scope: scope
+					}).then(function(popover) {
+						
+						scope.popover = popover;
+						scope.popover.show($event);
+					}).catch(function(e){
+						window.console.log("error pops");
+						window.console.log(e);
+					});
+				}
+				scope.leaveRoom = function() {
+					messageRoomService.leaveMessageRoom(scope.messageRoomId).then(function() {
+						scope.popover.remove();
+						$window.history.back();
+					}).catch(function(err){
+						
+						window.console.log(err);
+						$window.history.back();
+					});
+				};
+
+			}
+		};
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.message')
 		.service('messageRoomService', ['$http', '$stateParams', 'homeService', MessageRoomService]);
 
 	function MessageRoomService($http, $stateParams, homeService) {
@@ -1802,6 +1846,7 @@ angular.module('petal.home')
 		rs.getMessages = getMessages;
 		rs.getMessageRoom = getMessageRoom;
 		rs.getMessageRooms = getMessageRooms;
+		rs.leaveMessageRoom = leaveMessageRoom;
 		
 		function sendMessage(message) {
 			
@@ -1816,6 +1861,11 @@ angular.module('petal.home')
 		function getMessageRoom(params) {
 			
 			return $http.get(homeService.baseURL + 'messageRoom/getRoom/',{params:params} );
+
+		}
+		function leaveMessageRoom(messageRoomId) {
+			
+			return $http.post(homeService.baseURL + 'messageRoom/leaveRoom/',{messageRoomId:messageRoomId} );
 
 		}
 		function getMessageRooms() {
@@ -2706,9 +2756,7 @@ angular.module('petal.home')
 	angular.module('petal.people')
 		.service('peopleService', ["$http", "homeService", 'userLocationService', '$q', PeopleService]);
 
-	/*
-	 * This servic has a function names getStore which takes id as parameter and returns a promise
-	 */
+	
 	function PeopleService($http, homeService, userLocationService, $q) {
 
 		this.getAllUsers = getAllUsers;
@@ -2804,814 +2852,6 @@ angular.module('petal.home')
 		}
 
 		
-
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.post')
-		.controller('AllPostController', ['$scope', '$state', 'postService','$ionicLoading', AllPostController]);
-
-	function AllPostController($scope, $state, postService,$ionicLoading) {
-		var apc = this;
-		apc.getAllPosts = getAllPosts;
-		apc.pullRefreshPosts = pullRefreshPosts;
-		apc.loadMorePosts = loadMorePosts;
-		apc.postSearchTextSubmit = postSearchTextSubmit;
-		apc.searchCrossSubmit = searchCrossSubmit;
-		apc.params = {
-				limit: 3,
-				page: 1
-			};
-		activate();
-		
-		function pullRefreshPosts() {
-			activate();
-
-		}
-		function searchCrossSubmit(){
-			apc.postSearchText = '';
-			apc.showSearchCross = false;
-			activate();
-		}
-		function postSearchTextSubmit(interest){
-			
-			apc.showSearchCross = true;
-			if(interest){
-				apc.postSearchText = interest;	
-			}
-			if(apc.postSearchText){
-				activate();	
-			}
-			
-		}
-		function loadMorePosts() {
-			apc.params.page += 1;
-			getAllPosts();
-		}
-
-		function getAllPosts() {
-			apc.noPosts = false;	
-			postService.getAllPosts(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.postsList.push(value);
-				});
-				apc.noPosts =!response.data.total;
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.postsList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-			}).catch(function(err) {
-				
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.postsList = [];
-			apc.params = {
-				limit: 5,
-				page: 1,
-
-			};
-			if(apc.postSearchText){
-				apc.params.interest = 	apc.postSearchText;
-			}
-			getAllPosts();
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.post')
-		.controller('CreatePostController', ['$scope', '$state', 'postService','$ionicLoading', 'homeService',CreatePostController]);
-
-	function CreatePostController($scope, $state, postService,$ionicLoading,homeService) {
-		var cpc = this;
-		cpc.submitPost = submitPost;
-		cpc.post = {};
-		$ionicLoading.hide();
-		cpc.goBack = function(){
-			window.history.back();
-		};
-		$scope.$watch(function(){
-			return cpc.post.content;
-		}, function(newVal, oldVal) {
-			if (newVal && newVal.length > 300) {
-				cpc.post.content = oldVal;
-			}
-		});
-
-		function submitPost() {
-			$ionicLoading.show();
-			postService.submitPost(cpc.post).then(function(response) {
-				$ionicLoading.hide();
-				$state.go('home.post.latest');
-			}).catch(function(err) {
-				console.log("post controller error");
-				console.log(err);
-			}).finally(function(){
-				$ionicLoading.hide();
-			});
-		}
-		cpc.selectRandomImage = function(img){
-			cpc.post.image = img;
-		};
-		cpc.loadRandomImages = function(imageText){
-			cpc.loadingRandomImage = true;
-			cpc.randomImages = [];
-			homeService.getImages(imageText).then(function(response){
-				cpc.randomImages = response.data;
-				cpc.loadingRandomImage = false;
-			}).catch(function(err){
-				console.log("images err");
-				console.log(err);
-			});
-		};
-		cpc.cancelUpload = function() {
-			if(cpc.post.imageId){
-				homeService.deleteUpload(cpc.post.imageId).then(function(response){
-					cpc.post.image = '';
-					cpc.post.imageId = '';					
-				});
-			}
-
-			
-		};
-
-		cpc.submitUpload = function(file, errFiles) {
-			if(cpc.post.imageId){
-				cpc.cancelUpload();
-			}
-			cpc.loadingImage = true;
-			cpc.file = file;
-			cpc.errFile = errFiles && errFiles[0];
-			if (cpc.file) {
-				homeService.submitUpload(cpc.file).then(function(response) {
-					cpc.post.image = response.data.image;
-					cpc.post.imageId = response.data.imageId;
-					cpc.loadingImage = false;
-				});
-			}
-
-		};
-		
-	}
-})(window.angular);
-
-(function(angular){
-	'use strict';
-	angular.module('petal.post')
-		.controller('LatestPostController',['$scope','$state','postService','$ionicLoading',LatestPostController]);
-
-	function LatestPostController($scope,$state,postService,$ionicLoading){
-		var apc = this;
-		apc.getLatestPosts = getLatestPosts;
-		apc.pullRefreshPosts = pullRefreshPosts;
-		apc.loadMorePosts = loadMorePosts;
-		activate();
-
-		function pullRefreshPosts() {
-			activate();
-
-		}
-
-		function loadMorePosts() {
-			apc.params.page += 1;
-			getLatestPosts();
-		}
-
-		function getLatestPosts() {
-			postService.getLatestPosts(apc.params).then(function(response) {
-				angular.forEach(response.data.docs, function(value) {
-					apc.postsList.push(value);
-				});
-				apc.noPosts =!response.data.total;
-				
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.postsList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-			}).catch(function(err) {
-				console.log(err);
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.postsList = [];
-			apc.params = {
-				limit: 3,
-				page: 1
-			};
-			getLatestPosts();
-		}
-	}
-})(window.angular);
-(function(angular){
-	'use strict';
-	angular.module('petal.post')
-		.controller('NearbyPostController',['$scope','$state','postService','$ionicLoading',NearbyPostController]);
-
-	function NearbyPostController($scope,$state,postService,$ionicLoading){
-		var apc = this;
-		apc.getNearbyPosts = getNearbyPosts;
-		apc.pullRefreshPosts = pullRefreshPosts;
-		apc.loadMorePosts = loadMorePosts;
-		apc.releaseRange = releaseRange;
-		apc.distance = 10;
-		activate();
-
-		function pullRefreshPosts() {
-			activate();
-
-		}
-		function releaseRange(){
-			activate();
-		}
-		function loadMorePosts() {
-			apc.params.page += 1;
-			getNearbyPosts();
-		}
-
-		function getNearbyPosts() {
-			postService.getNearbyPosts(apc.params).then(function(response) {
-				
-				angular.forEach(response.data.docs, function(value) {
-					apc.postsList.push(value);
-				});
-				apc.noPosts =!response.data.total;
-				
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.postsList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-				
-			}).catch(function(err) {
-				console.log(err);
-				
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-				apc.initialSearchCompleted = true;
-			});
-
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.postsList = [];
-			apc.params = {
-				limit: 10,
-				page: 1,
-				distance: apc.distance
-			};
-			getNearbyPosts();
-		}
-	}
-})(window.angular);
-(function(angular){
-	'use strict';
-	angular.module('petal.post')
-		.controller('PopularPostController',['$scope','$state','postService','$ionicLoading',PopularPostController]);
-
-	function PopularPostController($scope,$state,postService,$ionicLoading){
-		var apc = this;
-		apc.getPopularPosts = getPopularPosts;
-		apc.pullRefreshPosts = pullRefreshPosts;
-		apc.loadMorePosts = loadMorePosts;
-		activate();
-
-		function pullRefreshPosts() {
-			activate();
-
-		}
-
-		function loadMorePosts() {
-			apc.params.page += 1;
-			getPopularPosts();
-		}
-
-		function getPopularPosts() {
-			postService.getPopularPosts(apc.params).then(function(response) {
-				angular.forEach(response.data.docs, function(value) {
-					apc.postsList.push(value);
-				});
-				if(!response.data.total){
-					apc.noPosts = true;
-				}
-				apc.initialSearchCompleted = true;
-				if (response.data.total > apc.postsList.length) {
-					apc.canLoadMoreResults = true;
-				}
-				else{
-					apc.canLoadMoreResults = false;	
-				}
-			}).catch(function(err) {
-				console.log(err);
-
-			}).finally(function() {
-				$scope.$broadcast('scroll.refreshComplete');
-				$scope.$broadcast('scroll.infiniteScrollComplete');
-				$ionicLoading.hide();
-			});
-
-
-		}
-
-		function activate() {
-			apc.canLoadMoreResults = false;
-			apc.initialSearchCompleted = false;
-			apc.postsList = [];
-			apc.params = {
-				limit: 3,
-				page: 1
-			};
-			getPopularPosts();
-		}
-	}
-})(window.angular);
-(function(angular){
-	'use strict';
-	angular.module('petal.post')
-		.controller('PostParentController',['$rootScope',PostParentController]);
-
-	function PostParentController($rootScope){
-		//$rootScope.slideHeader = true;
-	}
-})(window.angular);
-(function(angular) {
-	'use strict';
-	angular.module('petal.post')
-		.controller('SinglePostController', ['$scope', '$state', 'postService', '$stateParams','$ionicHistory','upvoteService',SinglePostController]);
-
-	function SinglePostController($scope, $state, postService,$stateParams,$ionicHistory,upvoteService) {
-		var apc = this;
-		apc.getSinglePost= getSinglePost;
-		apc.submitPostUpvote = submitPostUpvote;
-		apc.deletePostUpvote = deletePostUpvote;
-		apc.getPostDistance = getPostDistance;
-		apc.back = function(){
-			
-			window.history.back(); 
-		};
-		
-		activate();
-		
-		function getSinglePost() {
-			postService.getPost($stateParams.id).then(function(response) {
-				apc.post = response.data;
-				apc.distanceObj = {
-					latitude:apc.post.loc[1],
-					longitude: apc.post.loc[0],
-					diatance: 0
-				};
-				getPostDistance();
-				
-				
-			});
-
-		}
-		function checkPostUpvote(){
-			upvoteService.getUpvote(apc.currentPost).then(function(res){
-				
-				apc.postUpvoted = res.data || false;
-			}).catch(function(err){
-				console.log(err);
-			});
-		}
-		function submitPostUpvote(){
-			upvoteService.createUpvote(apc.currentPost).then(function(res){
-				checkPostUpvote();
-			}).catch(function(err){
-				console.log(err);
-			});
-		}
-		function deletePostUpvote(){
-			upvoteService.deleteUpvote(apc.currentPost).then(function(res){
-				checkPostUpvote();
-			}).catch(function(err){
-				console.log(err);
-			});
-		}
-		function activate(){
-			apc.currentPost = $stateParams.id;
-			getSinglePost();
-			checkPostUpvote();
-			
-		}
-		function getPostDistance(){
-			postService.getDistance(apc.distanceObj);
-		}
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	var postModule = angular.module('petal.post');
-	postModule.directive('postSearchModal', ['$rootScope','$ionicModal', 'postService',postSearchModal]);
-
-	function postSearchModal($rootScope,$ionicModal, postService) {
-		return {
-			restrict: 'A',
-			scope: {
-				postSearchModal: '@'
-			},
-			link: function(scope, elem) {
-				
-				scope.postSearchData = {};
-				scope.postSearchData.postSearchModal = scope.postSearchModal;
-				scope.postSearchData.postsList = [];
-				scope.modalsList = [];
-				scope.clickPostSearch = clickPostSearch;
-				scope.showPostModal = function() {
-					loadPostModal().then(function() {
-						scope.modal.show();
-						
-					});
-					scope.$on('modal.hidden', function() {
-
-						scope.modal.remove();
-					});
-				};
-				$rootScope.$on('$stateChangeStart', function() {
-					if(scope.modal){
-						scope.modal.remove();	
-					}
-   					
-				});
-				scope.getPosts = function(params) {
-					
-					postService.getAllPosts(params).then(function(response) {
-						
-						angular.forEach(response.data.docs, function(value) {
-							scope.postSearchData.postsList.push(value);
-						});
-						scope.postSearchData.noPosts = !response.data.total;
-						scope.postSearchData.initialSearchCompleted = true;
-						if (response.data.total > scope.postSearchData.postsList.length) {
-							scope.postSearchData.canLoadMoreResults = true;
-						} else {
-							scope.postSearchData.canLoadMoreResults = false;
-						}
-					});
-				};
-				function clickPostSearch(){
-					scope.postSearchData.postsList = [];
-					var params = {
-						interest: scope.postSearchData.postSearchModal ,
-						page: 1,
-						limit: 50
-					};
-					scope.getPosts(params);
-				}
-				function loadPostModal() {
-					return $ionicModal.fromTemplateUrl('app/post/views/postSearchModal.html', {
-						scope: scope
-					}).then(function(modal) {
-						scope.modal = modal;
-						
-					});
-				}
-				elem.bind('click', function(event) {
-					var params = {
-						interest: scope.postSearchData.postSearchModal ,
-						page: 1,
-						limit: 50
-					};
-					scope.showPostModal();
-					event.stopPropagation();
-					scope.getPosts(params);
-				});
-			}
-		};
-
-	}
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.post')
-		.directive('postsList', ['$rootScope','$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
-
-
-	function postsList( $rootScope,$state, userData, postService, upvoteService,$ionicModal) {
-		return {
-			restrict: 'E',
-			templateUrl: 'app/post/views/postsListTemplate.html',
-			scope: {
-				postsList: '=postsList',
-				postSearchTextSubmit: '&postSearchTextSubmit'
-			},
-			replace: true,
-			//controller: ['scope', ]
-			link: function (scope) {
-				
-				scope.getTime = function(time){
-					return moment(time).fromNow();
-				};
-				scope.currentUser = userData.getUser();
-
-				
-				scope.userPage = userPage;
-				function userPage(id){
-					scope.modal.hide();
-					$state.go('home.userPage', { user: id });
-				}
-				function loadPostModal() {
-					return $ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
-						scope: scope
-					}).then(function(modal) {
-						scope.modal = modal;
-					});
-				}
-				scope.postModal = {};
-				scope.postModal.userPage = userPage;
-				scope.postModal.currentUser = scope.currentUser;
-				scope.postModal.deletePost = function(){
-					if(scope.postModal.post.user._id!==scope.currentUser._id){
-						return;
-					}
-					else{
-						
-						postService.deletePost(scope.postModal.post._id).then(function(){
-							var postsLength = scope.postsList.length;
-							for (var i = 0; i < postsLength; i++) {
-								console.log("hit"+i);
-								if(scope.postsList[i]._id==scope.postModal.post._id){
-									console.log("hit delete"+i);
-									scope.postsList.splice(i,1);
-									scope.modal.remove();	
-									break;
-								}
-
-							}
-							
-							
-						});
-					}
-				};
-				scope.$on('$destroy', function() {
-					if(scope.modal){
-						scope.modal.remove();	
-					}
-					
-  				});
-				$rootScope.$on('$stateChangeStart', function() {
-					if(scope.modal){
-						scope.modal.remove();	
-					}
-   					
-				});
-				scope.showPostModal = function(post) {
-					scope.postModal.post = post;
-					scope.postModal.post.views+=1;
-					loadPostModal().then(function(){
-
-						scope.modal.show();	
-					});
-					scope.$on('modal.hidden', function() {
-    						
-    						scope.modal.remove();
-  					});
-					
-				};
-
-				
-			}
-		};
-	}
-
-	
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.post')
-		.directive('postUpvote', ['$state', 'upvoteService','$timeout',postUpvote]);
-
-
-	function postUpvote( $state, upvoteService,$timeout) {
-		return {
-			restrict: 'E',
-			templateUrl: 'app/post/views/postUpvoteTemplate.html',
-			scope: {
-				postId: '=postId',
-				upvotesLength: '=upvotesLength'
-			},
-			replace: true,
-			link: function (scope) {
-				scope.checkPostUpvote = checkPostUpvote;
-				scope.submitPostUpvote = submitPostUpvote;
-				scope.deletePostUpvote = deletePostUpvote;
-				activate();
-				function activate() {
-
-					scope.loadingUpvote = true;
-					checkPostUpvote();					
-				}
-
-
-				function checkPostUpvote() {
-					upvoteService.getUpvote(scope.postId).then(function(res) {
-						
-						scope.postUpvoted = res.data;
-						scope.loadingUpvote = false;	
-					}).catch(function(err) {
-						console.log("check error");
-						console.log(err);
-					});
-				}
-
-				function submitPostUpvote() {
-					scope.postUpvoted = true;
-					
-					upvoteService.createUpvote(scope.postId).then(function() {
-						
-						scope.upvotesLength+=1;	
-						
-					}).catch(function(err) {
-						console.log("submit error");
-						console.log(err);
-					});
-				}
-
-				function deletePostUpvote() {
-					scope.postUpvoted = false;
-					upvoteService.deleteUpvote(scope.postId).then(function() {
-						
-						scope.upvotesLength-=1;	
-						
-					}).catch(function(err) {
-						
-						window.alert(err);
-					});
-				}
-
-				
-
-			}
-		};
-	}
-
-	
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.post').
-	service('postService', ['$http', 'homeService', 'userLocationService', '$q', PostService]);
-
-
-	function PostService($http, homeService, userLocationService, $q) {
-		this.getAllPosts = getAllPosts;
-		this.getNearbyPosts = getNearbyPosts;
-		this.getLatestPosts = getLatestPosts;
-		this.getPopularPosts = getPopularPosts;
-		this.submitPost = submitPost;
-		this.deletePost = deletePost;
-		this.getPost = getPost;
-		this.getDistance = getDistance;
-
-		function getAllPosts(params) {
-			
-			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
-		}
-		function getFilteredPosts(defer,params){
-			$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
-					console.log("without position");
-					defer.resolve(posts);
-				}).catch(function(err2) {
-					defer.reject(err2);
-				});
-		}
-		function getNearbyPosts(params) {
-			params.nearby = true;
-			var defer = $q.defer();
-			
-			if(params.page==1){
-				userLocationService.setUserLocation();
-      			}
-      			
-			userLocationService.getUserLocation().then(function(position) {
-				params.latitude = position.latitude;
-				params.longitude = position.longitude;
-				$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
-					defer.resolve(posts);
-				}).catch(function(err) {
-					defer.reject(err);
-				});
-			}).catch(function(err) {
-				window.console.log(err);
-				getFilteredPosts(defer,params);
-			});
-
-			return defer.promise;
-
-		}
-
-		function getLatestPosts(params) {
-			params.sort = '-time';
-			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
-		}
-
-		function getPopularPosts(params) {
-			params.sort = '-upvotesLength';
-			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
-		}
-
-		function submitPost(post) {
-			var defer = $q.defer();
-			console.log("entered submit post");
-			userLocationService.getUserLocation().then(function(position) {
-				post.latitude = position.latitude;
-				post.longitude = position.longitude;
-
-				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
-
-					defer.resolve(response);
-				}).catch(function(err) {
-					defer.reject(err);
-				});
-			}).catch(function(err) {
-				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
-				
-					defer.resolve(response);
-				}).catch(function(err2) {
-					defer.reject(err2);
-				});
-			});
-			return defer.promise;
-		}
-
-		function deletePost(postId) {
-			return $http.delete(homeService.baseURL + 'post/delete/' + postId);
-		}
-
-		function getPost(postId) {
-			return $http.get(homeService.baseURL + 'post/get/' + postId);
-		}
-
-		function getDistance(posObj) {
-			var defer = $q.defer();
-			var lat1 = posObj.latitude;
-			var lon1 = posObj.longitude;
-			userLocationService.getUserLocation().then(function(position) {
-				var lat2 = position.latitude;
-				var lon2 = position.longitude;
-				var R = 6371; // Radius of the earth in km
-				var dLat = deg2rad(lat2 - lat1); // deg2rad below
-				var dLon = deg2rad(lon2 - lon1);
-				var a =
-					Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-					Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-					Math.sin(dLon / 2) * Math.sin(dLon / 2);
-				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-				var d = R * c; // Distance in km
-			
-				defer.resolve(Math.ceil(d));
-			}).catch(function(err) {
-				console.log(err);
-			});
-			return defer.promise;
-
-		}
-
-		function deg2rad(deg) {
-			return deg * (Math.PI / 180);
-		}
 
 	}
 })(window.angular);
@@ -4084,4 +3324,812 @@ angular.module('petal.home')
 
 
   }
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	var postModule = angular.module('petal.post');
+	postModule.directive('postSearchModal', ['$rootScope','$ionicModal', 'postService',postSearchModal]);
+
+	function postSearchModal($rootScope,$ionicModal, postService) {
+		return {
+			restrict: 'A',
+			scope: {
+				postSearchModal: '@'
+			},
+			link: function(scope, elem) {
+				
+				scope.postSearchData = {};
+				scope.postSearchData.postSearchModal = scope.postSearchModal;
+				scope.postSearchData.postsList = [];
+				scope.modalsList = [];
+				scope.clickPostSearch = clickPostSearch;
+				scope.showPostModal = function() {
+					loadPostModal().then(function() {
+						scope.modal.show();
+						
+					});
+					scope.$on('modal.hidden', function() {
+
+						scope.modal.remove();
+					});
+				};
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
+				scope.getPosts = function(params) {
+					
+					postService.getAllPosts(params).then(function(response) {
+						
+						angular.forEach(response.data.docs, function(value) {
+							scope.postSearchData.postsList.push(value);
+						});
+						scope.postSearchData.noPosts = !response.data.total;
+						scope.postSearchData.initialSearchCompleted = true;
+						if (response.data.total > scope.postSearchData.postsList.length) {
+							scope.postSearchData.canLoadMoreResults = true;
+						} else {
+							scope.postSearchData.canLoadMoreResults = false;
+						}
+					});
+				};
+				function clickPostSearch(){
+					scope.postSearchData.postsList = [];
+					var params = {
+						interest: scope.postSearchData.postSearchModal ,
+						page: 1,
+						limit: 50
+					};
+					scope.getPosts(params);
+				}
+				function loadPostModal() {
+					return $ionicModal.fromTemplateUrl('app/post/views/postSearchModal.html', {
+						scope: scope
+					}).then(function(modal) {
+						scope.modal = modal;
+						
+					});
+				}
+				elem.bind('click', function(event) {
+					var params = {
+						interest: scope.postSearchData.postSearchModal ,
+						page: 1,
+						limit: 50
+					};
+					scope.showPostModal();
+					event.stopPropagation();
+					scope.getPosts(params);
+				});
+			}
+		};
+
+	}
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.post')
+		.directive('postsList', ['$rootScope','$state', 'userData', 'postService', 'upvoteService', '$ionicModal',postsList]);
+
+
+	function postsList( $rootScope,$state, userData, postService, upvoteService,$ionicModal) {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/post/views/postsListTemplate.html',
+			scope: {
+				postsList: '=postsList',
+				postSearchTextSubmit: '&postSearchTextSubmit'
+			},
+			replace: true,
+			//controller: ['scope', ]
+			link: function (scope) {
+				
+				scope.getTime = function(time){
+					return moment(time).fromNow();
+				};
+				scope.currentUser = userData.getUser();
+
+				
+				scope.userPage = userPage;
+				function userPage(id){
+					scope.modal.hide();
+					$state.go('home.userPage', { user: id });
+				}
+				function loadPostModal() {
+					return $ionicModal.fromTemplateUrl('app/post/views/postModal.html', {
+						scope: scope
+					}).then(function(modal) {
+						scope.modal = modal;
+					});
+				}
+				scope.postModal = {};
+				scope.postModal.userPage = userPage;
+				scope.postModal.currentUser = scope.currentUser;
+				scope.postModal.deletePost = function(){
+					if(scope.postModal.post.user._id!==scope.currentUser._id){
+						return;
+					}
+					else{
+						
+						postService.deletePost(scope.postModal.post._id).then(function(){
+							var postsLength = scope.postsList.length;
+							for (var i = 0; i < postsLength; i++) {
+								console.log("hit"+i);
+								if(scope.postsList[i]._id==scope.postModal.post._id){
+									console.log("hit delete"+i);
+									scope.postsList.splice(i,1);
+									scope.modal.remove();	
+									break;
+								}
+
+							}
+							
+							
+						});
+					}
+				};
+				scope.$on('$destroy', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+					
+  				});
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
+				scope.showPostModal = function(post) {
+					scope.postModal.post = post;
+					scope.postModal.post.views+=1;
+					loadPostModal().then(function(){
+
+						scope.modal.show();	
+					});
+					scope.$on('modal.hidden', function() {
+    						
+    						scope.modal.remove();
+  					});
+					
+				};
+
+				
+			}
+		};
+	}
+
+	
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.post')
+		.directive('postUpvote', ['$state', 'upvoteService','$timeout',postUpvote]);
+
+
+	function postUpvote( $state, upvoteService,$timeout) {
+		return {
+			restrict: 'E',
+			templateUrl: 'app/post/views/postUpvoteTemplate.html',
+			scope: {
+				postId: '=postId',
+				upvotesLength: '=upvotesLength'
+			},
+			replace: true,
+			link: function (scope) {
+				scope.checkPostUpvote = checkPostUpvote;
+				scope.submitPostUpvote = submitPostUpvote;
+				scope.deletePostUpvote = deletePostUpvote;
+				activate();
+				function activate() {
+
+					scope.loadingUpvote = true;
+					checkPostUpvote();					
+				}
+
+
+				function checkPostUpvote() {
+					upvoteService.getUpvote(scope.postId).then(function(res) {
+						
+						scope.postUpvoted = res.data;
+						scope.loadingUpvote = false;	
+					}).catch(function(err) {
+						console.log("check error");
+						console.log(err);
+					});
+				}
+
+				function submitPostUpvote() {
+					scope.postUpvoted = true;
+					
+					upvoteService.createUpvote(scope.postId).then(function() {
+						
+						scope.upvotesLength+=1;	
+						
+					}).catch(function(err) {
+						console.log("submit error");
+						console.log(err);
+					});
+				}
+
+				function deletePostUpvote() {
+					scope.postUpvoted = false;
+					upvoteService.deleteUpvote(scope.postId).then(function() {
+						
+						scope.upvotesLength-=1;	
+						
+					}).catch(function(err) {
+						
+						window.alert(err);
+					});
+				}
+
+				
+
+			}
+		};
+	}
+
+	
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.post')
+		.controller('AllPostController', ['$scope', '$state', 'postService','$ionicLoading', AllPostController]);
+
+	function AllPostController($scope, $state, postService,$ionicLoading) {
+		var apc = this;
+		apc.getAllPosts = getAllPosts;
+		apc.pullRefreshPosts = pullRefreshPosts;
+		apc.loadMorePosts = loadMorePosts;
+		apc.postSearchTextSubmit = postSearchTextSubmit;
+		apc.searchCrossSubmit = searchCrossSubmit;
+		apc.params = {
+				limit: 3,
+				page: 1
+			};
+		activate();
+		
+		function pullRefreshPosts() {
+			activate();
+
+		}
+		function searchCrossSubmit(){
+			apc.postSearchText = '';
+			apc.showSearchCross = false;
+			activate();
+		}
+		function postSearchTextSubmit(interest){
+			
+			apc.showSearchCross = true;
+			if(interest){
+				apc.postSearchText = interest;	
+			}
+			if(apc.postSearchText){
+				activate();	
+			}
+			
+		}
+		function loadMorePosts() {
+			apc.params.page += 1;
+			getAllPosts();
+		}
+
+		function getAllPosts() {
+			apc.noPosts = false;	
+			postService.getAllPosts(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.postsList.push(value);
+				});
+				apc.noPosts =!response.data.total;
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.postsList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.postsList = [];
+			apc.params = {
+				limit: 5,
+				page: 1,
+
+			};
+			if(apc.postSearchText){
+				apc.params.interest = 	apc.postSearchText;
+			}
+			getAllPosts();
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.post')
+		.controller('CreatePostController', ['$scope', '$state', 'postService','$ionicLoading', 'homeService',CreatePostController]);
+
+	function CreatePostController($scope, $state, postService,$ionicLoading,homeService) {
+		var cpc = this;
+		cpc.submitPost = submitPost;
+		cpc.post = {};
+		$ionicLoading.hide();
+		cpc.goBack = function(){
+			window.history.back();
+		};
+		$scope.$watch(function(){
+			return cpc.post.content;
+		}, function(newVal, oldVal) {
+			if (newVal && newVal.length > 300) {
+				cpc.post.content = oldVal;
+			}
+		});
+
+		function submitPost() {
+			$ionicLoading.show();
+			postService.submitPost(cpc.post).then(function(response) {
+				$ionicLoading.hide();
+				$state.go('home.post.latest');
+			}).catch(function(err) {
+				console.log("post controller error");
+				console.log(err);
+			}).finally(function(){
+				$ionicLoading.hide();
+			});
+		}
+		cpc.selectRandomImage = function(img){
+			cpc.post.image = img;
+		};
+		cpc.loadRandomImages = function(imageText){
+			cpc.loadingRandomImage = true;
+			cpc.randomImages = [];
+			homeService.getImages(imageText).then(function(response){
+				cpc.randomImages = response.data;
+				cpc.loadingRandomImage = false;
+			}).catch(function(err){
+				console.log("images err");
+				console.log(err);
+			});
+		};
+		cpc.cancelUpload = function() {
+			if(cpc.post.imageId){
+				homeService.deleteUpload(cpc.post.imageId).then(function(response){
+					cpc.post.image = '';
+					cpc.post.imageId = '';					
+				});
+			}
+
+			
+		};
+
+		cpc.submitUpload = function(file, errFiles) {
+			if(cpc.post.imageId){
+				cpc.cancelUpload();
+			}
+			cpc.loadingImage = true;
+			cpc.file = file;
+			cpc.errFile = errFiles && errFiles[0];
+			if (cpc.file) {
+				homeService.submitUpload(cpc.file).then(function(response) {
+					cpc.post.image = response.data.image;
+					cpc.post.imageId = response.data.imageId;
+					cpc.loadingImage = false;
+				});
+			}
+
+		};
+		
+	}
+})(window.angular);
+
+(function(angular){
+	'use strict';
+	angular.module('petal.post')
+		.controller('LatestPostController',['$scope','$state','postService','$ionicLoading',LatestPostController]);
+
+	function LatestPostController($scope,$state,postService,$ionicLoading){
+		var apc = this;
+		apc.getLatestPosts = getLatestPosts;
+		apc.pullRefreshPosts = pullRefreshPosts;
+		apc.loadMorePosts = loadMorePosts;
+		activate();
+
+		function pullRefreshPosts() {
+			activate();
+
+		}
+
+		function loadMorePosts() {
+			apc.params.page += 1;
+			getLatestPosts();
+		}
+
+		function getLatestPosts() {
+			postService.getLatestPosts(apc.params).then(function(response) {
+				angular.forEach(response.data.docs, function(value) {
+					apc.postsList.push(value);
+				});
+				apc.noPosts =!response.data.total;
+				
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.postsList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.postsList = [];
+			apc.params = {
+				limit: 3,
+				page: 1
+			};
+			getLatestPosts();
+		}
+	}
+})(window.angular);
+(function(angular){
+	'use strict';
+	angular.module('petal.post')
+		.controller('NearbyPostController',['$scope','$state','postService','$ionicLoading',NearbyPostController]);
+
+	function NearbyPostController($scope,$state,postService,$ionicLoading){
+		var apc = this;
+		apc.getNearbyPosts = getNearbyPosts;
+		apc.pullRefreshPosts = pullRefreshPosts;
+		apc.loadMorePosts = loadMorePosts;
+		apc.releaseRange = releaseRange;
+		apc.distance = 10;
+		activate();
+
+		function pullRefreshPosts() {
+			activate();
+
+		}
+		function releaseRange(){
+			activate();
+		}
+		function loadMorePosts() {
+			apc.params.page += 1;
+			getNearbyPosts();
+		}
+
+		function getNearbyPosts() {
+			postService.getNearbyPosts(apc.params).then(function(response) {
+				
+				angular.forEach(response.data.docs, function(value) {
+					apc.postsList.push(value);
+				});
+				apc.noPosts =!response.data.total;
+				
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.postsList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+				
+			}).catch(function(err) {
+				console.log(err);
+				
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+				apc.initialSearchCompleted = true;
+			});
+
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.postsList = [];
+			apc.params = {
+				limit: 10,
+				page: 1,
+				distance: apc.distance
+			};
+			getNearbyPosts();
+		}
+	}
+})(window.angular);
+(function(angular){
+	'use strict';
+	angular.module('petal.post')
+		.controller('PopularPostController',['$scope','$state','postService','$ionicLoading',PopularPostController]);
+
+	function PopularPostController($scope,$state,postService,$ionicLoading){
+		var apc = this;
+		apc.getPopularPosts = getPopularPosts;
+		apc.pullRefreshPosts = pullRefreshPosts;
+		apc.loadMorePosts = loadMorePosts;
+		activate();
+
+		function pullRefreshPosts() {
+			activate();
+
+		}
+
+		function loadMorePosts() {
+			apc.params.page += 1;
+			getPopularPosts();
+		}
+
+		function getPopularPosts() {
+			postService.getPopularPosts(apc.params).then(function(response) {
+				angular.forEach(response.data.docs, function(value) {
+					apc.postsList.push(value);
+				});
+				if(!response.data.total){
+					apc.noPosts = true;
+				}
+				apc.initialSearchCompleted = true;
+				if (response.data.total > apc.postsList.length) {
+					apc.canLoadMoreResults = true;
+				}
+				else{
+					apc.canLoadMoreResults = false;	
+				}
+			}).catch(function(err) {
+				console.log(err);
+
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+				$ionicLoading.hide();
+			});
+
+
+		}
+
+		function activate() {
+			apc.canLoadMoreResults = false;
+			apc.initialSearchCompleted = false;
+			apc.postsList = [];
+			apc.params = {
+				limit: 3,
+				page: 1
+			};
+			getPopularPosts();
+		}
+	}
+})(window.angular);
+(function(angular){
+	'use strict';
+	angular.module('petal.post')
+		.controller('PostParentController',['$rootScope',PostParentController]);
+
+	function PostParentController($rootScope){
+		//$rootScope.slideHeader = true;
+	}
+})(window.angular);
+(function(angular) {
+	'use strict';
+	angular.module('petal.post')
+		.controller('SinglePostController', ['$scope', '$state', 'postService', '$stateParams','$ionicHistory','upvoteService',SinglePostController]);
+
+	function SinglePostController($scope, $state, postService,$stateParams,$ionicHistory,upvoteService) {
+		var apc = this;
+		apc.getSinglePost= getSinglePost;
+		apc.submitPostUpvote = submitPostUpvote;
+		apc.deletePostUpvote = deletePostUpvote;
+		apc.getPostDistance = getPostDistance;
+		apc.back = function(){
+			
+			window.history.back(); 
+		};
+		
+		activate();
+		
+		function getSinglePost() {
+			postService.getPost($stateParams.id).then(function(response) {
+				apc.post = response.data;
+				apc.distanceObj = {
+					latitude:apc.post.loc[1],
+					longitude: apc.post.loc[0],
+					diatance: 0
+				};
+				getPostDistance();
+				
+				
+			});
+
+		}
+		function checkPostUpvote(){
+			upvoteService.getUpvote(apc.currentPost).then(function(res){
+				
+				apc.postUpvoted = res.data || false;
+			}).catch(function(err){
+				console.log(err);
+			});
+		}
+		function submitPostUpvote(){
+			upvoteService.createUpvote(apc.currentPost).then(function(res){
+				checkPostUpvote();
+			}).catch(function(err){
+				console.log(err);
+			});
+		}
+		function deletePostUpvote(){
+			upvoteService.deleteUpvote(apc.currentPost).then(function(res){
+				checkPostUpvote();
+			}).catch(function(err){
+				console.log(err);
+			});
+		}
+		function activate(){
+			apc.currentPost = $stateParams.id;
+			getSinglePost();
+			checkPostUpvote();
+			
+		}
+		function getPostDistance(){
+			postService.getDistance(apc.distanceObj);
+		}
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.post').
+	service('postService', ['$http', 'homeService', 'userLocationService', '$q', PostService]);
+
+
+	function PostService($http, homeService, userLocationService, $q) {
+		this.getAllPosts = getAllPosts;
+		this.getNearbyPosts = getNearbyPosts;
+		this.getLatestPosts = getLatestPosts;
+		this.getPopularPosts = getPopularPosts;
+		this.submitPost = submitPost;
+		this.deletePost = deletePost;
+		this.getPost = getPost;
+		this.getDistance = getDistance;
+
+		function getAllPosts(params) {
+			
+			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
+		}
+		function getFilteredPosts(defer,params){
+			$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
+					console.log("without position");
+					defer.resolve(posts);
+				}).catch(function(err2) {
+					defer.reject(err2);
+				});
+		}
+		function getNearbyPosts(params) {
+			params.nearby = true;
+			var defer = $q.defer();
+			
+			if(params.page==1){
+				userLocationService.setUserLocation();
+      			}
+      			
+			userLocationService.getUserLocation().then(function(position) {
+				params.latitude = position.latitude;
+				params.longitude = position.longitude;
+				$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
+					defer.resolve(posts);
+				}).catch(function(err) {
+					defer.reject(err);
+				});
+			}).catch(function(err) {
+				window.console.log(err);
+				getFilteredPosts(defer,params);
+			});
+
+			return defer.promise;
+
+		}
+
+		function getLatestPosts(params) {
+			params.sort = '-time';
+			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
+		}
+
+		function getPopularPosts(params) {
+			params.sort = '-upvotesLength';
+			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
+		}
+
+		function submitPost(post) {
+			var defer = $q.defer();
+			console.log("entered submit post");
+			userLocationService.getUserLocation().then(function(position) {
+				post.latitude = position.latitude;
+				post.longitude = position.longitude;
+
+				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
+
+					defer.resolve(response);
+				}).catch(function(err) {
+					defer.reject(err);
+				});
+			}).catch(function(err) {
+				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
+				
+					defer.resolve(response);
+				}).catch(function(err2) {
+					defer.reject(err2);
+				});
+			});
+			return defer.promise;
+		}
+
+		function deletePost(postId) {
+			return $http.delete(homeService.baseURL + 'post/delete/' + postId);
+		}
+
+		function getPost(postId) {
+			return $http.get(homeService.baseURL + 'post/get/' + postId);
+		}
+
+		function getDistance(posObj) {
+			var defer = $q.defer();
+			var lat1 = posObj.latitude;
+			var lon1 = posObj.longitude;
+			userLocationService.getUserLocation().then(function(position) {
+				var lat2 = position.latitude;
+				var lon2 = position.longitude;
+				var R = 6371; // Radius of the earth in km
+				var dLat = deg2rad(lat2 - lat1); // deg2rad below
+				var dLon = deg2rad(lon2 - lon1);
+				var a =
+					Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+					Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+					Math.sin(dLon / 2) * Math.sin(dLon / 2);
+				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+				var d = R * c; // Distance in km
+			
+				defer.resolve(Math.ceil(d));
+			}).catch(function(err) {
+				console.log(err);
+			});
+			return defer.promise;
+
+		}
+
+		function deg2rad(deg) {
+			return deg * (Math.PI / 180);
+		}
+
+	}
 })(window.angular);
