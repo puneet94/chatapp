@@ -67,8 +67,6 @@
 		function socketJoin() {
 			Socket.emit('addToMessagetRoom', { 'roomId': messageRoom._id });
 			Socket.on('roomMessageReceived', function(message) {
-				console.log("received message");
-				console.log(message);
 				cbc.messageList.push(message);
 				scrollBottom();
 				cbc.messageLoading = false;
@@ -91,9 +89,7 @@
 			var messageObj = { 'message': cbc.myMsg, 'roomId': cbc.messageRoom._id };
 
 			messageRoomService.sendMessage(messageObj).then(function(res) {
-				
 				cbc.myMsg = '';
-				//cbc.messageList.push(res.data.savedMessage);
 				scrollBottom();
 			}).catch(function(err) {
 				console.log(err);

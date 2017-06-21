@@ -8,25 +8,27 @@
 	function config($stateProvider) {
 		$stateProvider
 			.state('messageRoomInterest', {
-				url: '/messageRoom/interest/:interest',
+				url: '/messageRoom/interest/post/:interest/:postId',
 				templateUrl: 'app/message/views/messageRoom.html',
 				controller: 'MessageRoomController',
 				controllerAs: 'mrc',
 				resolve: {
 					messageRoom: [ '$stateParams', '$q', 'messageRoomService',messageRoom]
-
 				}
 
-			}).state('messageRoomPost', {
-				url: '/messageRoom/post/:postId',
+			}).state('messageRoom', {
+				url: '/messageRoom/:roomId',
 				templateUrl: 'app/message/views/messageRoom.html',
 				controller: 'MessageRoomController',
 				controllerAs: 'mrc',
 				resolve: {
 					messageRoom: [ '$stateParams', '$q', 'messageRoomService',messageRoom]
-
 				}
-
+			}).state('messageRoomCreate', {
+				url: '/messageRoomCreate',
+				templateUrl: 'app/message/views/messageRoomCreate.html',
+				controller: 'MessageRoomCreateController',
+				controllerAs: 'mrcc'
 			});
 	}
 
@@ -35,12 +37,15 @@
 		var params = {};
 		if($stateParams.postId){
 			params.postId = $stateParams.postId;
-		}else{
+		} 
+		if($stateParams.interest){
 			params.interest = $stateParams.interest;
 		}
+		if($stateParams.roomId){
+			params.roomId = $stateParams.roomId;
+		}
+		
 		messageRoomService.getMessageRoom(params).then(function(response){
-			console.log("resolve response");
-			console.log(response);
 			defer.resolve(response.data.foundMessageRoom);					
 		}).catch(function(e){
 			console.log("Resolve mesage Room");

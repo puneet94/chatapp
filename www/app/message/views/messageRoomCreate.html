@@ -1,0 +1,43 @@
+<ion-view cache-view="false">
+	<ion-header-bar align-title="left" class="bar-positive gradHeader">
+                        <button class="button button-icon ion-arrow-left-c icon" ng-click="mrcc.leaveMessageCreate()">
+                        </button>
+                        <h4 class="title" >                            
+                            <span >
+                                Create Group
+                            </span>
+                        </h4>
+                        <button class="button" ng-click="mrcc.createMessageRoom()">
+                        	Submit
+                        </button>
+                </ion-header-bar>
+                <ion-content class="has-header" >
+                	<div class="messageRoomCreateContainer">
+
+                		<div class="messageRoomInterest">
+                			<div class="list">
+					  <label class="item item-input">
+					    <span class="input-label">Topic</span>
+					    <input type="text" ng-model="mrcc.messageRoom.interest" autofocus="autofocus">
+					  </label>
+					  
+				</div>
+                		</div>
+                		<div>
+                                <img ng-src="{{mrcc.messageRoom.messageRoomImage}}" width="150" height="150" ng-if="mrcc.messageRoom.messageRoomImage" />
+                                <ion-spinner ng-if="mrcc.loadingImage" class="spinner-energized"></ion-spinner>
+                                <div>
+                                        <button ng-if="!mrcc.loadingImage && !mrcc.messageRoom.messageRoomImage" class="button button-energized" ngf-select="mrcc.submitUpload($file, $invalidFiles)" accept="image/*" ngf-max-height="5000" ngf-max-size="10MB">Upload Picture</button>
+                                        <button class="button button-assertive" ng-if="mrcc.messageRoom.messageRoomImage" ng-click="mrcc.cancelUpload()">Cancel</button>
+                                        <button class="button button-assertive" ng-click="mrcc.loadRandomImages(mrcc.messageRoom.interest)">
+                                                Load Random Images 
+                                        </button>
+                                </div>
+                                <div class="randomImagesList" > 
+                                <ion-spinner ng-if="mrcc.loadingRandomImage" class="spinner-energized"></ion-spinner>
+                                <img class="randomImage" ng-click="mrcc.selectRandomImage(img)"  ng-repeat="img in mrcc.randomImages" ng-src="{{img}}" />
+                        </div>
+                        </div>
+                	</div>
+                </ion-content>
+</ion-view>

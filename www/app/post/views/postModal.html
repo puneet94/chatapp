@@ -13,7 +13,6 @@
                                 <p>{{postModal.post.user.status}}</p>
                                 <distance-view position-cords="postModal.post.loc"> </distance-view>
                         </div>
-                       
                         <div class="item item-body postModalBodyContainer">
                                 <div class="postModalInterests">
                                 <span class="subdued" ng-repeat="interest in postModal.post.interests track by $index">
@@ -24,11 +23,8 @@
                                         <span ng-bind="postModal.post.content ">
                                         </span>
                                 </p>
-                                <div>
-                                        <img class="full-image postImage imageGray" ng-src="{{postModal.post.image}}" ng-if="postModal.post.image">
-                                         <!--<a  ui-sref="messageRoomPost({postId:postModal.post._id})" class="chatRoomJoinButton">
-                                                 GROUP CHAT
-                                        </a>-->       
+                                <div ng-if="postModal.post.image">
+                                        <img class="full-image postImage imageGray" ng-src="{{postModal.post.image}}" >
                                 </div>
                                 
                                 
@@ -61,7 +57,7 @@
                                                         <h3>#{{interest}}</h3>                
                                                 </div>
                                                 <div class="col">
-                                                        <a  ui-sref="messageRoomInterest({interest:interest})" class="chatRoomJoinButton">
+                                                        <a  ui-sref="messageRoomInterest({interest:interest,postId:postModal.post._id})" class="chatRoomJoinButton">
                                                 JOIN
                                         </a>                                        
                                                 </div>

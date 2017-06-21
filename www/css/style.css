@@ -394,6 +394,23 @@ h1, h2, h3, h4, h5, h6 {
     color: rgba(0, 0, 0, 0.5);
     padding-top: 5px; }
 
+.createMessageRoomButton {
+  background: #ef473a !important;
+  color: white !important;
+  z-index: 12 !important;
+  position: absolute !important;
+  bottom: 100px !important;
+  right: 20px !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
+  transform: translate3d(0, 0, 0) !important;
+  transition: 0.2s linear !important;
+  transition-property: transform, all !important; }
+  .createMessageRoomButton:hover {
+    transform: translate3d(0, -1px, 0) !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
+    background: #e42112 !important; }
+
 .peopleList .peopleListContainer .personAvatar {
   border-radius: 5px;
   max-width: 45px;
@@ -416,7 +433,8 @@ h1, h2, h3, h4, h5, h6 {
     margin-right: 2px;
     border: 1px solid #eee;
     border-radius: 5px;
-    filter: contrast(120%); }
+    filter: contrast(120%);
+    min-width: 100px; }
 
 .chatRoomJoinButton {
   padding: 7px 15px;
