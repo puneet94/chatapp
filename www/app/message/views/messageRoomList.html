@@ -5,10 +5,13 @@
 		</ion-refresher>
 		
 		<ion-list class="list messageList">
-			<ion-item message-room-list-modal>
-				<center>
+			<ion-item >
+				<div message-room-list-modal>
+					<center>
 				<i class="icon ion-search placeholder-icon"></i> Search
-				</center>
+				</center>	
+				</div>
+				
 			</ion-item>
 			<ion-item class="messageItem item-avatar" ng-repeat="messageRoom in mrlc.messageRoomsList" on-tap="mrlc.messageRoomPage(messageRoom)">
 				<img class="messageAvatar" ng-src="{{messageRoom.messageRoomImage || messageRoom.lastMessage.user.picture}}" />

@@ -1,9 +1,14 @@
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('PostParentController',['$rootScope',PostParentController]);
+		.controller('PostParentController',[PostParentController]);
 
-	function PostParentController($rootScope){
+	function PostParentController(){
+		var ppc = this;
 		//$rootScope.slideHeader = true;
+		ppc.fabContainerShown = false;
+		ppc.showFabContainer = function(){
+			ppc.fabContainerShown = !ppc.fabContainerShown ;
+		};
 	}
 })(window.angular);

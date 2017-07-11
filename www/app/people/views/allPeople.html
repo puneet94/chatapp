@@ -1,19 +1,15 @@
-<ion-view><ion-content class="has-header" watch-scroll>
+<ion-view>
+        <ion-content class="has-header" watch-scroll>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="apc.pullRefreshPeople()">
         </ion-refresher>
-        <div class="row ">
-                <div class="col col-90">
-                        <div class="item item-input">
-                                <input type="text" ng-model="apc.peopleSearchText" placeholder="Search peopl by interests. Eg: football" />
-                                <span ng-if="apc.showSearchCross" class="padding" ng-click="apc.searchCrossSubmit()">
-                                        <i  class=" icon ion-close-round">
-                                        </i>
-                                </span>
-                        </div>
-                </div>
-                <button ng-if="!spc.showClear " ng-disabled="!apc.peopleSearchText" class="col button button-icon icon ion-ios-search" ng-click="apc.peopleSearchTextSubmit()">
-                </button>
-        </div>
+        <ion-item >
+                                <div people-search-modal>
+                                        <center>
+                                <i class="icon ion-search placeholder-icon"></i> Search
+                                </center>       
+                                </div>
+                                
+                        </ion-item>
         <ionic-custom-spinner ng-if="!apc.initialSearchCompleted" >                
                 
         </ionic-custom-spinner>

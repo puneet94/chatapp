@@ -9,7 +9,7 @@
                 
                 <p>{{people.status}}</p>
                 <p class="tagContent">
-                        <span class="subdued postTag" ng-click="setPeopleSearch(interest,$event)" ng-repeat="interest in people.interests track by $index">#{{interest}}</span>
+                        <span class="subdued postTag" people-search-modal="{{interest}}" ng-repeat="interest in people.interests track by $index">#{{interest}}</span>
                 </p>
                 <i ng-if="listType=='requested'" class="icon ion-person-add" cancel-reveal="{{people._id}}" after-callback="removeAfterDecided($index)"></i>
 

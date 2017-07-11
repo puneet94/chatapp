@@ -14,8 +14,6 @@
     "socket.io-client": "^1.7.2",
     "moment": "^2.18.1",
     "angular-toastr": "^2.1.1",
-    "css-ripple-effect": "^1.0.8",
-    "ionic-native-transitions": "shprink/ionic-native-transitions#^1.0.3",
-    "default-passive-events": "^0.1.1"
+    "css-ripple-effect": "^1.0.8"
   }
 }

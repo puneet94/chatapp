@@ -25,10 +25,12 @@
 		margin-bottom: 10px
 		font-size: 13px
 	.postModalBody
-		font-size: 18px
-		line-height: 25px
-		color: black
+		font-size: 16px
 		margin-top: 0
+		padding-left: 10px
+		color: rgba(0,0,0,0.8)
+		line-height: 1.70 !important
+		letter-spacing: 0.02em
 	.postModalInfo
 		.infoValue
 			font-size: 14px
@@ -123,6 +125,11 @@ a
 	padding-top: 2px
 	padding-bottom: 2px
 	border-top: none
+	.postsListContent
+		font-size: 16px
+		color: rgba(0,0,0,0.8)
+		line-height: 1.70 !important
+		letter-spacing: 0.02em
 	.postImage
 		margin-top: 10px
 		border: 1px solid #eee
@@ -136,3 +143,48 @@ a
 	padding-top: 100px
 	font-size: 32px
 	text-align: center
+@keyframes zoomIn
+	from
+		opacity: 0
+		transform: scale3d(.3, .3, .3)
+	50%
+		opacity: 1
+@keyframes slideInUp
+	from
+		transform: translate3d(0, 100%, 0)
+		visibility: visible
+	to
+		transform: translate3d(0, 0, 0)
+@keyframes slideOutDown
+	from
+		transform: translate3d(0, 0, 0)
+	to
+		visibility: hidden
+		transform: translate3d(0, 100%, 0)
+@keyframes zoomOut
+	from
+		opacity: 1
+	50%
+		opacity: 0
+		transform: scale3d(.3, .3, .3)
+	to
+		opacity: 0
+.postFabContainer
+	position: absolute
+	bottom: 170px
+	right: 28px
+	height: 70px
+	width: 160px
+	z-index: 5
+	text-align: right
+.button1,.button2
+	text-shadow: 1px 0 0 #eee, 0 -1px 0 #eee, 0 1px 0 #eee, -1px 0 0 #eee
+.button1.ng-enter
+	animation: zoomIn 0.3s linear
+.button2.ng-enter
+	animation: zoomIn 0.1s linear
+
+.button1.ng-leave
+	animation: zoomOut 0.2s linear
+.button2.ng-leave
+	animation: zoomOut 0.4s linear

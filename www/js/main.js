@@ -98,80 +98,6 @@
 
 (function(angular) {
 	'use strict';
-	angular.module('petal.chat', ['ngFileUpload'])
-		.config(['$stateProvider', config]);
-
-
-	function config($stateProvider) {
-		$stateProvider
-			.state('home.chat', {
-				url: '/chat',
-				abstract: true,
-				views: {
-					'chat-tab': {
-						templateUrl: 'app/chat/views/chatParent.html',
-						controller: 'ChatParentController',
-						controllerAs: 'ppc'
-					}
-				}
-
-			}).state('home.chat.all', {
-				url: '/all',
-
-				views: {
-					'chat-tab': {
-						templateUrl: 'app/chat/views/allChat.html',
-						controller: 'AllChatController',
-						controllerAs: 'acc'
-					}
-				}
-			}).state('home.chat.revealed', {
-				url: '/revealed',
-
-				views: {
-					'chat-tab': {
-						templateUrl: 'app/chat/views/revealedChat.html',
-						controller: 'RevealedChatController',
-						controllerAs: 'rpc'
-					}
-				}
-			}).state('home.chat.messageroom', {
-				url: '/messageRoom',
-
-				views: {
-					'chat-tab': {
-						templateUrl: 'app/message/views/messageRoomList.html',
-						controller: 'MessageRoomListController',
-						controllerAs: 'mrlc'
-					}
-				}
-			}).state('chatBox', {
-				url: '/chatBox/:user',
-				templateUrl: 'app/chat/views/chatBox.html',
-				controller: 'ChatBoxController',
-				controllerAs: 'cbc',
-				resolve: {
-					blocked: [ '$stateParams', 'blockService','$q', blocked]
-
-				}
-
-			});
-	}
-
-	function blocked($stateParams,blockService,$q){
-		var defer = $q.defer();
-		blockService.check($stateParams.user).then(function(response){
-			defer.resolve(response.data.blocked);					
-		}).catch(function(){
-			defer.resolve();	
-		});
-		return defer.promise;
-	}
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
 	angular.module('petal.home', [])
 		.config(['$stateProvider', '$authProvider', config]);
 
@@ -241,6 +167,80 @@
 			defer.resolve();
 			//defer.reject();
 		}
+		return defer.promise;
+	}
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.chat', ['ngFileUpload'])
+		.config(['$stateProvider', config]);
+
+
+	function config($stateProvider) {
+		$stateProvider
+			.state('home.chat', {
+				url: '/chat',
+				abstract: true,
+				views: {
+					'chat-tab': {
+						templateUrl: 'app/chat/views/chatParent.html',
+						controller: 'ChatParentController',
+						controllerAs: 'ppc'
+					}
+				}
+
+			}).state('home.chat.all', {
+				url: '/all',
+
+				views: {
+					'chat-tab': {
+						templateUrl: 'app/chat/views/allChat.html',
+						controller: 'AllChatController',
+						controllerAs: 'acc'
+					}
+				}
+			}).state('home.chat.revealed', {
+				url: '/revealed',
+
+				views: {
+					'chat-tab': {
+						templateUrl: 'app/chat/views/revealedChat.html',
+						controller: 'RevealedChatController',
+						controllerAs: 'rpc'
+					}
+				}
+			}).state('home.chat.messageroom', {
+				url: '/messageRoom',
+
+				views: {
+					'chat-tab': {
+						templateUrl: 'app/message/views/messageRoomList.html',
+						controller: 'MessageRoomListController',
+						controllerAs: 'mrlc'
+					}
+				}
+			}).state('chatBox', {
+				url: '/chatBox/:user',
+				templateUrl: 'app/chat/views/chatBox.html',
+				controller: 'ChatBoxController',
+				controllerAs: 'cbc',
+				resolve: {
+					blocked: [ '$stateParams', 'blockService','$q', blocked]
+
+				}
+
+			});
+	}
+
+	function blocked($stateParams,blockService,$q){
+		var defer = $q.defer();
+		blockService.check($stateParams.user).then(function(response){
+			defer.resolve(response.data.blocked);					
+		}).catch(function(){
+			defer.resolve();	
+		});
 		return defer.promise;
 	}
 
@@ -550,83 +550,561 @@
 
 (function(angular) {
 	'use strict';
-	angular.module('petal.chat')
-		.service('chatService', ['$http', '$stateParams', 'homeService', ReviewService]);
+	angular.module('petal.home')
+		.directive('distanceView', ['postService', '$timeout', function(postService, $timeout) {
+			return {
+				restrict: 'E',
+				templateUrl: 'app/home/views/distanceViewTemplate.html',
+				scope: {
+					positionCords: '='
+				},
+				replace: true,
+				link: function(scope) {
+					$timeout(getDistance, 1000);
 
-	function ReviewService($http, $stateParams, homeService) {
-		var rs = this;
-		rs.sendChatMessage = sendChatMessage;
-		rs.getChatMessages = getChatMessages;
-		rs.getChatRoom = getChatRoom;
-		rs.getAllChatRooms = getAllChatRooms;
-		rs.getRevealedChatRooms = getRevealedChatRooms;
-		rs.updateChatRoom = updateChatRoom;
-		rs.deleteChatRoom = deleteChatRoom;
+					function getDistance() {
+						if (scope.positionCords) {
+							scope.distanceObj = {
+								latitude: scope.positionCords[1],
+								longitude: scope.positionCords[0],
 
-		function deleteChatRoom(id){
-			return $http.post(homeService.baseURL + 'chatRoom/delete/' + id);
+							};
+							postService.getDistance(scope.distanceObj).then(function(res) {
+								scope.distanceObj.distance = res + ' mi';
+							}).catch(function(err) {
+								scope.distanceObj.distance = '';
+							});
+						} else {
+							scope.distanceObj = {};
+							scope.distanceObj.distance = '';
+						}
+					}
+
+
+				}
+			};
+		}])
+		.directive('ionicCustomSpinner',[ionicCustomSpinner]);
+
+		function ionicCustomSpinner(){
+			return {
+				templateUrl: 'app/home/views/ionicCustomSpinner.html'
+			};
 		}
-		function sendChatMessage(chat) {
+		/*.directive('expandingTextarea', [function() {
+			return {
+				restrict: 'A',
+				controller: function($scope, $element, $attrs, $timeout) {
+					$element.css('min-height', '0');
+					$element.css('resize', 'none');
+					$element.css('overflow-y', 'hidden');
+					setHeight(0);
+					$timeout(setHeightToScrollHeight);
+
+					function setHeight(height) {
+						$element.css('height', height + 'px');
+						$element.css('max-height', height + 'px');
+					}
+
+					function setHeightToScrollHeight() {
+						setHeight(0);
+						var scrollHeight = angular.element($element)[0]
+							.scrollHeight;
+						if (scrollHeight !== undefined) {
+							setHeight(scrollHeight);
+						}
+					}
+
+					$scope.$watch(function() {
+						return angular.element($element)[0].value;
+					}, setHeightToScrollHeight);
+				}
+			};
+		}])*/
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	var imageModal = function($ionicModal) {
+		return {
+			restrict: 'A',
+			scope: {
+
+				imageModal: '@'
+			},
+			link: function($scope, elem) {
+
+				function showImageModal(image) {
+					loadModal().then(function() {
+						$scope.currentImage = image;
+						$scope.modal.show();
+					});
+
+				}
+
+				function loadModal() {
+					return $ionicModal.fromTemplateUrl('app/chat/views/chatImageModal.html', {
+						scope: $scope
+					}).then(function(modal) {
+						$scope.modal = modal;
+					});
+				}
+				elem.bind('click', function(event) {
+					showImageModal($scope.imageModal);
+					event.stopPropagation();
+				});
+			}
+		};
+
+	};
+	angular.module('petal.home').directive('keepScroll', [
+		'$state', '$timeout', 'ScrollPositions', '$ionicScrollDelegate',
+		function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
+			return {
+				restrict: 'A',
+				link: function(scope) {
+					scope.$on('$stateChangeStart', function() {
+						ScrollPositions[$state.current.name] = $ionicScrollDelegate.getScrollPosition();
+
+					});
+					$timeout(function() {
+						var offset;
+						offset = ScrollPositions[$state.current.name];
+						if (offset) {
+							$ionicScrollDelegate.scrollTo(offset.left, offset.top);
+						}
+					});
+				}
+			};
+		}
+	]).factory('ScrollPositions', [
+		function() {
+			return {};
+		}
+	]).directive('isFocused', ['$timeout', function($timeout) {
+		return {
+			scope: { trigger: '@isFocused' },
+			link: function(scope, element) {
+
+				scope.$watch('trigger', function(value) {
+
+					if (value === 'true') {
+						$timeout(function() {
+							element[0].focus();
+
+							element.on('blur', function() {
+								//alert("hello");
+								element[0].focus();
+							});
+						});
+					}
+
+				});
+			}
+		};
+	}]).directive('lazyImg', function() {
+		return {
+			/*     <lazy-img src-large="http://youbaku.com/uploads/places_images/large/{{img}}" src-small="http://youbaku.com/athumb.php?file={{img}}&small" />
+			 */
+			replace: true,
+			template: '<div class="lazy-img"><div class="sm"><img src="{{imgSmall}}" class="small"/></div><div style="padding-bottom: 75%;"></div><img src="{{imgLarge}}" class="large"/></div>',
+			scope: {
+				imgLarge: '@srcLarge',
+				imgSmall: '@srcSmall'
+			},
+
+			link: function(scope, elem) {
+				var imgSmall = new Image();
+				var imgLarge = new Image();
+				imgSmall.src = scope.imgSmall;
+				imgSmall.onload = function() {
+					elem.children('.sm').find('img').css('opacity', '1');
+					imgLarge.src = scope.imgLarge;
+					imgLarge.onload = function() {
+						elem.find('img').css('opacity', '1');
+					};
+				};
+			}
+		};
+	}).directive('imageModal', ['$ionicModal', imageModal])
+	.directive('watchScroll',['$rootScope',watchScroll]);
+
+	function watchScroll($rootScope){
+		return {
+			restrict: 'A',
+			link: function(scope,elem){
+
+				var start = 0;
+				var threshold = 150;
+				elem.bind('scroll',function(e){
+					
+					var scrollTop = e.srcElement.scrollTop;
+					if(scrollTop-start > threshold){
+						$rootScope.slideHeader = true;
+					}else{
+						$rootScope.slideHeader = false;
+					}
+					if($rootScope.slideHeaderPrevious > scrollTop - start){
+						$rootScope.slideHeader = false;
+					}
+					$rootScope.slideHeaderPrevious = scrollTop - start;
+					$rootScope.$apply();
+				});
+			}
+		};
+	}
+
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+
+	angular.module('petal.home')
+		.controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", 'userLocationService', '$ionicLoading', 'RequestsService', '$ionicModal', AuthenticationController]);
+
+	function AuthenticationController($scope, $auth, $state, userData, userLocationService, $ionicLoading, RequestsService, $ionicModal) {
+		var phc = this;
+
+		phc.isAuth = $auth.isAuthenticated();
+		if (phc.isAuth) {
+			$state.go('home.post.all');
+		}
+		if (window.cordova) {
+			phc.webSignIn = true;
+		}
+		phc.authLogout = authLogout;
+		phc.loadPostModal = loadPostModal;
+
+
+		phc.socialAuthenticate = socialAuthenticate;
+		$scope.googleSignIn = function() {
+
+
+
+			$ionicLoading.show({
+				template: 'Logging in...'
+			});
+
+			window.plugins.googleplus.login({
+					webClientId: '792068565007-rdm7nrlfmc29jvlqo5l0tkgu6ci0vboa.apps.googleusercontent.com'
+
+				},
+				function(user_data) {
+					var profile = {};
+					profile.id = user_data.userId;
+					profile.displayName = user_data.displayName;
+					profile.imageUrl = user_data.imageUrl;
+					RequestsService.googleSignIn(profile)
+						.then(function(response) {
+							$auth.setToken(response.data.token);
+							successfulAuthentication(response.data.user);
+						}).catch(function(err) {
+							console.log("error");
+							console.log(err);
+							$ionicLoading.hide();
+						});
+
+				},
+				function(msg) {
+					alert("missed");
+					console.log(msg);
+					$ionicLoading.hide();
+				}
+			);
+		};
+		function successfulAuthentication(user) {
+			userData.setUser(user);
+			userLocationService.setUserLocation();
+			RequestsService.register();
+
+			if (user.device_token) {
+				$state.go('home.post.popular');
+			} else {
+				$state.go('home.userEditPage');
+			}
+		}
+
+		function socialAuthenticate(provider) {
+			$ionicLoading.show();
+			$auth.authenticate(provider).then(function(response) {
+				successfulAuthentication(response.data.user);
+			}).catch(function(err) {
+				$ionicLoading.hide();
+
+			}).finally(function() {
+				//$ionicLoading.hide();
+			});
+		}
+
+
+		function loadPostModal() {
+			$ionicModal.fromTemplateUrl('app/home/views/policy.html', {
+				scope: $scope
+			}).then(function(modal) {
+				$scope.modal = modal;
+				$scope.modal.show();
+			});
+		}
+
+
+		function authLogout() {
+			$auth.logout();
+			userData.removeUser();
+			$state.go('authenticate');
+		}
+	}
+
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.home')
+		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate','$rootScope',HomeController]);
+
+	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate,$rootScope) {
+		var hc = this;
+		hc.badgeValue = '';
+		hc.chatClicked = chatClicked;
+		/*
+			Code for hiding the header on scroll up and down
+		*/
+		$rootScope.slideHeader = false;
+  		$rootScope.slideHeaderPrevious = 0;
+		Socket.on("connect", function() {
+			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
+			Socket.on('newMessageReceived', messageReceived);
+		});
+
+		function messageReceived(message) {
+			var messageString = message.message;
+			if(message.type && message.type=='img'){
+				messageString = 'New image';
+			}
+			var userName = message.user.anonName||message.user.facebookName ||message.user.googleName ;
+			if (message.user._id == userData.getUser()._id) {
+
+			} else {
+				if ($state.current.name == 'chatBox') {
+
+					if ($state.params.user != message.user._id) {
+						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
+							allowHtml: true,
+							onTap: function() {
+								$state.go('chatBox', { user: message.user._id });
+							}
+						});
+					}
+				} else {
+					
+					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
+						allowHtml: true,
+						onTap: function() {
+							$state.go('chatBox', { user: message.user._id });
+						}
+					});
+					hc.badgeValue = 1;
+
+				}
+
+
+			}
+		}
+		hc.goForward = function() {
 			
-			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
+			var selected = $ionicTabsDelegate.selectedIndex();
+			if (selected != -1) {
+				if(selected===1){
+					$ionicTabsDelegate.select(selected + 2);	
+				}
+				else{
+					$ionicTabsDelegate.select(selected + 1);	
+				}
+				
+			}
+		};
+
+		hc.goBack = function() {
+
+			var selected = $ionicTabsDelegate.selectedIndex();
+			if (selected !== -1 && selected !== 0) {
+				if(selected===3){
+					$ionicTabsDelegate.select(selected - 2);
+				}
+				else{
+					$ionicTabsDelegate.select(selected - 1);
+				}
+			}
+		};
+
+		function chatClicked() {
+			hc.badgeValue = '';
+			//$state.go('home.chat.all');
 		}
-
-		function getChatMessages(chatRoomId,params) {
-			
-			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
-		}
-
-		function getChatRoom(user) {
-			
-			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
-
-		}
-		function getAllChatRooms(params) {
-			params.revealed = false;
-			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
-
-		}
-		function getRevealedChatRooms(params) {
-			params.revealed = true;
-			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
-
-		}
-		function updateChatRoom(id){
-			return $http.post(homeService.baseURL+'chatRoom/update/'+id);
-		}
-
-		
-
-
 	}
 })(window.angular);
 
 (function(angular){
-'use strict';
-angular.module('petal.chat').factory('Socket', ['socketFactory','homeService',SocketFactory]);
-    
-    function SocketFactory(socketFactory,homeService) {
-        return socketFactory({
-            prefix: '',
-            ioSocket: io.connect(homeService.baseURL)
-        });
-    }
+	'use strict';
+	angular.module('petal.home')
+		.service('homeService',['$http','Upload',HomeService]);
+
+		function HomeService($http,Upload){
+			//this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
+			this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
+			this.deleteUpload = deleteUpload;
+			this.submitUpload = submitUpload;
+			this.getImages = getImages;
+			var that = this;
+			function deleteUpload(id){
+				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
+			}
+			function getImages(imageText){
+				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
+			}
+			function submitUpload(file){
+				return Upload.upload({
+					url: that.baseURL + 'upload/singleUploadId',
+					data: { file: file }
+				});
+			}
+		}
+})(window.angular);
+(function(angular) {
+	'use strict';
+	
+		angular.module('petal.home')
+			.service('RequestsService', ['homeService', '$http', '$q', '$ionicLoading', '$cordovaPushV5', '$auth', RequestsService]);
+	
+
+	function RequestsService(homeService, $http, $q, $ionicLoading, $cordovaPushV5, $auth) {
+
+		var base_url = homeService.baseURL;
+
+		function register() {
+
+			var deferred = $q.defer();
+			
+			var options = {
+				android: {
+					senderID: "679461840115",
+					vibrate: "true"
+				},
+				browser:{
+
+				},
+				ios: {
+					alert: "true",
+					badge: "true",
+					sound: "true"
+				},
+				windows: {}
+			};
+			/*if(vibrate){
+				//options.android.vibrate = true;
+				//options.android.forceShow =true;
+			}*/
+			
+			$cordovaPushV5.initialize(options).then(function() {
+				// start listening for new notifications
+				$cordovaPushV5.onNotification(function(){
+					console.log("insideeee notification");
+					console.log(arguments);
+				});
+				// start listening for errors
+				$cordovaPushV5.onError();
+
+				// register to get registrationId
+				if ($auth.isAuthenticated()) {
+					$cordovaPushV5.register().then(function(registrationId) {
+						$http.post(base_url + 'notification/register', { 'device_token': registrationId })
+							.then(function(response) {
+								deferred.resolve(response);
+							})
+							.catch(function(data) {
+								deferred.reject(data);
+							}).finally(function() {
+								$ionicLoading.hide();
+							});
+					});
+				}
+
+			});
+
+
+			return deferred.promise;
+
+		}
+		function googleSignIn(profile){
+			return $http.post(base_url+'authenticate/auth/nativeGoogle', { profile: profile });
+		}
+		return {
+			googleSignIn: googleSignIn,
+			register: register
+		};
+	}
 
 })(window.angular);
+
 (function(angular){
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name authModApp.userData
+ * @description
+ * # userData
+ * Factory in the authModApp.
+ */
+angular.module('petal.home')
+  .factory('userData',['$window','$state','$auth','$http','homeService',userData]);
 
+  function userData($window,$state,$auth,$http,homeService) {
+    var storage = $window.localStorage;
+    var cachedUser={};
+    var obj1 =  {
+      setUser: function (user) {
+        
+        if(user){
+          storage.setItem('user',JSON.stringify(user));
+        }
+        else{
 
-angular.module('petal.chat')
-	.factory('SocketUserService', ['socketFactory','userData','homeService',socketFactoryFunction]);
-    function socketFactoryFunction(socketFactory,userData,homeService) {
-        return socketFactory({
-            prefix: '',
-            ioSocket: io.connect(homeService.baseURL+userData.getUser()._id)
-        });
-    }
+          var userId = $auth.getPayload().sub;
+          if(userId){
+            return $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
+              
+              /*if(obj1.isUserExists()){
+                  storage.removeItem('user');
+              }*/
+            
+              storage.setItem('user',JSON.stringify(res.data));
+            });
+          }
+        }
+        
+
+      },
+      getUser: function(){
+
+        return JSON.parse(storage.getItem('user'));
+      },
+      removeUser: function(){
+        cachedUser = null;
+        storage.removeItem('user');
+      },
+      isUserExists: function(){
+        if(obj1.getUser()){
+          return true;
+        }
+        return false;
+      }
+    };
+    return obj1;
+  }
 })(window.angular);
+
 (function(angular) {
 	'use strict';
 	angular.module('petal.chat')
@@ -991,561 +1469,83 @@ angular.module('petal.chat')
 
 (function(angular) {
 	'use strict';
+	angular.module('petal.chat')
+		.service('chatService', ['$http', '$stateParams', 'homeService', ReviewService]);
 
-	angular.module('petal.home')
-		.controller("AuthenticationController", ["$scope", "$auth", "$state", "userData", 'userLocationService', '$ionicLoading', 'RequestsService', '$ionicModal', AuthenticationController]);
+	function ReviewService($http, $stateParams, homeService) {
+		var rs = this;
+		rs.sendChatMessage = sendChatMessage;
+		rs.getChatMessages = getChatMessages;
+		rs.getChatRoom = getChatRoom;
+		rs.getAllChatRooms = getAllChatRooms;
+		rs.getRevealedChatRooms = getRevealedChatRooms;
+		rs.updateChatRoom = updateChatRoom;
+		rs.deleteChatRoom = deleteChatRoom;
 
-	function AuthenticationController($scope, $auth, $state, userData, userLocationService, $ionicLoading, RequestsService, $ionicModal) {
-		var phc = this;
-
-		phc.isAuth = $auth.isAuthenticated();
-		if (phc.isAuth) {
-			$state.go('home.post.all');
+		function deleteChatRoom(id){
+			return $http.post(homeService.baseURL + 'chatRoom/delete/' + id);
 		}
-		if (window.cordova) {
-			phc.webSignIn = true;
-		}
-		phc.authLogout = authLogout;
-		phc.loadPostModal = loadPostModal;
-
-
-		phc.socialAuthenticate = socialAuthenticate;
-		$scope.googleSignIn = function() {
-
-
-
-			$ionicLoading.show({
-				template: 'Logging in...'
-			});
-
-			window.plugins.googleplus.login({
-					webClientId: '792068565007-rdm7nrlfmc29jvlqo5l0tkgu6ci0vboa.apps.googleusercontent.com'
-
-				},
-				function(user_data) {
-					var profile = {};
-					profile.id = user_data.userId;
-					profile.displayName = user_data.displayName;
-					profile.imageUrl = user_data.imageUrl;
-					RequestsService.googleSignIn(profile)
-						.then(function(response) {
-							$auth.setToken(response.data.token);
-							successfulAuthentication(response.data.user);
-						}).catch(function(err) {
-							console.log("error");
-							console.log(err);
-							$ionicLoading.hide();
-						});
-
-				},
-				function(msg) {
-					alert("missed");
-					console.log(msg);
-					$ionicLoading.hide();
-				}
-			);
-		};
-		function successfulAuthentication(user) {
-			userData.setUser(user);
-			userLocationService.setUserLocation();
-			RequestsService.register();
-
-			if (user.device_token) {
-				$state.go('home.post.popular');
-			} else {
-				$state.go('home.userEditPage');
-			}
-		}
-
-		function socialAuthenticate(provider) {
-			$ionicLoading.show();
-			$auth.authenticate(provider).then(function(response) {
-				successfulAuthentication(response.data.user);
-			}).catch(function(err) {
-				$ionicLoading.hide();
-
-			}).finally(function() {
-				//$ionicLoading.hide();
-			});
-		}
-
-
-		function loadPostModal() {
-			$ionicModal.fromTemplateUrl('app/home/views/policy.html', {
-				scope: $scope
-			}).then(function(modal) {
-				$scope.modal = modal;
-				$scope.modal.show();
-			});
-		}
-
-
-		function authLogout() {
-			$auth.logout();
-			userData.removeUser();
-			$state.go('authenticate');
-		}
-	}
-
-
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	angular.module('petal.home')
-		.controller('HomeController', ['$scope', '$state', 'userData', 'Socket', 'toastr', '$ionicTabsDelegate','$rootScope',HomeController]);
-
-	function HomeController($scope, $state, userData, Socket, toastr,$ionicTabsDelegate,$rootScope) {
-		var hc = this;
-		hc.badgeValue = '';
-		hc.chatClicked = chatClicked;
-		/*
-			Code for hiding the header on scroll up and down
-		*/
-		$rootScope.slideHeader = false;
-  		$rootScope.slideHeaderPrevious = 0;
-		Socket.on("connect", function() {
-			Socket.emit('addToSingleRoom', { 'roomId': userData.getUser()._id });
-			Socket.on('newMessageReceived', messageReceived);
-		});
-
-		function messageReceived(message) {
-			var messageString = message.message;
-			if(message.type && message.type=='img'){
-				messageString = 'New image';
-			}
-			var userName = message.user.anonName||message.user.facebookName ||message.user.googleName ;
-			if (message.user._id == userData.getUser()._id) {
-
-			} else {
-				if ($state.current.name == 'chatBox') {
-
-					if ($state.params.user != message.user._id) {
-						toastr.info('<p>' + userName+ '</p><p>' + messageString + '</p>', {
-							allowHtml: true,
-							onTap: function() {
-								$state.go('chatBox', { user: message.user._id });
-							}
-						});
-					}
-				} else {
-					
-					toastr.info('<p>' + userName + '</p><p>' + messageString + '</p>', {
-						allowHtml: true,
-						onTap: function() {
-							$state.go('chatBox', { user: message.user._id });
-						}
-					});
-					hc.badgeValue = 1;
-
-				}
-
-
-			}
-		}
-		hc.goForward = function() {
+		function sendChatMessage(chat) {
 			
-			var selected = $ionicTabsDelegate.selectedIndex();
-			if (selected != -1) {
-				if(selected===1){
-					$ionicTabsDelegate.select(selected + 2);	
-				}
-				else{
-					$ionicTabsDelegate.select(selected + 1);	
-				}
-				
-			}
-		};
-
-		hc.goBack = function() {
-
-			var selected = $ionicTabsDelegate.selectedIndex();
-			if (selected !== -1 && selected !== 0) {
-				if(selected===3){
-					$ionicTabsDelegate.select(selected - 2);
-				}
-				else{
-					$ionicTabsDelegate.select(selected - 1);
-				}
-			}
-		};
-
-		function chatClicked() {
-			hc.badgeValue = '';
-			//$state.go('home.chat.all');
+			return $http.post(homeService.baseURL + 'chat/create/' + chat.roomId, chat);
 		}
-	}
-})(window.angular);
 
-(function(angular) {
-	'use strict';
-	angular.module('petal.home')
-		.directive('distanceView', ['postService', '$timeout', function(postService, $timeout) {
-			return {
-				restrict: 'E',
-				templateUrl: 'app/home/views/distanceViewTemplate.html',
-				scope: {
-					positionCords: '='
-				},
-				replace: true,
-				link: function(scope) {
-					$timeout(getDistance, 1000);
-
-					function getDistance() {
-						if (scope.positionCords) {
-							scope.distanceObj = {
-								latitude: scope.positionCords[1],
-								longitude: scope.positionCords[0],
-
-							};
-							postService.getDistance(scope.distanceObj).then(function(res) {
-								scope.distanceObj.distance = res + ' mi';
-							}).catch(function(err) {
-								scope.distanceObj.distance = '';
-							});
-						} else {
-							scope.distanceObj = {};
-							scope.distanceObj.distance = '';
-						}
-					}
-
-
-				}
-			};
-		}])
-		.directive('ionicCustomSpinner',[ionicCustomSpinner]);
-
-		function ionicCustomSpinner(){
-			return {
-				templateUrl: 'app/home/views/ionicCustomSpinner.html'
-			};
-		}
-		/*.directive('expandingTextarea', [function() {
-			return {
-				restrict: 'A',
-				controller: function($scope, $element, $attrs, $timeout) {
-					$element.css('min-height', '0');
-					$element.css('resize', 'none');
-					$element.css('overflow-y', 'hidden');
-					setHeight(0);
-					$timeout(setHeightToScrollHeight);
-
-					function setHeight(height) {
-						$element.css('height', height + 'px');
-						$element.css('max-height', height + 'px');
-					}
-
-					function setHeightToScrollHeight() {
-						setHeight(0);
-						var scrollHeight = angular.element($element)[0]
-							.scrollHeight;
-						if (scrollHeight !== undefined) {
-							setHeight(scrollHeight);
-						}
-					}
-
-					$scope.$watch(function() {
-						return angular.element($element)[0].value;
-					}, setHeightToScrollHeight);
-				}
-			};
-		}])*/
-})(window.angular);
-
-(function(angular) {
-	'use strict';
-	var imageModal = function($ionicModal) {
-		return {
-			restrict: 'A',
-			scope: {
-
-				imageModal: '@'
-			},
-			link: function($scope, elem) {
-
-				function showImageModal(image) {
-					loadModal().then(function() {
-						$scope.currentImage = image;
-						$scope.modal.show();
-					});
-
-				}
-
-				function loadModal() {
-					return $ionicModal.fromTemplateUrl('app/chat/views/chatImageModal.html', {
-						scope: $scope
-					}).then(function(modal) {
-						$scope.modal = modal;
-					});
-				}
-				elem.bind('click', function(event) {
-					showImageModal($scope.imageModal);
-					event.stopPropagation();
-				});
-			}
-		};
-
-	};
-	angular.module('petal.home').directive('keepScroll', [
-		'$state', '$timeout', 'ScrollPositions', '$ionicScrollDelegate',
-		function($state, $timeout, ScrollPositions, $ionicScrollDelegate) {
-			return {
-				restrict: 'A',
-				link: function(scope) {
-					scope.$on('$stateChangeStart', function() {
-						ScrollPositions[$state.current.name] = $ionicScrollDelegate.getScrollPosition();
-
-					});
-					$timeout(function() {
-						var offset;
-						offset = ScrollPositions[$state.current.name];
-						if (offset) {
-							$ionicScrollDelegate.scrollTo(offset.left, offset.top);
-						}
-					});
-				}
-			};
-		}
-	]).factory('ScrollPositions', [
-		function() {
-			return {};
-		}
-	]).directive('isFocused', ['$timeout', function($timeout) {
-		return {
-			scope: { trigger: '@isFocused' },
-			link: function(scope, element) {
-
-				scope.$watch('trigger', function(value) {
-
-					if (value === 'true') {
-						$timeout(function() {
-							element[0].focus();
-
-							element.on('blur', function() {
-								//alert("hello");
-								element[0].focus();
-							});
-						});
-					}
-
-				});
-			}
-		};
-	}]).directive('lazyImg', function() {
-		return {
-			/*     <lazy-img src-large="http://youbaku.com/uploads/places_images/large/{{img}}" src-small="http://youbaku.com/athumb.php?file={{img}}&small" />
-			 */
-			replace: true,
-			template: '<div class="lazy-img"><div class="sm"><img src="{{imgSmall}}" class="small"/></div><div style="padding-bottom: 75%;"></div><img src="{{imgLarge}}" class="large"/></div>',
-			scope: {
-				imgLarge: '@srcLarge',
-				imgSmall: '@srcSmall'
-			},
-
-			link: function(scope, elem) {
-				var imgSmall = new Image();
-				var imgLarge = new Image();
-				imgSmall.src = scope.imgSmall;
-				imgSmall.onload = function() {
-					elem.children('.sm').find('img').css('opacity', '1');
-					imgLarge.src = scope.imgLarge;
-					imgLarge.onload = function() {
-						elem.find('img').css('opacity', '1');
-					};
-				};
-			}
-		};
-	}).directive('imageModal', ['$ionicModal', imageModal])
-	.directive('watchScroll',['$rootScope',watchScroll]);
-
-	function watchScroll($rootScope){
-		return {
-			restrict: 'A',
-			link: function(scope,elem){
-
-				var start = 0;
-				var threshold = 150;
-				elem.bind('scroll',function(e){
-					
-					var scrollTop = e.srcElement.scrollTop;
-					if(scrollTop-start > threshold){
-						$rootScope.slideHeader = true;
-					}else{
-						$rootScope.slideHeader = false;
-					}
-					if($rootScope.slideHeaderPrevious > scrollTop - start){
-						$rootScope.slideHeader = false;
-					}
-					$rootScope.slideHeaderPrevious = scrollTop - start;
-					$rootScope.$apply();
-				});
-			}
-		};
-	}
-
-
-})(window.angular);
-
-(function(angular){
-	'use strict';
-	angular.module('petal.home')
-		.service('homeService',['$http','Upload',HomeService]);
-
-		function HomeService($http,Upload){
-			this.baseURL = 'https://petalchat-imanjithreddy.c9users.io/';
-			//this.baseURL = 'https://banana-surprise-31332.herokuapp.com/';
-			this.deleteUpload = deleteUpload;
-			this.submitUpload = submitUpload;
-			this.getImages = getImages;
-			var that = this;
-			function deleteUpload(id){
-				return $http.post(that.baseURL+'upload/deleteUpload', {'data' : {'public_id':id}} );
-			}
-			function getImages(imageText){
-				return $http.get(that.baseURL+'upload/getImages',{params:{imageText:imageText}});
-			}
-			function submitUpload(file){
-				return Upload.upload({
-					url: that.baseURL + 'upload/singleUploadId',
-					data: { file: file }
-				});
-			}
-		}
-})(window.angular);
-(function(angular) {
-	'use strict';
-	
-		angular.module('petal.home')
-			.service('RequestsService', ['homeService', '$http', '$q', '$ionicLoading', '$cordovaPushV5', '$auth', RequestsService]);
-	
-
-	function RequestsService(homeService, $http, $q, $ionicLoading, $cordovaPushV5, $auth) {
-
-		var base_url = homeService.baseURL;
-
-		function register() {
-
-			var deferred = $q.defer();
+		function getChatMessages(chatRoomId,params) {
 			
-			var options = {
-				android: {
-					senderID: "679461840115",
-					vibrate: "true"
-				},
-				browser:{
+			return $http.get(homeService.baseURL + 'chat/getChats/' + chatRoomId,{params:params});
+		}
 
-				},
-				ios: {
-					alert: "true",
-					badge: "true",
-					sound: "true"
-				},
-				windows: {}
-			};
-			/*if(vibrate){
-				//options.android.vibrate = true;
-				//options.android.forceShow =true;
-			}*/
+		function getChatRoom(user) {
 			
-			$cordovaPushV5.initialize(options).then(function() {
-				// start listening for new notifications
-				$cordovaPushV5.onNotification(function(){
-					console.log("insideeee notification");
-					console.log(arguments);
-				});
-				// start listening for errors
-				$cordovaPushV5.onError();
-
-				// register to get registrationId
-				if ($auth.isAuthenticated()) {
-					$cordovaPushV5.register().then(function(registrationId) {
-						$http.post(base_url + 'notification/register', { 'device_token': registrationId })
-							.then(function(response) {
-								deferred.resolve(response);
-							})
-							.catch(function(data) {
-								deferred.reject(data);
-							}).finally(function() {
-								$ionicLoading.hide();
-							});
-					});
-				}
-
-			});
-
-
-			return deferred.promise;
+			return $http.get(homeService.baseURL + 'chatRoom/get/' + user);
 
 		}
-		function googleSignIn(profile){
-			return $http.post(base_url+'authenticate/auth/nativeGoogle', { profile: profile });
+		function getAllChatRooms(params) {
+			params.revealed = false;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
 		}
-		return {
-			googleSignIn: googleSignIn,
-			register: register
-		};
+		function getRevealedChatRooms(params) {
+			params.revealed = true;
+			return $http.get(homeService.baseURL + 'chatRoom/all/',{params:params});
+
+		}
+		function updateChatRoom(id){
+			return $http.post(homeService.baseURL+'chatRoom/update/'+id);
+		}
+
+		
+
+
 	}
-
 })(window.angular);
 
 (function(angular){
 'use strict';
+angular.module('petal.chat').factory('Socket', ['socketFactory','homeService',SocketFactory]);
+    
+    function SocketFactory(socketFactory,homeService) {
+        return socketFactory({
+            prefix: '',
+            ioSocket: io.connect(homeService.baseURL)
+        });
+    }
 
-/**
- * @ngdoc service
- * @name authModApp.userData
- * @description
- * # userData
- * Factory in the authModApp.
- */
-angular.module('petal.home')
-  .factory('userData',['$window','$state','$auth','$http','homeService',userData]);
-
-  function userData($window,$state,$auth,$http,homeService) {
-    var storage = $window.localStorage;
-    var cachedUser={};
-    var obj1 =  {
-      setUser: function (user) {
-        
-        if(user){
-          storage.setItem('user',JSON.stringify(user));
-        }
-        else{
-
-          var userId = $auth.getPayload().sub;
-          if(userId){
-            return $http.get(homeService.baseURL+'user/get/'+userId).then(function(res){
-              
-              /*if(obj1.isUserExists()){
-                  storage.removeItem('user');
-              }*/
-            
-              storage.setItem('user',JSON.stringify(res.data));
-            });
-          }
-        }
-        
-
-      },
-      getUser: function(){
-
-        return JSON.parse(storage.getItem('user'));
-      },
-      removeUser: function(){
-        cachedUser = null;
-        storage.removeItem('user');
-      },
-      isUserExists: function(){
-        if(obj1.getUser()){
-          return true;
-        }
-        return false;
-      }
-    };
-    return obj1;
-  }
 })(window.angular);
+(function(angular){
+'use strict';
 
+
+
+angular.module('petal.chat')
+	.factory('SocketUserService', ['socketFactory','userData','homeService',socketFactoryFunction]);
+    function socketFactoryFunction(socketFactory,userData,homeService) {
+        return socketFactory({
+            prefix: '',
+            ioSocket: io.connect(homeService.baseURL+userData.getUser()._id)
+        });
+    }
+})(window.angular);
 (function(angular) {
 	'use strict';
 	angular.module('petal.message')
@@ -1855,6 +1855,88 @@ angular.module('petal.home')
 
 (function(angular) {
 	'use strict';
+	var messageRoomModule = angular.module('petal.message');
+	messageRoomModule.directive('messageRoomListModal', ['$rootScope','$ionicModal', 'messageRoomService',messageRoomListModal]);
+
+	function messageRoomListModal($rootScope,$ionicModal, messageRoomService) {
+		return {
+			restrict: 'A',
+			scope: {
+				messageRoomListModal: '@'
+			},
+			link: function(scope, elem) {
+				
+				scope.messageRoomListData = {};
+				scope.messageRoomListData.messageRoomsList = [];
+				scope.modalsList = [];
+				scope.clickMessageRoomSearch = clickMessageRoomSearch;
+				scope.showMessageRoomModal = function() {
+					loadMessageRoomModal().then(function() {
+						scope.modal.show();
+						
+					});
+					scope.$on('modal.hidden', function() {
+
+						scope.modal.remove();
+					});
+				};
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
+				scope.getMessageRooms = function(params) {
+					
+					messageRoomService.getAllMessageRooms(params).then(function(response) {
+						scope.messageRoomListData.messageRoomsList = [];
+						angular.forEach(response.data.docs, function(value) {
+							scope.messageRoomListData.messageRoomsList.push(value);
+						});
+						scope.messageRoomListData.noMessageRooms = !response.data.total;
+						scope.messageRoomListData.initialSearchCompleted = true;
+						if (response.data.total > scope.messageRoomListData.messageRoomsList.length) {
+							scope.messageRoomListData.canLoadMoreResults = true;
+						} else {
+							scope.messageRoomListData.canLoadMoreResults = false;
+						}
+					});
+				};
+				function clickMessageRoomSearch(){
+					scope.messageRoomListData.messageRoomsList = [];
+					var params = {
+						interest: scope.messageRoomListData.messageRoomSearchModal ,
+						page: 1,
+						limit: 50
+					};
+					scope.getMessageRooms(params);
+				}
+				function loadMessageRoomModal() {
+					return $ionicModal.fromTemplateUrl('app/message/views/messageRoomListModal.html', {
+						scope: scope
+					}).then(function(modal) {
+						scope.modal = modal;
+						
+					});
+				}
+				elem.bind('click', function(event) {
+					var params = {
+						page: 1,
+						limit: 50
+					};
+					scope.showMessageRoomModal();
+					event.stopPropagation();
+					scope.getMessageRooms(params);
+				});
+			}
+		};
+
+	}
+
+})(window.angular);
+
+(function(angular) {
+	'use strict';
 	angular.module('petal.message')
 		.directive('messageRoomSettings', ['messageRoomService', '$ionicPopover','$window',messageRoomSettings]);
 
@@ -1895,6 +1977,59 @@ angular.module('petal.home')
 
 			}
 		};
+	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	angular.module('petal.message')
+		.service('messageRoomService', ['$http', '$stateParams', 'homeService', MessageRoomService]);
+
+	function MessageRoomService($http, $stateParams, homeService) {
+		var rs = this;
+		rs.sendMessage = sendMessage;
+		rs.getMessages = getMessages;
+		rs.getMessageRoom = getMessageRoom;
+		rs.createMessageRoom = createMessageRoom;
+		rs.getMessageRooms = getMessageRooms;
+		rs.leaveMessageRoom = leaveMessageRoom;
+		rs.getAllMessageRooms = getAllMessageRooms;
+		
+		function sendMessage(message) {
+			
+			return $http.post(homeService.baseURL + 'message/create/' + message.roomId, message);
+		}
+
+		function getMessages(messageRoomId,params) {
+			
+			return $http.get(homeService.baseURL + 'message/getMessages/' + messageRoomId,{params:params});
+		}
+
+		function getMessageRoom(params) {
+			
+			return $http.get(homeService.baseURL + 'messageRoom/getRoom/',{params:params} );
+
+		}
+		function createMessageRoom(messageRoom){
+			return $http.post(homeService.baseURL + 'messageRoom/createRoom' , {messageRoom:messageRoom});	
+		}
+		function leaveMessageRoom(messageRoomId) {
+			
+			return $http.post(homeService.baseURL + 'messageRoom/leaveRoom/',{messageRoomId:messageRoomId} );
+
+		}
+		function getMessageRooms() {
+			
+			return $http.get(homeService.baseURL + 'messageRoom/getRooms/' );
+
+		}
+		function getAllMessageRooms(params){
+			return $http.get(homeService.baseURL+'messageRoom/getAllRooms',{params:params});
+		}
+		
+		
+
+
 	}
 })(window.angular);
 
@@ -2236,55 +2371,6 @@ angular.module('petal.home')
 
 (function(angular) {
 	'use strict';
-	angular.module('petal.message')
-		.service('messageRoomService', ['$http', '$stateParams', 'homeService', MessageRoomService]);
-
-	function MessageRoomService($http, $stateParams, homeService) {
-		var rs = this;
-		rs.sendMessage = sendMessage;
-		rs.getMessages = getMessages;
-		rs.getMessageRoom = getMessageRoom;
-		rs.createMessageRoom = createMessageRoom;
-		rs.getMessageRooms = getMessageRooms;
-		rs.leaveMessageRoom = leaveMessageRoom;
-		
-		function sendMessage(message) {
-			
-			return $http.post(homeService.baseURL + 'message/create/' + message.roomId, message);
-		}
-
-		function getMessages(messageRoomId,params) {
-			
-			return $http.get(homeService.baseURL + 'message/getMessages/' + messageRoomId,{params:params});
-		}
-
-		function getMessageRoom(params) {
-			
-			return $http.get(homeService.baseURL + 'messageRoom/getRoom/',{params:params} );
-
-		}
-		function createMessageRoom(messageRoom){
-			return $http.post(homeService.baseURL + 'messageRoom/createRoom' , {messageRoom:messageRoom});	
-		}
-		function leaveMessageRoom(messageRoomId) {
-			
-			return $http.post(homeService.baseURL + 'messageRoom/leaveRoom/',{messageRoomId:messageRoomId} );
-
-		}
-		function getMessageRooms() {
-			
-			return $http.get(homeService.baseURL + 'messageRoom/getRooms/' );
-
-		}
-		
-		
-
-
-	}
-})(window.angular);
-
-(function(angular) {
-	'use strict';
 	angular.module('petal.people')
 		.directive('peopleList', [ 'userData',peopleList]);
 
@@ -2316,6 +2402,89 @@ angular.module('petal.home')
 			}]
 		};
 	}
+})(window.angular);
+
+(function(angular) {
+	'use strict';
+	var peopleModule = angular.module('petal.people');
+	peopleModule.directive('peopleSearchModal', ['$rootScope','$ionicModal', 'peopleService',peopleSearchModal]);
+
+	function peopleSearchModal($rootScope,$ionicModal, peopleService) {
+		return {
+			restrict: 'A',
+			scope: {
+				peopleSearchModal: '@'
+			},
+			link: function(scope, elem) {
+				
+				scope.peopleSearchData = {};
+				scope.peopleSearchData.peopleSearchModal = scope.peopleSearchModal;
+				scope.peopleSearchData.peopleList = [];
+				scope.modalsList = [];
+				scope.clickPeopleSearch = clickPeopleSearch;
+				scope.showPeopleModal = function() {
+					loadPeopleModal().then(function() {
+						scope.modal.show();
+						
+					});
+					scope.$on('modal.hidden', function() {
+
+						scope.modal.remove();
+					});
+				};
+				$rootScope.$on('$stateChangeStart', function() {
+					if(scope.modal){
+						scope.modal.remove();	
+					}
+   					
+				});
+				scope.getPeople = function(params) {
+					peopleService.getAllUsers(params).then(function(response) {
+						
+						angular.forEach(response.data.docs, function(value) {
+							scope.peopleSearchData.peopleList.push(value);
+						});
+						scope.peopleSearchData.noPeople = !response.data.total;
+						scope.peopleSearchData.initialSearchCompleted = true;
+						if (response.data.total > scope.peopleSearchData.peopleList.length) {
+							scope.peopleSearchData.canLoadMoreResults = true;
+						} else {
+							scope.peopleSearchData.canLoadMoreResults = false;
+						}
+					});
+				};
+				function clickPeopleSearch(){
+					scope.peopleSearchData.peopleList = [];
+					var params = {
+						interest: scope.peopleSearchData.peopleSearchModal ,
+						page: 1,
+						limit: 50
+					};
+					scope.getPeople(params);
+				}
+				function loadPeopleModal() {
+					return $ionicModal.fromTemplateUrl('app/people/views/peopleSearchModal.html', {
+						scope: scope
+					}).then(function(modal) {
+						scope.modal = modal;
+						
+					});
+				}
+				elem.bind('click', function(event) {
+					var params = {
+						interest: scope.peopleSearchData.peopleSearchModal ,
+						page: 1,
+						limit: 50
+					};
+					scope.showPeopleModal();
+					event.stopPropagation();
+					scope.getPeople(params);
+				});
+			}
+		};
+
+	}
+
 })(window.angular);
 
 (function(angular) {
@@ -3280,10 +3449,15 @@ angular.module('petal.home')
 (function(angular){
 	'use strict';
 	angular.module('petal.post')
-		.controller('PostParentController',['$rootScope',PostParentController]);
+		.controller('PostParentController',[PostParentController]);
 
-	function PostParentController($rootScope){
+	function PostParentController(){
+		var ppc = this;
 		//$rootScope.slideHeader = true;
+		ppc.fabContainerShown = false;
+		ppc.showFabContainer = function(){
+			ppc.fabContainerShown = !ppc.fabContainerShown ;
+		};
 	}
 })(window.angular);
 (function(angular) {
@@ -3605,130 +3779,134 @@ angular.module('petal.home')
 })(window.angular);
 
 (function(angular) {
-	'use strict';
-	angular.module('petal.post').
-	service('postService', ['$http', 'homeService', 'userLocationService', '$q', PostService]);
+'use strict';
+angular.module('petal.post').
+service('postService', ['$http', 'homeService', 'userLocationService' ,'$q', PostService]);
 
 
-	function PostService($http, homeService, userLocationService, $q) {
-		this.getAllPosts = getAllPosts;
-		this.getNearbyPosts = getNearbyPosts;
-		this.getLatestPosts = getLatestPosts;
-		this.getPopularPosts = getPopularPosts;
-		this.submitPost = submitPost;
-		this.deletePost = deletePost;
-		this.getPost = getPost;
-		this.getDistance = getDistance;
+function PostService($http, homeService, userLocationService, $q) {
+	this.getAllPosts = getAllPosts;
+	this.getNearbyPosts = getNearbyPosts;
+	this.getLatestPosts = getLatestPosts;
+	this.getPopularPosts = getPopularPosts;
+	this.submitPost = submitPost;
+	this.deletePost = deletePost;
+	this.getPost = getPost;
+	this.getDistance = getDistance;
 
-		function getAllPosts(params) {
-			
+	
+	function getAllPosts(params) {
+		
 			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
-		}
-		function getFilteredPosts(defer,params){
+		
+		
+	}
+	function getFilteredPosts(defer,params){
+		$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
+				console.log("without position");
+				defer.resolve(posts);
+			}).catch(function(err2) {
+				defer.reject(err2);
+			});
+	}
+	function getNearbyPosts(params) {
+		params.nearby = true;
+		var defer = $q.defer();
+		
+		if(params.page==1){
+			userLocationService.setUserLocation();
+			}
+			
+		userLocationService.getUserLocation().then(function(position) {
+			params.latitude = position.latitude;
+			params.longitude = position.longitude;
 			$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
-					console.log("without position");
-					defer.resolve(posts);
-				}).catch(function(err2) {
-					defer.reject(err2);
-				});
-		}
-		function getNearbyPosts(params) {
-			params.nearby = true;
-			var defer = $q.defer();
-			
-			if(params.page==1){
-				userLocationService.setUserLocation();
-      			}
-      			
-			userLocationService.getUserLocation().then(function(position) {
-				params.latitude = position.latitude;
-				params.longitude = position.longitude;
-				$http.get(homeService.baseURL + "post/getPosts", { params: params }).then(function(posts) {
-					defer.resolve(posts);
-				}).catch(function(err) {
-					defer.reject(err);
-				});
+				defer.resolve(posts);
 			}).catch(function(err) {
-				window.console.log(err);
-				getFilteredPosts(defer,params);
+				defer.reject(err);
 			});
+		}).catch(function(err) {
+			window.console.log(err);
+			getFilteredPosts(defer,params);
+		});
 
-			return defer.promise;
-
-		}
-
-		function getLatestPosts(params) {
-			params.sort = '-time';
-			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
-		}
-
-		function getPopularPosts(params) {
-			params.sort = '-upvotesLength';
-			return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
-		}
-
-		function submitPost(post) {
-			var defer = $q.defer();
-			console.log("entered submit post");
-			userLocationService.getUserLocation().then(function(position) {
-				post.latitude = position.latitude;
-				post.longitude = position.longitude;
-
-				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
-
-					defer.resolve(response);
-				}).catch(function(err) {
-					defer.reject(err);
-				});
-			}).catch(function(err) {
-				$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
-				
-					defer.resolve(response);
-				}).catch(function(err2) {
-					defer.reject(err2);
-				});
-			});
-			return defer.promise;
-		}
-
-		function deletePost(postId) {
-			return $http.delete(homeService.baseURL + 'post/delete/' + postId);
-		}
-
-		function getPost(postId) {
-			return $http.get(homeService.baseURL + 'post/get/' + postId);
-		}
-
-		function getDistance(posObj) {
-			var defer = $q.defer();
-			var lat1 = posObj.latitude;
-			var lon1 = posObj.longitude;
-			userLocationService.getUserLocation().then(function(position) {
-				var lat2 = position.latitude;
-				var lon2 = position.longitude;
-				var R = 6371; // Radius of the earth in km
-				var dLat = deg2rad(lat2 - lat1); // deg2rad below
-				var dLon = deg2rad(lon2 - lon1);
-				var a =
-					Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-					Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-					Math.sin(dLon / 2) * Math.sin(dLon / 2);
-				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-				var d = R * c; // Distance in km
-			
-				defer.resolve(Math.ceil(d));
-			}).catch(function(err) {
-				console.log(err);
-			});
-			return defer.promise;
-
-		}
-
-		function deg2rad(deg) {
-			return deg * (Math.PI / 180);
-		}
+		return defer.promise;
 
 	}
+
+	function getLatestPosts(params) {
+		params.sort = '-time';
+		
+
+		return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
+	}
+
+	function getPopularPosts(params) {
+		params.sort = '-upvotesLength';
+		return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
+	}
+
+	function submitPost(post) {
+		var defer = $q.defer();
+		userLocationService.getUserLocation().then(function(position) {
+			post.latitude = position.latitude;
+			post.longitude = position.longitude;
+
+			$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
+
+				defer.resolve(response);
+			}).catch(function(err) {
+				defer.reject(err);
+			});
+		}).catch(function(err) {
+			$http.post(homeService.baseURL + 'post/create', { post: post }).then(function(response) {
+			
+				defer.resolve(response);
+			}).catch(function(err2) {
+				defer.reject(err2);
+			});
+		});
+		return defer.promise;
+	}
+
+	function deletePost(postId) {
+		return $http.delete(homeService.baseURL + 'post/delete/' + postId);
+	}
+
+	function getPost(postId) {
+		return $http.get(homeService.baseURL + 'post/get/' + postId);
+	}
+
+	function getDistance(posObj) {
+		var defer = $q.defer();
+		var lat1 = posObj.latitude;
+		var lon1 = posObj.longitude;
+		userLocationService.getUserLocation().then(function(position) {
+			var lat2 = position.latitude;
+			var lon2 = position.longitude;
+			var R = 6371; // Radius of the earth in km
+			var dLat = deg2rad(lat2 - lat1); // deg2rad below
+			var dLon = deg2rad(lon2 - lon1);
+			var a =
+				Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+				Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+				Math.sin(dLon / 2) * Math.sin(dLon / 2);
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+			var d = R * c; // Distance in km
+		
+			defer.resolve(Math.ceil(d));
+		}).catch(function(err) {
+			console.log(err);
+		});
+		return defer.promise;
+
+	}
+
+	function deg2rad(deg) {
+		return deg * (Math.PI / 180);
+	}
+
+}
 })(window.angular);
 
 (function(angular) {

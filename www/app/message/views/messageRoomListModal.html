@@ -1,0 +1,34 @@
+<ion-modal-view cache-view="false">
+        <ion-header-bar class="bar bar-header bar-positive item-input-inset">
+                <button class="button button-icon ion-arrow-left-c icon " ng-click="modal.hide()"></button>
+                <label class="item-input-wrapper">
+                        <i class="icon ion-ios-search placeholder-icon"></i>
+                        <input type="search" placeholder="Search" ng-model="messageRoomListData.messageRoomSearchModal">
+                </label>
+                <button class="button button-clear" ng-disabled="!messageRoomListData.messageRoomSearchModal" ng-click="clickMessageRoomSearch()">
+                        Search
+                </button>
+        </ion-header-bar>
+        <ion-content class="has-header">
+                <div ng-if="messageRoomListData.noMessageRooms">
+                        <h1 class="noMessageRoomsHeader">No messageRooms available</h1>
+                </div>
+                <ion-list>
+                                <ion-item ng-repeat="messageRoom in messageRoomListData.messageRoomsList track by $index">
+                                        <div class="row">
+                                                <div class="col col-80">
+                                                        <h3>#{{messageRoom.interest}}</h3>                
+                                                </div>
+                                                <div class="col">
+                                                        <a  ui-sref="messageRoom({roomId:messageRoom._id})" class="chatRoomJoinButton">
+                                                JOIN
+                                        </a>                                        
+                                                </div>
+                                        </div>
+                                        
+                                        
+                                </ion-item>
+                        </ion-list>
+                
+        </ion-content>
+</ion-modal-view>

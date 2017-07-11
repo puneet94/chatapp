@@ -11,6 +11,7 @@
 		rs.createMessageRoom = createMessageRoom;
 		rs.getMessageRooms = getMessageRooms;
 		rs.leaveMessageRoom = leaveMessageRoom;
+		rs.getAllMessageRooms = getAllMessageRooms;
 		
 		function sendMessage(message) {
 			
@@ -39,6 +40,9 @@
 			
 			return $http.get(homeService.baseURL + 'messageRoom/getRooms/' );
 
+		}
+		function getAllMessageRooms(params){
+			return $http.get(homeService.baseURL+'messageRoom/getAllRooms',{params:params});
 		}
 		
 		

@@ -8,6 +8,14 @@
                         <!--<div class=" col ripple col-20 columnCustom " ui-sref="home.post.all" ui-sref-active="columnCustomActive"><h5 class="customTabHeading">All</h5></div>-->
                 </div>
         </ion-header-bar>
+        <div class="postFabContainer" >
+            <button ng-if="ppc.fabContainerShown" class="button1 button  icon-right ion-plus-round button-clear button-assertive" ui-sref="postSubmit">Create Post</button>
+            <button ng-if="ppc.fabContainerShown" class="button2 button  icon-right ion-ios-search-strong button-clear button-positive" post-search-modal>Search Posts</button>
+            
+        </div>
+        <button class="button createMessageRoomButton" ng-click="ppc.showFabContainer()">
+            <i class="ion-android-list"></i>
+        </button>
         <ion-nav-view  name="post-tab" animation="slide-left-right">
           Loading
         </ion-nav-view>
