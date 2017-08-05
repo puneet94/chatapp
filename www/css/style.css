@@ -57,223 +57,6 @@
   max-height: 45px;
   border: 1px solid #eee; }
 
-.randomImagesList {
-  height: 100px;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  width: 100%;
-  white-space: nowrap; }
-  .randomImagesList .randomImage {
-    height: 100%;
-    margin-right: 2px;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    filter: contrast(120%);
-    min-width: 100px; }
-
-.chatRoomJoinButton {
-  padding: 7px 15px;
-  border: 2px solid #387ef5;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1.4px; }
-
-.postModalContent {
-  border: none;
-  padding: 0; }
-  .postModalContent .postAvatarContent {
-    border: none;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0; }
-    .postModalContent .postAvatarContent img {
-      border-radius: 5px; }
-  .postModalContent .postModalBodyContainer {
-    border: none;
-    padding-top: 5px; }
-  .postModalContent .postModalInterests {
-    border-bottom: 1px solid #ddd;
-    margin: -16px;
-    padding: 10px;
-    padding-left: 16px;
-    margin-bottom: 10px;
-    font-size: 13px; }
-  .postModalContent .postModalBody {
-    font-size: 16px;
-    margin-top: 0;
-    padding-left: 10px;
-    color: rgba(0, 0, 0, 0.8);
-    line-height: 1.70 !important;
-    letter-spacing: 0.02em; }
-  .postModalContent .postModalInfo .infoValue {
-    font-size: 14px;
-    padding-left: 2px; }
-  .postModalContent .postModalInfo .icon {
-    font-size: 20px; }
-  .postModalContent .postUpvote {
-    color: red; }
-  .postModalContent .postUpvoted {
-    color: red; }
-
-.heartBeatAnimation {
-  animation: heartbeat 3s infinite; }
-
-@keyframes heartbeat {
-  0% {
-    transform: scale(0.95); }
-  20% {
-    transform: scale(1); }
-  40% {
-    transform: scale(0.95); }
-  60% {
-    transform: scale(1); }
-  80% {
-    transform: scale(0.95); }
-  100% {
-    transform: scale(0.95); } }
-
-.imageGray {
-  -moz-filter: contrast(120%);
-  -ms-filter: contrast(120%);
-  -o-filter: contrast(120%);
-  filter: contrast(120%); }
-
-a {
-  text-decoration: none; }
-
-.buttonSearch {
-  padding-top: 10px; }
-
-.postTag {
-  margin-right: 5px;
-  color: blue; }
-
-.postTabs {
-  color: black; }
-
-.tagContent, .postUserName {
-  padding-left: 5px; }
-
-.singlePostContainer {
-  padding-left: 0px;
-  padding-bottom: 0px;
-  border-bottom: 1px solid #ddd;
-  margin: 0; }
-  .singlePostContainer .postUserName a {
-    font-size: 17px; }
-  .singlePostContainer .postUserImage {
-    max-width: 50px !important;
-    max-height: 45px !important;
-    border-radius: 5px !important; }
-  .singlePostContainer .postTag {
-    color: rgba(0, 0, 0, 0.5);
-    margin-right: 5px; }
-  .singlePostContainer .tagContent {
-    margin-top: 5px;
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.6); }
-  .singlePostContainer .postInfo {
-    padding-top: 15px;
-    padding-bottom: 0; }
-    .singlePostContainer .postInfo .infoValue {
-      margin-left: 2px;
-      color: black;
-      font-size: 11px;
-      text-transform: lowercase; }
-    .singlePostContainer .postInfo .icon {
-      font-size: 16px;
-      color: blue; }
-    .singlePostContainer .postInfo .infoViews {
-      color: red; }
-
-.singlePostContent {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  border-top: none; }
-  .singlePostContent .postsListContent {
-    font-size: 16px;
-    color: rgba(0, 0, 0, 0.8);
-    line-height: 1.70 !important;
-    letter-spacing: 0.02em; }
-  .singlePostContent .postImage {
-    margin-top: 10px;
-    border: 1px solid #eee;
-    border-radius: 5px; }
-  .singlePostContent span {
-    font-size: 16px;
-    color: black; }
-
-.noPostsHeader {
-  color: #9E9E9E;
-  padding-top: 100px;
-  font-size: 32px;
-  text-align: center; }
-
-@keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3); }
-  50% {
-    opacity: 1; } }
-
-@keyframes slideInUp {
-  from {
-    transform: translate3d(0, 100%, 0);
-    visibility: visible; }
-  to {
-    transform: translate3d(0, 0, 0); } }
-
-@keyframes slideOutDown {
-  from {
-    transform: translate3d(0, 0, 0); }
-  to {
-    visibility: hidden;
-    transform: translate3d(0, 100%, 0); } }
-
-@keyframes zoomOut {
-  from {
-    opacity: 1; }
-  50% {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3); }
-  to {
-    opacity: 0; } }
-
-.postFabContainer {
-  position: absolute;
-  bottom: 170px;
-  right: 28px;
-  height: 70px;
-  width: 160px;
-  z-index: 5;
-  text-align: right; }
-
-.button1, .button2 {
-  text-shadow: 1px 0 0 #eee, 0 -1px 0 #eee, 0 1px 0 #eee, -1px 0 0 #eee; }
-
-.button1.ng-enter {
-  animation: zoomIn 0.3s linear; }
-
-.button2.ng-enter {
-  animation: zoomIn 0.1s linear; }
-
-.button1.ng-leave {
-  animation: zoomOut 0.2s linear; }
-
-.button2.ng-leave {
-  animation: zoomOut 0.4s linear; }
-
-.peopleList .peopleListContainer .personAvatar {
-  border-radius: 5px;
-  max-width: 45px;
-  max-height: 50px; }
-
-.peopleList .peopleListContainer .peopleName {
-  font-weight: 600; }
-  .peopleList .peopleListContainer .peopleName .peopleGender {
-    font-size: 12px;
-    font-weight: 400; }
-
 .logoIcon {
   background-image: url("/img/logo.png");
   height: 100px;
@@ -638,6 +421,223 @@ h1, h2, h3, h4, h5, h6 {
     transform: translate3d(0, -1px, 0) !important;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
     background: #e42112 !important; }
+
+.peopleList .peopleListContainer .personAvatar {
+  border-radius: 5px;
+  max-width: 45px;
+  max-height: 50px; }
+
+.peopleList .peopleListContainer .peopleName {
+  font-weight: 600; }
+  .peopleList .peopleListContainer .peopleName .peopleGender {
+    font-size: 12px;
+    font-weight: 400; }
+
+.randomImagesList {
+  height: 100px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  width: 100%;
+  white-space: nowrap; }
+  .randomImagesList .randomImage {
+    height: 100%;
+    margin-right: 2px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    filter: contrast(120%);
+    min-width: 100px; }
+
+.chatRoomJoinButton {
+  padding: 7px 15px;
+  border: 2px solid #387ef5;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.4px; }
+
+.postModalContent {
+  border: none;
+  padding: 0; }
+  .postModalContent .postAvatarContent {
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0; }
+    .postModalContent .postAvatarContent img {
+      border-radius: 5px; }
+  .postModalContent .postModalBodyContainer {
+    border: none;
+    padding-top: 5px; }
+  .postModalContent .postModalInterests {
+    border-bottom: 1px solid #ddd;
+    margin: -16px;
+    padding: 10px;
+    padding-left: 16px;
+    margin-bottom: 10px;
+    font-size: 13px; }
+  .postModalContent .postModalBody {
+    font-size: 16px;
+    margin-top: 0;
+    padding-left: 10px;
+    color: rgba(0, 0, 0, 0.8);
+    line-height: 1.70 !important;
+    letter-spacing: 0.02em; }
+  .postModalContent .postModalInfo .infoValue {
+    font-size: 14px;
+    padding-left: 2px; }
+  .postModalContent .postModalInfo .icon {
+    font-size: 20px; }
+  .postModalContent .postUpvote {
+    color: red; }
+  .postModalContent .postUpvoted {
+    color: red; }
+
+.heartBeatAnimation {
+  animation: heartbeat 3s infinite; }
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(0.95); }
+  20% {
+    transform: scale(1); }
+  40% {
+    transform: scale(0.95); }
+  60% {
+    transform: scale(1); }
+  80% {
+    transform: scale(0.95); }
+  100% {
+    transform: scale(0.95); } }
+
+.imageGray {
+  -moz-filter: contrast(120%);
+  -ms-filter: contrast(120%);
+  -o-filter: contrast(120%);
+  filter: contrast(120%); }
+
+a {
+  text-decoration: none; }
+
+.buttonSearch {
+  padding-top: 10px; }
+
+.postTag {
+  margin-right: 5px;
+  color: blue; }
+
+.postTabs {
+  color: black; }
+
+.tagContent, .postUserName {
+  padding-left: 5px; }
+
+.singlePostContainer {
+  padding-left: 0px;
+  padding-bottom: 0px;
+  border-bottom: 1px solid #ddd;
+  margin: 0; }
+  .singlePostContainer .postUserName a {
+    font-size: 17px; }
+  .singlePostContainer .postUserImage {
+    max-width: 50px !important;
+    max-height: 45px !important;
+    border-radius: 5px !important; }
+  .singlePostContainer .postTag {
+    color: rgba(0, 0, 0, 0.5);
+    margin-right: 5px; }
+  .singlePostContainer .tagContent {
+    margin-top: 5px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6); }
+  .singlePostContainer .postInfo {
+    padding-top: 15px;
+    padding-bottom: 0; }
+    .singlePostContainer .postInfo .infoValue {
+      color: black;
+      font-size: 11px;
+      text-transform: lowercase; }
+    .singlePostContainer .postInfo .icon {
+      font-size: 16px;
+      color: blue; }
+    .singlePostContainer .postInfo .infoViews {
+      color: red; }
+
+.singlePostContent {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-top: none; }
+  .singlePostContent .postsListContent {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.8);
+    line-height: 1.70 !important;
+    letter-spacing: 0.02em;
+    margin-top: 8px; }
+  .singlePostContent .postImage {
+    margin-top: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px; }
+  .singlePostContent span {
+    font-size: 16px;
+    color: black; }
+
+.noPostsHeader {
+  color: #9E9E9E;
+  padding-top: 100px;
+  font-size: 32px;
+  text-align: center; }
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3); }
+  50% {
+    opacity: 1; } }
+
+@keyframes slideInUp {
+  from {
+    transform: translate3d(0, 100%, 0);
+    visibility: visible; }
+  to {
+    transform: translate3d(0, 0, 0); } }
+
+@keyframes slideOutDown {
+  from {
+    transform: translate3d(0, 0, 0); }
+  to {
+    visibility: hidden;
+    transform: translate3d(0, 100%, 0); } }
+
+@keyframes zoomOut {
+  from {
+    opacity: 1; }
+  50% {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3); }
+  to {
+    opacity: 0; } }
+
+.postFabContainer {
+  position: absolute;
+  bottom: 170px;
+  right: 28px;
+  height: 70px;
+  width: 160px;
+  z-index: 5;
+  text-align: right; }
+
+.button1, .button2 {
+  text-shadow: 1px 0 0 #eee, 0 -1px 0 #eee, 0 1px 0 #eee, -1px 0 0 #eee; }
+
+.button1.ng-enter {
+  animation: zoomIn 0.3s linear; }
+
+.button2.ng-enter {
+  animation: zoomIn 0.1s linear; }
+
+.button1.ng-leave {
+  animation: zoomOut 0.2s linear; }
+
+.button2.ng-leave {
+  animation: zoomOut 0.4s linear; }
 
 .center {
   margin-left: auto;

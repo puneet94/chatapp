@@ -2,7 +2,11 @@
         <div class="singlePostContainer fade-in" ng-repeat="post in postsList track by post._id">
                 <div class="item item-avatar item-icon-right">
                         <img class="postUserImage " ng-src="{{post.user.picture}}">
-                        <h2 class="postUserName"><a ui-sref="home.userPage({user:post.user._id})">{{post.user.anonName}}</a></h2>
+                        <h2 class="postUserName">
+                            <a ui-sref="home.userPage({user:post.user._id})">
+                            {{post.user.anonName}}
+                            </a>
+                        </h2>
                         <p class="tagContent">
                                 <span class="subdued postTag" post-search-modal="{{interest}}"  ng-repeat="interest in post.interests track by $index">#{{interest}}</span>
                         </p>
@@ -11,11 +15,11 @@
                 <div class="item item-body  item-text-wrap singlePostContent" ng-click="showPostModal(post)">
                         
                         <div style="border-top: 1px solid #eee;">
-                                <p class="postsListContent">
+                                <div class="postsListContent">
                                         <span ng-bind="post.content | limitTo:150">
                                         </span>
                                         <span ng-if="post.content.length > 150">...</span>
-                                </p>
+                                </div>
                         </div>
                         <img class="full-image postImage imageGray" ng-src="{{post.image}}" ng-if="post.image"/>
                         <div class="row postInfo">

@@ -30,8 +30,10 @@
 			state('home.userPage', {
 				url: '/userPage/:user',
 				resolve: {
+					currentUser: [ '$stateParams','$state', '$auth','$q', '$timeout',currentUser],
 					blocked: [ '$stateParams', 'blockService','$q', blocked],
 					friends: [ '$stateParams', 'revealService','$q', friends]
+					
 
 				},
 				views: {
@@ -74,6 +76,21 @@
 		}).catch(function(){
 			defer.resolve();	
 		});
+		return defer.promise;
+	}
+	function currentUser($stateParams,$state,$auth,$q,$timeout){
+		var defer = $q.defer();
+		if($stateParams.user!=$auth.getPayload().sub){
+			
+			defer.resolve();	
+		}else{
+			$timeout(function() {
+				$state.go('home.user.userMePage');
+				defer.reject();
+			});
+			
+			
+		}
 		return defer.promise;
 	}
 	function friends($stateParams,revealService,$q){

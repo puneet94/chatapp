@@ -1,10 +1,10 @@
 (function(angular) {
 'use strict';
 angular.module('petal.post').
-service('postService', ['$http', 'homeService', 'userLocationService' ,'$q', PostService]);
+service('postService', ['$http', 'homeService', 'userLocationService' ,'$q', '$auth',PostService]);
 
 
-function PostService($http, homeService, userLocationService, $q) {
+function PostService($http, homeService, userLocationService, $q,$auth) {
 	this.getAllPosts = getAllPosts;
 	this.getNearbyPosts = getNearbyPosts;
 	this.getLatestPosts = getLatestPosts;
@@ -53,17 +53,39 @@ function PostService($http, homeService, userLocationService, $q) {
 		return defer.promise;
 
 	}
-
+	function getPostsFunction(url,params){
+		var defer = $q.defer();
+		
+		if (typeof(window.Worker) !== "undefined") {
+			 var worker = new window.Worker('./js/postList.js');
+			 var workerData = {
+			 	"params": params,
+			 	"url": url,
+			 	"token": $auth.getToken()
+			 };
+			 worker.postMessage(JSON.stringify(workerData));
+  			worker.onmessage = function (event) {
+    				
+			defer.resolve({data:JSON.parse(event.data)});
+    				
+  			};
+		} else {
+		    alert("inisde else");
+			return $http.get(url, { params: params });    
+		}
+		return defer.promise;
+	}
 	function getLatestPosts(params) {
 		params.sort = '-time';
+		var url  = homeService.baseURL + 'post/getPosts';
+		return getPostsFunction(url,params);
 		
-
-		return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
 	}
 
 	function getPopularPosts(params) {
 		params.sort = '-upvotesLength';
-		return $http.get(homeService.baseURL + 'post/getPosts', { params: params });
+		var url = homeService.baseURL + 'post/getPosts';
+		return getPostsFunction(url,params);
 	}
 
 	function submitPost(post) {
